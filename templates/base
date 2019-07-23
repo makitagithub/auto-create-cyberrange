@@ -1,0 +1,23 @@
+# Generated vagrant file
+#
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+{# Macro that prints out attributes of a device #}
+{% macro printAttributes(device_name) %}
+{% for command in devices[device_name] %}
+    {{ command }}
+{% endfor %}
+{% endmacro %}
+
+{# Device definitions #}
+Vagrant.configure("2") do |config|
+{% for name, attributes in devices.iteritems() %}
+
+  # device: {{ name }}
+  config.vm.define "{{ name }}" do |device|
+{{ printAttributes(name) }}
+  end
+{% endfor %}
+
+end
