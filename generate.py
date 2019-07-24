@@ -51,7 +51,7 @@ templateLoader = jinja2.FileSystemLoader(searchpath="templates")
 templateEnv = jinja2.Environment(loader=templateLoader, trim_blocks=True)
 baseTemplate = templateEnv.get_template("base")
 output = baseTemplate.render(devices = devices)
-print (output)
+print (output.encode('utf-8'))
 
 #vagrantfile = open('Vagrantfile','w')
 #vagrantfile.write(output)
