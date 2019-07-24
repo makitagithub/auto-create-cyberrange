@@ -1,2 +1,2 @@
-- python 2.7
+- Python 3
 - Jinja 2.10
