@@ -16,8 +16,7 @@ Vagrant.configure("2") do |config|
 
   # device: {{ name }}
   config.vm.define "{{ name }}" do |device|
-{{ printAttributes(name) }}
-  end
+{{ printAttributes(name) }}  end
 {% endfor %}
 
 end
