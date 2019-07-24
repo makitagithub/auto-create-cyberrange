@@ -21,8 +21,16 @@ except IOError:
     print ("Error: cannot find mappings.")
 
 # Converts yaml attribute names to vagrant attribute names.
-def do_mapping(name):
-    return vagrant_mappings[name]
+def do_mapping(name, command_type):
+    return vagrant_mappings[str(command_type)][name]
+
+def add_formated_command(key, value):
+    if (key in vagrant_mappings['string']):
+        devices[host['name']].append('device.' + str(do_mapping(key, 'string')) + ' = \"' + str(value) + '\"')
+    elif (key in vagrant_mappings['integer']):
+        devices[host['name']].append('device.' + str(do_mapping(key, 'integer')) + ' = ' + str(value))
+    elif (key in vagrant_mappings['boolean']):
+        devices[host['name']].append('device.' + str(do_mapping(key, 'boolean')) + ' = ' + str(value).lower())
 
 def find_ip(name):
     for net_mapping in yml['net_mappings']:
@@ -35,7 +43,7 @@ for host in yml['hosts']:
     devices[host['name']] = []
     for key, value in host.items():
         if (key != 'name'):
-            devices[host['name']].append('device.' + str(do_mapping(key)) + ' = \"' + str(value) + '\"')
+            add_formated_command(key, value)
     if (yml['net_mappings']):      
         devices[host['name']].append('device.vm.network :private_network, ip: \"' + str(find_ip(host['name'])) + '\"')
 

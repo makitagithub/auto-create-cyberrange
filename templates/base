@@ -12,7 +12,7 @@
 
 {# Device definitions #}
 Vagrant.configure("2") do |config|
-{% for name, attributes in devices.iteritems() %}
+{% for name, attributes in devices.items() %}
 
   # device: {{ name }}
   config.vm.define "{{ name }}" do |device|

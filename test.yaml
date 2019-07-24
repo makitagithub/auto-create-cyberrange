@@ -7,6 +7,8 @@ hosts:
 
   - name: home
     base_box: ubuntu/bionic64
+    boot_timeout: 1000
+    box_check_update: false
 
 routers:
   - name: server-router

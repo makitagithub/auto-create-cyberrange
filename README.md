@@ -12,11 +12,10 @@ generate.py is a python program that generates a vagrant source file from a defi
 4. Run `$ vagrant up`
 
 ### Implemented attribute types:
-- all simple string vagrant attributes
+- all simple vagrant attributes
 - a simple network (assigning an ip address to a device)
 
 ### Not implemented yet:
-- numeric and other vagrant attributes
 - VirtualBox and OpenStack attributes
 - other network configuration
 
