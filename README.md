@@ -13,9 +13,12 @@ generate.py is a python program that generates a vagrant source file from a defi
 
 ### Implemented attribute types:
 - all simple vagrant attributes
-- a simple network (assigning an ip address to a device)
+- a simple network (assigning ip and netmask to a device)
 
 ### Not implemented yet:
 - VirtualBox and OpenStack attributes
 - other network configuration
+
+### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues):
+- after running on Windows the output may contain invalid multibyte chars
 
