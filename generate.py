@@ -4,6 +4,8 @@ import sys
 import yaml
 import jinja2
 
+from modules.network_parser import add_networks
+
 if (len(sys.argv) != 2):
     print ("Error: Expecting 1 argument (yml file).")
     sys.exit();
@@ -26,17 +28,20 @@ def do_mapping(name, command_type):
 
 def add_formated_command(key, value):
     if (key in vagrant_mappings['string']):
-        devices[host['name']].append('device.' + str(do_mapping(key, 'string')) + ' = \"' + str(value) + '\"')
+        devices[host['name']].append(
+                'device.' + str(do_mapping(key, 'string'))
+                + ' = \"' + str(value) + '\"')
     elif (key in vagrant_mappings['integer']):
-        devices[host['name']].append('device.' + str(do_mapping(key, 'integer')) + ' = ' + str(value))
+        devices[host['name']].append(
+                'device.' + str(do_mapping(key, 'integer'))
+                + ' = ' + str(value))
     elif (key in vagrant_mappings['boolean']):
-        devices[host['name']].append('device.' + str(do_mapping(key, 'boolean')) + ' = ' + str(value).lower())
+        devices[host['name']].append(
+                'device.' + str(do_mapping(key, 'boolean'))
+                + ' = ' + str(value).lower())
 
-def find_ip(name):
-    for net_mapping in yml['net_mappings']:
-        if (net_mapping['host'] == name):
-            return net_mapping['ip']
 
+# Building "devices" structure that will be passed to Jinja2
 devices = {}
 
 for host in yml['hosts']:
@@ -44,18 +49,13 @@ for host in yml['hosts']:
     for key, value in host.items():
         if (key != 'name'):
             add_formated_command(key, value)
-    if (yml['net_mappings']):      
-        devices[host['name']].append('device.vm.network :private_network, ip: \"' + str(find_ip(host['name'])) + '\"')
+    add_networks(host['name'], yml, devices)
 
+
+# Generating output via Jinja2
 templateLoader = jinja2.FileSystemLoader(searchpath="templates")
 templateEnv = jinja2.Environment(loader=templateLoader, trim_blocks=True)
 baseTemplate = templateEnv.get_template("base")
 output = baseTemplate.render(devices = devices)
-print (output.encode('utf-8'))
-
-#vagrantfile = open('Vagrantfile','w')
-#vagrantfile.write(output)
-
-
-
+print (output)
 
