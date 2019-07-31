@@ -23,8 +23,11 @@ generate.py is a python program that generates a vagrant source file from a defi
 ### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues):
 - after running on Windows the output may contain invalid multibyte chars
 
-### Supprted flavors:
+### Flavors
 
+Flavors provide a quick way to choose hardware specs (like number of cpus and memory) for a virtual machine. These attributes can also be specified separately by `memory` and `cpus`. The values of `memory` and/or `cpus` always override the values specified in the `flavor`.
+
+##### Supported flavors:
 | flavor | cpus | memory |
 | ------------------ |:--:|:-----:|
 | csirtmu.tiny1x2    | 1  | 2048  |
