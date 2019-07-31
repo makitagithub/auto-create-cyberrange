@@ -13,6 +13,7 @@ generate.py is a python program that generates a vagrant source file from a defi
 
 ### Implemented attribute types:
 - all simple vagrant attributes
+- flavors, memory, cpus
 - a simple network (assigning ip and netmask to a device)
 
 ### Not implemented yet:
@@ -21,4 +22,19 @@ generate.py is a python program that generates a vagrant source file from a defi
 
 ### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues):
 - after running on Windows the output may contain invalid multibyte chars
+
+### Supprted flavors:
+
+| flavor | cpus | memory |
+| ------------------ |:--:|:-----:|
+| csirtmu.tiny1x2    | 1  | 2048  |
+| csirtmu.tiny1x4    | 1  | 4096  |
+| csirtmu.small2x4   | 2  | 4096  |
+| csirtmu.small2x8   | 2  | 8192  |
+| csirtmu.medium4x8  | 4  | 8192  |
+| csirtmu.medium4x16 | 4  | 16384 |
+| csirtmu.large8x16  | 8  | 16384 |
+| csirtmu.large8x32  | 8  | 32768 |
+| csirtmu.jumbo16x32 | 16 | 32768 |
+| csirtmu.jumbo16x64 | 16 | 65536 |
 
