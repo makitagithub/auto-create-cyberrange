@@ -4,6 +4,8 @@ name: small-sandbox
 hosts:
   - name: server
     base_box: ubuntu/bionic64
+    flavor: csirtmu.tiny1x4
+    cpus: 2
 
   - name: home
     base_box: ubuntu/bionic64

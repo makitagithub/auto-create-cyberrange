@@ -60,7 +60,6 @@ boolean:
 other:
     box_url: vm.box_url
     guest: vm.guest
-    network: vm.network
     provider: vm.provider
     provision: vm.provision
     synced_folder: vm.synced_folder
@@ -74,4 +73,9 @@ other:
     vagrant_host: vagrant.host
     vagrant_plugins: vagrant.plugins
     vagrant_sensitive: vagrant.sensitive
+need_provider:
+    flavor: flavor
+    memory: memory
+    cpus: cpus
+    
 

@@ -23,6 +23,8 @@ def add_networks(hostname, yml, devices):
         if (mapping['host'] == hostname):
             _add_ip(hostname, yml['net_mappings'], devices)
             if (yml['networks']):
-                _add_netmask(hostname, mapping['network'], yml['networks'], devices)
+                _add_netmask(
+                        hostname, mapping['network']
+                        , yml['networks'], devices)
                 
 
