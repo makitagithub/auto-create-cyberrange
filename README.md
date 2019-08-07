@@ -20,10 +20,21 @@ generate.py is a python program that generates a vagrant source file from a defi
 - VirtualBox and OpenStack attributes
 - other network configuration
 
-### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues):
-- after running on Windows the output may contain invalid multibyte chars
+### Working yaml attributes
+- hosts
+    - all string, integer and boolean [vagrant attributes](https://www.vagrantup.com/docs/vagrantfile/machine_settings.html) (mappings of vagrant attribute names to yaml attributes are in name_mapping/mapping.yml)
+    - flavor
+    - memory
+    - cpus
+- networks
+    - name
+    - cidr
+- net_mappings
+    - host
+    - network
+    - ip
 
-### Flavors
+#### Flavors
 
 Flavors provide a quick way to choose hardware specs (like number of cpus and memory) for a virtual machine. These attributes can also be specified separately by `memory` and `cpus`. The values of `memory` and/or `cpus` always override the values specified in the `flavor`.
 
@@ -40,4 +51,10 @@ Flavors provide a quick way to choose hardware specs (like number of cpus and me
 | csirtmu.large8x32  | 8  | 32768 |
 | csirtmu.jumbo16x32 | 16 | 32768 |
 | csirtmu.jumbo16x64 | 16 | 65536 |
+
+### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues):
+- after running on Windows the output may contain invalid multibyte chars
+
+### Notes
+- tested on Vagrant 2.2.5, VirtualBox 6.0.4 and 6.0.10
 
