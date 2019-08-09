@@ -4,7 +4,7 @@ import sys
 import yaml
 import jinja2
 
-from modules.network_parser import add_networks
+from modules.network_parser import add_networks, add_routers
 from modules.provider import print_prov_attributes
 
 if (len(sys.argv) != 2):
@@ -62,6 +62,10 @@ for host in yml['hosts']:
     add_networks(host['name'], yml, devices)
     print_prov_attributes(host, flavors
             , name_mappings['need_provider'], devices)
+
+for router in yml['routers']:
+    devices[router['name']] = []
+    add_routers(router['name'], yml, devices)
 
 
 # Generating output via Jinja2
