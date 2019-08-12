@@ -33,6 +33,12 @@ generate.py is a python program that generates a vagrant source file from a defi
     - host
     - network
     - ip
+- routers
+    - name
+- router_mappings
+    - router
+    - network
+    - ip
 
 #### Flavors
 
