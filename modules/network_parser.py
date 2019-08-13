@@ -23,7 +23,7 @@ def _add_netmask(hostname, my_network, networks, definitions):
     for network in networks:
         if (network['name'] == my_network):
             address, mask = network['cidr'].split('/')
-            definitions[hostname][-1] += (', netmask: ' + mask)
+            definitions[hostname][-1] += (', netmask: \"' + mask + "\"")
 
 
 def add_networks(hostname, yml, definitions):
