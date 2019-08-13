@@ -49,7 +49,7 @@ def add_router_specification(router, definitions):
     """ Adds the default specification for a router. """
     
     ROUTER_BOX = "generic/debian10"
-    ROUTER_MEMORY = 128
+    ROUTER_MEMORY = 256
 
     definitions[router['name']].append("device.vm.box = \"" + ROUTER_BOX + "\"")
     definitions[router['name']].append(
