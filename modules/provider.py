@@ -51,12 +51,12 @@ def add_prov_attributes(host, flavors, provider_attributes, definitions):
 def add_router_specification(router, definitions):
     """ Adds the default specification for a router. """
 
-    ROUTER_BOX = "generic/debian10"
-    ROUTER_MEMORY = 256
+    router_box = "generic/debian10"
+    router_memory = 256
 
     definitions[router['name']].append(
-        "device.vm.box = \"" + ROUTER_BOX + "\"")
+        "device.vm.box = \"" + router_box + "\"")
     definitions[router['name']].append(
         "device.vm.provider \"virtualbox\" do |vb|")
-    definitions[router['name']].append("  vb.memory = " + str(ROUTER_MEMORY))
+    definitions[router['name']].append("  vb.memory = " + str(router_memory))
     definitions[router['name']].append("end")

@@ -7,35 +7,17 @@ from modules.attribute_formatter import add_simple_commands
 from modules.provider import add_prov_attributes, add_router_specification
 from modules.network_parser import add_networks, add_router_ip
 
+MAPPING_FILE = "name_mapping/mapping.yml"
+FLAVORS_FILE = "name_mapping/flavors.yml"
 
-def _open_yml(yml_file_name):
-    """ Opens the input yaml file. """
+
+def _open_file(file_name):
+    """ Opens and returns a file from the argument. """
     try:
-        ymlfile = open(str(yml_file_name))
-        yml = yaml.safe_load(ymlfile)
-        return yml
+        input_file = open(str(file_name))
+        return yaml.safe_load(input_file)
     except IOError:
-        print("Error: file does not exist.")
-
-
-def _open_mappings():
-    """ Opens the file with name mappings. """
-    try:
-        mapping_file = open("name_mapping/mapping.yml")
-        mappings = yaml.safe_load(mapping_file)
-        return mappings
-    except IOError:
-        print("Error: cannot find mappings.")
-
-
-def _open_flavors():
-    """ Opens the file with flavor definitions. """
-    try:
-        flavors_file = open("name_mapping/flavors.yml")
-        flavors = yaml.safe_load(flavors_file)
-        return flavors
-    except IOError:
-        print("Error: cannot find the list of flavors.")
+        print("Error: Cannot find a required file.")
 
 
 def _create_hosts(yml, mappings, flavors):
@@ -66,11 +48,11 @@ def _create_routers(yml):
 
 
 def create_devices(yml_file_name):
-    """ Returns a marged dictionary of host and router definitions. """
+    """ Returns a merged dictionary of host and router definitions. """
 
-    yml = _open_yml(yml_file_name)
-    mappings = _open_mappings()
-    flavors = _open_flavors()
+    yml = _open_file(yml_file_name)
+    mappings = _open_file(MAPPING_FILE)
+    flavors = _open_file(FLAVORS_FILE)
 
     return {
         **_create_hosts(yml, mappings, flavors),

@@ -7,14 +7,9 @@ def _find_ip(hostname, mappings, device_type):
     """ Finds the ip address of a device. """
 
     for mapping in mappings:
-        if device_type == 'host':
-            if mapping['host'] and mapping['host'] == hostname:
+        if device_type in ('host', 'router'):
+            if mapping[device_type] and mapping[device_type] == hostname:
                 return mapping['ip']
-        elif device_type == 'router':
-            if mapping['router'] and mapping['router'] == hostname:
-                return mapping['ip']
-
-    return None
 
 
 def _add_ip(hostname, mappings, device_type, definitions):
