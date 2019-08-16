@@ -4,7 +4,7 @@
 import sys
 import jinja2
 
-from modules.device_creator import create_devices
+from modules.device_creator import create_devices, create_vagrantfile
 
 if len(sys.argv) != 2:
     print("Error: Expecting 1 argument (yml file).")
@@ -19,4 +19,4 @@ TEMPLATE_ENV = jinja2.Environment(loader=TEMPLATE_LOADER, trim_blocks=True)
 BASE_TEMPLATE = TEMPLATE_ENV.get_template("base")
 OUTPUT = BASE_TEMPLATE.render(devices=DEVICES)
 
-print(OUTPUT)
+create_vagrantfile(OUTPUT)

@@ -57,3 +57,16 @@ def create_devices(yml_file_name):
     return {
         **_create_hosts(yml, mappings, flavors),
         **_create_routers(yml)}
+
+
+def create_vagrantfile(output):
+    """ Writes the prepared output to a Vagrantfile. """
+    filename = "Vagrantfile"
+
+    try:
+        vagrantfile = open(filename, "w")
+        vagrantfile.write(output)
+    except IOError:
+        print("Error: cannot write to this location.")
+
+    print("Vagrantfile successfully created.")
