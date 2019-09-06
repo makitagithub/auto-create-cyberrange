@@ -4,19 +4,14 @@
 import sys
 import jinja2
 
-from modules.device_creator import create_devices, create_vagrantfile
+from modules.file_generator import generate_vagrantfile, generate_ansible_files
+from modules.device_creator import open_file
 
 if len(sys.argv) != 2:
     print("Error: Expecting 1 argument (yml file).")
     sys.exit()
 
-# A structure with formatted commands for each device
-DEVICES = create_devices(str(sys.argv[1]))
+device_definitions = open_file(str(sys.argv[1]))
 
-# Generating output via Jinja2
-TEMPLATE_LOADER = jinja2.FileSystemLoader(searchpath="templates")
-TEMPLATE_ENV = jinja2.Environment(loader=TEMPLATE_LOADER, trim_blocks=True)
-BASE_TEMPLATE = TEMPLATE_ENV.get_template("base")
-OUTPUT = BASE_TEMPLATE.render(devices=DEVICES)
-
-create_vagrantfile(OUTPUT)
+generate_vagrantfile(device_definitions)
+generate_ansible_files(device_definitions)

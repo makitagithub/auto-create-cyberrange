@@ -27,5 +27,4 @@ def add_simple_commands(device, mappings, device_definition):
     """ Adds definitions of string, integer and boolean vagrant attributes. """
 
     for key, value in device.items():
-        if key != "name":
-            _format_and_add(key, value, mappings, device_definition)
+        _format_and_add(key, value, mappings, device_definition)

@@ -3,27 +3,32 @@
 import sys
 
 
-def _find_ip(hostname, mappings, device_type):
-    """ Finds the ip address of a device. """
+def _find_networks(hostname, mappings, device_type):
+    """ Matches the device to networks. Returns a list of maiching networks. """
+    network_list = []
 
     for mapping in mappings:
         if device_type in ('host', 'router'):
             if mapping[device_type] and mapping[device_type] == hostname:
-                return mapping['ip']
+                network_list.append(mapping)
 
+    return network_list
 
 def _add_ip(hostname, mappings, device_type, definitions):
-    """ Adds a formatted ip address to a device definition. """
+    """ Adds a formatted ip address and network name to device definition. """
 
-    ip_address = _find_ip(hostname, mappings, device_type)
+    networks = _find_networks(hostname, mappings, device_type)
 
-    if not ip_address:
-        print("Cannot find network mapping.")
-        sys.exit()
+    for network in networks:
+        if not network["ip"]:
+            print("Cannot find network mapping.")
+            sys.exit()
 
-    definitions[hostname].append(
-        "device.vm.network :private_network, ip: \""
-        + ip_address + '\"')
+        definitions[hostname].append(
+            "device.vm.network :private_network, ip: \""
+            + network["ip"] + '\", virtualbox__intnet: ' + network["network"])
+
+
 
 
 def _add_netmask(hostname, my_network, networks, definitions):
@@ -35,6 +40,20 @@ def _add_netmask(hostname, my_network, networks, definitions):
             definitions[hostname][-1] += (', netmask: \"' + mask + "\"")
 
 
+def _add_interfaces(hostname, mapping, device_type, networks, definitions):
+    """ Adds all network interfaces to a device. """
+
+    if not mapping["ip"]:
+        print("Cannot find network mapping.")
+        sys.exit()
+
+    definitions[hostname].append(
+        "device.vm.network :private_network, ip: \"" + mapping["ip"]
+        + "\", virtualbox__intnet: \"" + mapping["network"] + "\"")
+
+    if device_type == "host":
+        _add_netmask(hostname, mapping["network"], networks, definitions)
+
 def add_networks(hostname, yml, definitions):
     """ Adds ip address and natmask to a host. """
 
@@ -43,10 +62,9 @@ def add_networks(hostname, yml, definitions):
 
     for mapping in yml['net_mappings']:
         if mapping['host'] == hostname:
-            _add_ip(hostname, yml['net_mappings'], 'host', definitions)
-            if yml['networks']:
-                _add_netmask(
-                    hostname, mapping['network'], yml['networks'], definitions)
+            _add_interfaces(
+                hostname, mapping,
+                'host', yml['networks'], definitions)
 
 
 def add_router_ip(routername, yml, definitions):
@@ -57,4 +75,6 @@ def add_router_ip(routername, yml, definitions):
 
     for mapping in yml['router_mappings']:
         if mapping['router'] == routername:
-            _add_ip(routername, yml['router_mappings'], 'router', definitions)
+            _add_interfaces(
+                routername, mapping,
+                'router', yml['networks'], definitions)

@@ -11,13 +11,23 @@ MAPPING_FILE = "name_mapping/mapping.yml"
 FLAVORS_FILE = "name_mapping/flavors.yml"
 
 
-def _open_file(file_name):
+def open_file(file_name):
     """ Opens and returns a file from the argument. """
     try:
         input_file = open(str(file_name))
         return yaml.safe_load(input_file)
     except IOError:
         print("Error: Cannot find a required file.")
+
+def _add_provisioning(hostname, host_definitions):
+    """ Adds provisioning to the device if the file exists. """
+    try:
+        provision_file = open("provision/" + str(hostname) + ".yaml")
+        host_definitions[hostname].append("device.vm.provision \"ansible\" do |ansible|")
+        host_definitions[hostname].append("  ansible.playbook = \"provision/" + hostname + ".yaml\"")
+        host_definitions[hostname].append("end")
+    except IOError:
+        pass
 
 
 def _create_hosts(yml, mappings, flavors):
@@ -31,6 +41,7 @@ def _create_hosts(yml, mappings, flavors):
         add_networks(host["name"], yml, host_definitions)
         add_prov_attributes(
             host, flavors, mappings['need_provider'], host_definitions)
+        _add_provisioning(host["name"], host_definitions)
 
     return host_definitions
 
@@ -47,26 +58,12 @@ def _create_routers(yml):
     return router_definitions
 
 
-def create_devices(yml_file_name):
+def create_devices(definitions):
     """ Returns a merged dictionary of host and router definitions. """
 
-    yml = _open_file(yml_file_name)
-    mappings = _open_file(MAPPING_FILE)
-    flavors = _open_file(FLAVORS_FILE)
+    mappings = open_file(MAPPING_FILE)
+    flavors = open_file(FLAVORS_FILE)
 
     return {
-        **_create_hosts(yml, mappings, flavors),
-        **_create_routers(yml)}
-
-
-def create_vagrantfile(output):
-    """ Writes the prepared output to a Vagrantfile. """
-    filename = "Vagrantfile"
-
-    try:
-        vagrantfile = open(filename, "w")
-        vagrantfile.write(output)
-    except IOError:
-        print("Error: cannot write to this location.")
-
-    print("Vagrantfile successfully created.")
+        **_create_hosts(definitions, mappings, flavors),
+        **_create_routers(definitions)}
