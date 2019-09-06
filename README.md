@@ -18,7 +18,7 @@ generate.py is a python program that generates a vagrant source file from a defi
 	- `base_box`: an OS image that will be installed on the machine (required)
 	- `cpus`: number of CPU units
 	- `memory`: required memory size in MB
-	- `flavors`: a quick definition of memory and cpus (details below)
+	- `flavor`: a quick definition of memory and cpus (details below)
 	- other simple [vagrant attributes](https://www.vagrantup.com/docs/vagrantfile/machine_settings.html)
 
 - `routers`: a list of routers. Routers need only a unique name. All other attributes are preset (Debian 10 with 256MB memory and 2 CPUs).
