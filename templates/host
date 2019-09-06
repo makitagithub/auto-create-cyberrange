@@ -5,7 +5,7 @@
   tasks:
 
   - name: Change default gateway
-    sudo: yes
+    become: yes
     command: route add default gw {{ host.router_ip }} enp0s8
 
 {% endfor %}
