@@ -1,0 +1,18 @@
+---
+{% for routing in network %}
+- name: Configuring routing tables on {{ routing.router_name }} 
+  hosts: {{ routing.router_name }}
+  tasks:
+
+  - name: Enable IP forwarding
+    become: yes
+    copy:
+      dest: "/etc/sysctl.conf"
+      content: "net.ipv4.ip_forward=1"
+
+  - name: Restarting procps service
+    become: yes
+    command: /etc/init.d/procps restart
+
+{% endfor %}
+...

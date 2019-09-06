@@ -1,0 +1,12 @@
+---
+{% for host in hosts%}
+- name: Configuring routing tables on {{ host.host_name }}
+  hosts: {{ host.host_name }}
+  tasks:
+
+  - name: Change default gateway
+    become: yes
+    command: route add default gw {{ host.router_ip }} enp0s8
+
+{% endfor %}
+...

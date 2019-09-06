@@ -9,7 +9,7 @@ string:
     box_download_ca_path: vm.box_download_ca_path
     box_version: vm.box_version
     communicator: vm.communicator
-    hostname: vm.hostname
+    name: vm.hostname
     post_up_message: vm.post_up_message
     ssh_config: ssh.config
     ssh_export_command_template: ssh.export_command_template
