@@ -38,6 +38,14 @@ generate.py is a python program that generates a vagrant source file from a defi
 	- `network`: name of an existing network
 	- `ip`: ip address of the router in the network
 
+### Testing the network
+
+After a successful `vagrant up` it is sometimes needed to test the network routing:
+
+1. Log in to a host with `$ vagrant ssh <host>`.
+2. Ping a host from a different network with `$ ping <other-host>`.
+3. If the networks are connected with a router and the routing works, ping gives an output (cca every second) about the transmitted packets. If ping cannot access the other host, no such output is produced.
+
 #### Flavors
 
 Flavors provide a quick way to choose hardware specs (like number of cpus and memory) for a virtual machine. These attributes can also be specified separately by `memory` and `cpus`. The values of `memory` and/or `cpus` always override the values specified in the `flavor`.
