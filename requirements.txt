@@ -2,5 +2,3 @@
 - Jinja 2.10
 - PyYAML 3.12
 
-DHCP server for vboxnet0 must be turned off in VirtualBox. It can be done manually in VirtualBox or with th command $ VBoxManage dhcpserver remove --ifname vboxnet0
-
