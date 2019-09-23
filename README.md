@@ -71,6 +71,7 @@ Flavors provide a quick way to choose hardware specs (like number of cpus and me
 
 ### Notes
 - tested on Vagrant 2.2.5, VirtualBox 6.0.4 and 6.0.10
+- Vagrantfile and the provision directory contains everything needed by vagrant. Feel free to move them to a different directory after creation. 
 
 ### Other requirements
 - DHCP server for vboxnet0 must be turned off in VirtualBox. It can be done manually in VirtualBox or with the command `$ VBoxManage dhcpserver remove --ifname vboxnet0`
