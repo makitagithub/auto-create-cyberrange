@@ -1,12 +1,12 @@
 name: small-sandbox
 hosts:
   - name: server
-    base_box: ubuntu/bionic64
+    base_box: kalilinux/rolling-light
     flavor: csirtmu.tiny1x4
     cpus: 2
 
   - name: home
-    base_box: ubuntu/bionic64
+    base_box: kalilinux/rolling-light
     boot_timeout: 1000
     box_check_update: false
 
