@@ -1,0 +1,9 @@
+---
+# Main ansible playground
+
+  - import_playbook: device_configuration.yml
+
+# Write your custom configuration here:
+
+
+...

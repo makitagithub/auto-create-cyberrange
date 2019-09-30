@@ -1,0 +1,24 @@
+---
+# Basic configuration of all defined devices
+
+- name: Configuring all hosts
+  hosts: {{ hosts|map(attribute='host_name')|unique|join(',') }}
+  become: yes
+  roles:
+    - hosts
+
+{% for host in hosts %}
+- name: Configuring host {{ host.host_name }}
+  hosts: {{ host.host_name }}
+  become: yes
+  tasks:
+  - name: Change default gateway
+    command: route add default gw {{ host.router_ip }} eth1
+
+{% endfor %}
+- name: Configuring all routers
+  hosts: {{ routers|map(attribute='router_name')|unique|join(',') }}
+  become: yes
+  roles:
+    - routers
+...

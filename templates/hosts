@@ -1,0 +1,6 @@
+---
+# Configuration of all host devices
+
+- name: Install net-tools
+  command: apt-get install net-tools
+...
