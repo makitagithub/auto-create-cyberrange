@@ -26,6 +26,7 @@ def create_host_map(net_mappings, router_mappings):
     for net_mapping in net_mappings:
         host = dict()
         host["host_name"] = net_mapping["host"]
+        host["host_ip"] = net_mapping["ip"]
         host["router_ip"] = _find_router_ip(
             net_mapping["network"], router_mappings)
         hosts.append(host)

@@ -2,7 +2,7 @@ import jinja2
 import os
 
 from modules.device_creator import create_devices
-from modules.ansible_files_generator import create_network_map, create_host_map
+from modules.ansible_data_generator import create_network_map, create_host_map
 
 
 def _load_template(template_name):
@@ -23,20 +23,85 @@ def _generate_file(filename, output_string):
         print("Error: cannot write to this location.")
 
 
+def _create_role_directory(role_name):
+    """ Creates directory structure for a role. """
+
+    try:
+        os.mkdir("provision")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir("provision/roles")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir("provision/roles/" + role_name)
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir("provision/roles/" + role_name +"/tasks")
+    except FileExistsError:
+        pass
+
+
 def generate_vagrantfile(definitions):
     """ Writes the prepared output to a Vagrantfile. """
     
     device_definitions = create_devices(definitions)
-    template = _load_template("base")
+    template = _load_template("vagrantfile")
     output = template.render(devices=device_definitions)
     _generate_file("Vagrantfile", output)
     
     print("Info: Vagrantfile successfully created.")
 
 
-def _generate_routers_playbook(definitions):
-    """ Generates ansible playbook for router configuration. """
-    
+def _generate_playbook():
+    """ Generates the main playbook. """
+
+    template = _load_template("playbook")
+    output = template.render()
+
+    try:
+        os.mkdir("provision")
+    except FileExistsError:
+        pass
+
+    _generate_file("./provision/playbook.yml", output)
+
+
+def _generate_device_configuration(definitions):
+    """ Generates a playbook with basic device configutarion. """
+
+    host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"])
+    network = create_network_map(
+            definitions["net_mappings"], definitions["router_mappings"]) 
+
+    template = _load_template("device_configuration")
+    output = template.render(hosts=host_map, routers=network)
+
+    try:
+        os.mkdir("provision")
+    except FileExistsError:
+        pass
+
+    _generate_file("./provision/device_configuration.yml", output)
+
+
+def _generate_hosts_role(definitions):
+    """ Generates hosts role. """
+
+    host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"])
+
+    template = _load_template("hosts")
+    output = template.render(hosts=host_map)
+
+    _create_role_directory("hosts")
+    _generate_file("./provision/roles/hosts/tasks/main.yml", output)
+
+
+def _generate_routers_role(definitions):
+    """ Generates routers role. """
+
     if not definitions['routers'] or not definitions['router_mappings']:
         print("Info: No router definition was found. Skipping router creation.")
         return
@@ -44,38 +109,19 @@ def _generate_routers_playbook(definitions):
     network = create_network_map(
             definitions["net_mappings"], definitions["router_mappings"]) 
 
-    template = _load_template("router")
+    template = _load_template("routers")
     output = template.render(network=network)
 
-    try:
-        os.mkdir("provision")
-    except FileExistsError:
-        pass
-
-    _generate_file("./provision/routers_playbook.yaml", output)
-
-    print("Info: Routers successfully created.")
-
-
-def _generate_host_playbook(definitions): 
-    """ Generates ansible playbook for host configuration. """
-
-    host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"])
-
-    template = _load_template("host")
-    output = template.render(hosts=host_map)
-
-    try:
-        os.mkdir("provision")
-    except FileExistsError:
-        pass
-
-    _generate_file("./provision/hosts_playbook.yaml", output)
-
-    print("Info: Hosts successfully created.")
+    _create_role_directory("routers")
+    _generate_file("./provision/roles/routers/tasks/main.yml", output)
 
 
 def generate_ansible_files(device_definitions):
     """ Generates files for ansible. """
-    _generate_routers_playbook(device_definitions)
-    _generate_host_playbook(device_definitions)
+    
+    _generate_playbook()
+    _generate_device_configuration(device_definitions)
+    _generate_hosts_role(device_definitions)
+    _generate_routers_role(device_definitions)
+
+    print("Info: Ansible files successfully created.")
