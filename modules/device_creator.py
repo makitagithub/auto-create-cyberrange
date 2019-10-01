@@ -22,9 +22,9 @@ def open_file(file_name):
 def _add_provisioning(hostname, host_definitions):
     """ Adds provisioning to the device if the file exists. """
     try:
-        provision_file = open("provision/" + str(hostname) + ".yaml")
+        provision_file = open("provision/" + str(hostname) + ".yml")
         host_definitions[hostname].append("device.vm.provision \"ansible\" do |ansible|")
-        host_definitions[hostname].append("  ansible.playbook = \"provision/" + hostname + ".yaml\"")
+        host_definitions[hostname].append("  ansible.playbook = \"provision/" + hostname + ".yml\"")
         host_definitions[hostname].append("end")
     except IOError:
         pass

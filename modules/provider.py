@@ -55,6 +55,8 @@ def add_router_specification(router, definitions):
     router_memory = 256
 
     definitions[router['name']].append(
+        "device.vm.hostname = \"" + router['name'] + "\"")
+    definitions[router['name']].append(
         "device.vm.box = \"" + router_box + "\"")
     definitions[router['name']].append(
         "device.vm.provider \"virtualbox\" do |vb|")
