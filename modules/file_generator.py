@@ -92,8 +92,11 @@ def _generate_hosts_role(definitions):
 
     host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"])
 
+    network = create_network_map(
+            definitions["net_mappings"], definitions["router_mappings"])
+
     template = _load_template("hosts")
-    output = template.render(hosts=host_map)
+    output = template.render(hosts=host_map, routers=network)
 
     _create_role_directory("hosts")
     _generate_file("./provision/roles/hosts/tasks/main.yml", output)
@@ -106,11 +109,13 @@ def _generate_routers_role(definitions):
         print("Info: No router definition was found. Skipping router creation.")
         return
 
+    host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"])
+
     network = create_network_map(
             definitions["net_mappings"], definitions["router_mappings"]) 
 
     template = _load_template("routers")
-    output = template.render(network=network)
+    output = template.render(hosts=host_map, routers=network)
 
     _create_role_directory("routers")
     _generate_file("./provision/roles/routers/tasks/main.yml", output)
