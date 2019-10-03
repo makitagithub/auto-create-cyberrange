@@ -78,7 +78,7 @@ The name of the correct network interface can be different for every box. The su
 - other VirtualBox attributes
 - more complex routing
 
-### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues):
+### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues?label_name%5B%5D=known_issue):
 - after running on Windows the output may contain invalid multibyte chars
 
 ### Notes
