@@ -15,3 +15,4 @@ device_definitions = open_file(str(sys.argv[1]))
 
 generate_vagrantfile(device_definitions)
 generate_ansible_files(device_definitions)
+

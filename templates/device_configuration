@@ -13,7 +13,7 @@
   become: yes
   tasks:
   - name: Change default gateway
-    command: route add default gw {{ host.router_ip }} eth1
+    command: route add default gw {{ host.router_ip }} {{ host.interface }}
 
 {% endfor %}
 - name: Configuring all routers

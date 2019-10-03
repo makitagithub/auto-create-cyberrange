@@ -1,3 +1,7 @@
+from modules.device_creator import open_file
+
+INTERFACE_FILE = "name_mapping/interface.yml"
+
 def create_network_map(net_mappings, router_mappings):
     """ Creates a structure with network topology for Jinja2 template. """
 
@@ -18,7 +22,18 @@ def _find_router_ip(network_name, router_mappings):
             return router_mapping["ip"]
 
 
-def create_host_map(net_mappings, router_mappings):
+def _find_interface(host_name, hosts):
+
+    for host in hosts:
+        if host["name"] == host_name:
+            interfaces = open_file(INTERFACE_FILE)
+            if host["base_box"] in interfaces:
+                return interfaces[host["base_box"]]
+
+    return "eth1"
+
+
+def create_host_map(net_mappings, router_mappings, host_list):
     """ Creates a structure with hosts and their primary routers ip """
 
     hosts = []
@@ -29,5 +44,6 @@ def create_host_map(net_mappings, router_mappings):
         host["host_ip"] = net_mapping["ip"]
         host["router_ip"] = _find_router_ip(
             net_mapping["network"], router_mappings)
+        host["interface"] = _find_interface(net_mapping["host"], host_list)
         hosts.append(host)
     return hosts

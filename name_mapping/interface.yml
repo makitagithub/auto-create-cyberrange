@@ -1,0 +1,3 @@
+kalilinux/rolling-light: eth1
+xubuntu-16.04-desktop-amd64: eth1
+ubuntu/xenial64: enp0s8

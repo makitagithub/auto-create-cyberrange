@@ -72,7 +72,7 @@ def _generate_playbook():
 def _generate_device_configuration(definitions):
     """ Generates a playbook with basic device configutarion. """
 
-    host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"])
+    host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"], definitions["hosts"])
     network = create_network_map(
             definitions["net_mappings"], definitions["router_mappings"]) 
 
@@ -90,7 +90,7 @@ def _generate_device_configuration(definitions):
 def _generate_hosts_role(definitions):
     """ Generates hosts role. """
 
-    host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"])
+    host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"], definitions["hosts"])
 
     network = create_network_map(
             definitions["net_mappings"], definitions["router_mappings"])
@@ -109,7 +109,7 @@ def _generate_routers_role(definitions):
         print("Info: No router definition was found. Skipping router creation.")
         return
 
-    host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"])
+    host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"], definitions["hosts"])
 
     network = create_network_map(
             definitions["net_mappings"], definitions["router_mappings"]) 

@@ -64,6 +64,10 @@ Flavors provide a quick way to choose hardware specs (like number of cpus and me
 | csirtmu.jumbo16x32 | 16 | 32768 |
 | csirtmu.jumbo16x64 | 16 | 65536 |
 
+### Interface names and supported boxes
+
+The name of the correct network interface can be different for every box. The supported boxes are listed in the file name_mappings/interface.yml. If your box is not on the list, the most common "eth1" will be used. If you get an error during `$ vagrant up` about non-existing network interface, you can add the name of your box and the correct network interface to the list manually.
+
 ### Implemented attribute types:
 - all simple vagrant attributes
 - flavors, memory, cpus
