@@ -2,7 +2,7 @@
 # Configuration of all host devices
 
 - name: Install net-tools
-  command: apt-get install net-tools
+  command: apt install net-tools
 
 {% for host in hosts %}
 - name: Add {{ host.host_name }} alias

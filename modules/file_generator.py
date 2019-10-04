@@ -27,19 +27,19 @@ def _create_role_directory(role_name):
     """ Creates directory structure for a role. """
 
     try:
-        os.mkdir("provision")
+        os.mkdir("provisioning")
     except FileExistsError:
         pass
     try:
-        os.mkdir("provision/roles")
+        os.mkdir("provisioning/roles")
     except FileExistsError:
         pass
     try:
-        os.mkdir("provision/roles/" + role_name)
+        os.mkdir("provisioning/roles/" + role_name)
     except FileExistsError:
         pass
     try:
-        os.mkdir("provision/roles/" + role_name +"/tasks")
+        os.mkdir("provisioning/roles/" + role_name +"/tasks")
     except FileExistsError:
         pass
 
@@ -62,11 +62,11 @@ def _generate_playbook():
     output = template.render()
 
     try:
-        os.mkdir("provision")
+        os.mkdir("provisioning")
     except FileExistsError:
         pass
 
-    _generate_file("./provision/playbook.yml", output)
+    _generate_file("./provisioning/playbook.yml", output)
 
 
 def _generate_device_configuration(definitions):
@@ -80,11 +80,11 @@ def _generate_device_configuration(definitions):
     output = template.render(hosts=host_map, routers=network)
 
     try:
-        os.mkdir("provision")
+        os.mkdir("provisioning")
     except FileExistsError:
         pass
 
-    _generate_file("./provision/device_configuration.yml", output)
+    _generate_file("./provisioning/device_configuration.yml", output)
 
 
 def _generate_hosts_role(definitions):
@@ -99,7 +99,7 @@ def _generate_hosts_role(definitions):
     output = template.render(hosts=host_map, routers=network)
 
     _create_role_directory("hosts")
-    _generate_file("./provision/roles/hosts/tasks/main.yml", output)
+    _generate_file("./provisioning/roles/hosts/tasks/main.yml", output)
 
 
 def _generate_routers_role(definitions):
@@ -118,7 +118,7 @@ def _generate_routers_role(definitions):
     output = template.render(hosts=host_map, routers=network)
 
     _create_role_directory("routers")
-    _generate_file("./provision/roles/routers/tasks/main.yml", output)
+    _generate_file("./provisioning/roles/routers/tasks/main.yml", output)
 
 
 def generate_ansible_files(device_definitions):
