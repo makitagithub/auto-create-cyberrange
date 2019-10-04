@@ -55,11 +55,15 @@ def generate_vagrantfile(definitions):
     print("Info: Vagrantfile successfully created.")
 
 
-def _generate_playbook():
+def _generate_playbook(definitions):
     """ Generates the main playbook. """
 
+    host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"], definitions["hosts"])
+    network = create_network_map(
+            definitions["net_mappings"], definitions["router_mappings"]) 
+    
     template = _load_template("playbook")
-    output = template.render()
+    output = template.render(hosts=host_map, routers=network)
 
     try:
         os.mkdir("provisioning")
@@ -124,7 +128,7 @@ def _generate_routers_role(definitions):
 def generate_ansible_files(device_definitions):
     """ Generates files for ansible. """
     
-    _generate_playbook()
+    _generate_playbook(device_definitions)
     _generate_device_configuration(device_definitions)
     _generate_hosts_role(device_definitions)
     _generate_routers_role(device_definitions)
