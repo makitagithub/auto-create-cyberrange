@@ -14,8 +14,11 @@
   hosts: {{ host.host_name }}
   become: yes
   tasks:
-  - name: Change default gateway
-    command: route add default gw {{ host.router_ip }} {{ host.interface }}
+{% for network_ip in network_ips %} 
+  - name: Add gateway for {{ network_ip }}
+    command: route add -net {{ network_ip }} gw {{ host.router_ip }} {{ host.interface }}
+{% endfor %}
+
 
 {% endfor %}
 - name: Configuring all routers

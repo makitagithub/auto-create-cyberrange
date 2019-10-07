@@ -2,7 +2,7 @@ import jinja2
 import os
 
 from modules.device_creator import create_devices
-from modules.ansible_data_generator import create_network_map, create_host_map
+from modules.ansible_data_generator import create_network_map, create_host_map, create_network_ips
 
 
 def _load_template(template_name):
@@ -60,10 +60,11 @@ def _generate_playbook(definitions):
 
     host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"], definitions["hosts"])
     network = create_network_map(
-            definitions["net_mappings"], definitions["router_mappings"]) 
+            definitions["net_mappings"], definitions["router_mappings"])
+    network_ips = create_network_ips(definitions["networks"])
     
     template = _load_template("playbook")
-    output = template.render(hosts=host_map, routers=network)
+    output = template.render(hosts=host_map, routers=network, network_ips=network_ips)
 
     try:
         os.mkdir("provisioning")
@@ -79,9 +80,10 @@ def _generate_device_configuration(definitions):
     host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"], definitions["hosts"])
     network = create_network_map(
             definitions["net_mappings"], definitions["router_mappings"]) 
+    network_ips = create_network_ips(definitions["networks"])
 
     template = _load_template("device_configuration")
-    output = template.render(hosts=host_map, routers=network)
+    output = template.render(hosts=host_map, routers=network, network_ips=network_ips)
 
     try:
         os.mkdir("provisioning")

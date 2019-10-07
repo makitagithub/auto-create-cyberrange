@@ -47,3 +47,12 @@ def create_host_map(net_mappings, router_mappings, host_list):
         host["interface"] = _find_interface(net_mapping["host"], host_list)
         hosts.append(host)
     return hosts
+
+def create_network_ips(networks):
+
+    network_ips = []
+    for network in networks:
+        if network["cidr"] not in network_ips:
+            network_ips.append(network["cidr"])
+
+    return network_ips
