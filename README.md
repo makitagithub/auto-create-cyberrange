@@ -86,4 +86,5 @@ The name of the correct network interface can be different for every box. The su
 - Vagrantfile and the provision directory contains everything needed by vagrant. Feel free to move them to a different directory after creation. 
 
 ### Other requirements
+- Virtualization must be enabled
 - DHCP server for vboxnet0 must be turned off in VirtualBox. It can be done manually in VirtualBox or with the command `$ VBoxManage dhcpserver remove --ifname vboxnet0`
