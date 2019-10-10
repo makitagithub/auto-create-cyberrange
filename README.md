@@ -3,12 +3,12 @@
 A next generation of https://gitlab.ics.muni.cz/KYPO-content/KYPO-Creator
 
 
-generate.py is a python program that generates a vagrant source file from a definition in yaml. This yaml file contains definitions of devices (hosts and routers) and networks. Its structure is described below.
+create.py is a python program that generates a vagrant source file from a definition in yaml. This yaml file contains definitions of devices (hosts and routers) and networks. Its structure is described below.
 
 ### Usage:
 1. Clone the project.
 2. Navigate to the project folder.
-3. Type `$ python3 generate.py yaml_file.yml`. There is a test yaml file in the repository called test.yml.
+3. Type `$ python3 create.py yaml_file.yml`. There is a test yaml file in the repository called test.yml.
 4. Run `$ vagrant up`
 
 ### Input yaml file structure
