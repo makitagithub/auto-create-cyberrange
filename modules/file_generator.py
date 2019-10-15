@@ -44,12 +44,23 @@ def _create_role_directory(role_name):
         pass
 
 
+def _find_user_ansible_files(definitions):
+    """ Finds the user ansible files and returns a list of host names. """
+    host_names = []
+
+    for host in definitions["hosts"]:
+        if os.path.isfile("provisioning/" + host["name"] + ".yml" ):
+            host_names.append(host["name"])
+
+    return host_names
+
 def generate_vagrantfile(definitions):
     """ Writes the prepared output to a Vagrantfile. """
     
     device_definitions = create_devices(definitions)
+    user_ansible_files = _find_user_ansible_files(definitions)
     template = _load_template("vagrantfile")
-    output = template.render(devices=device_definitions)
+    output = template.render(devices=device_definitions, user_files=user_ansible_files)
     _generate_file("Vagrantfile", output)
     
     print("Info: Vagrantfile successfully created.")
