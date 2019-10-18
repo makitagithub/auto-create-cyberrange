@@ -2,14 +2,22 @@
 
 A next generation of https://gitlab.ics.muni.cz/KYPO-content/KYPO-Creator
 
-
 create.py is a python program that generates a vagrant source file from a definition in yaml. This yaml file contains definitions of devices (hosts and routers) and networks. Its structure is described below.
 
+### Requirements:
+- Python 3
+- VirtualBox 6
+- Ansible 2.3.3.0
+- Virtualization must be enabled
+- DHCP server for vboxnet0 must be turned off in VirtualBox. It can be done manually in VirtualBox or with the command `$ VBoxManage dhcpserver remove --ifname vboxnet0`
+
 ### Usage:
-1. Clone the project.
-2. Navigate to the project folder.
-3. Type `$ python3 create.py yaml_file.yml`. There is a test yaml file in the repository called test.yml.
-4. Run `$ vagrant up`
+1. Check the requirements and install/configure everything required.
+2. Install Python dependencies with `pip3 install -r requirements.txt`.
+3. Clone the project.
+4. Navigate to the project folder.
+5. Type `$ python3 create.py yaml_file.yml`. There is a test yaml file in the repository called test.yml.
+6. Run `$ vagrant up`
 
 ### Input yaml file structure
 
@@ -85,6 +93,3 @@ The name of the correct network interface can be different for every box. The su
 - tested on Vagrant 2.2.5, VirtualBox 6.0.4 and 6.0.10
 - Vagrantfile and the provision directory contains everything needed by vagrant. Feel free to move them to a different directory after creation. 
 
-### Other requirements
-- Virtualization must be enabled
-- DHCP server for vboxnet0 must be turned off in VirtualBox. It can be done manually in VirtualBox or with the command `$ VBoxManage dhcpserver remove --ifname vboxnet0`

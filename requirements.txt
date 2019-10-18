@@ -1,4 +1,2 @@
-- Python 3
-- Jinja 2.10
-- PyYAML 3.12
-- VirtualBox 6.0
+Jinja2>=2.10
+PyYAML>=3.12
