@@ -16,7 +16,7 @@ create.py is a python program that generates a vagrant source file from a defini
 2. Install Python dependencies with `pip3 install -r requirements.txt`.
 3. Clone the project.
 4. Navigate to the project folder.
-5. Type `$ python3 create.py yaml_file.yml`. There is a test yaml file in the repository called test.yml.
+5. Type `$ python3 create.py sandbox.yml`. 
 6. Run `$ vagrant up`
 
 ### Input yaml file structure
