@@ -17,7 +17,7 @@ def open_file(file_name):
         input_file = open(str(file_name))
         return yaml.safe_load(input_file)
     except IOError:
-        print("Error: Cannot find a required file.")
+        print("Error: Cannot find a required file: " + str(file_name))
 
 def _add_provisioning(hostname, host_definitions):
     """ Adds provisioning to the device if the file exists. """
