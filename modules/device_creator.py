@@ -2,6 +2,7 @@
 Jinja2 """
 
 import yaml
+import sys
 
 from modules.attribute_formatter import add_simple_commands
 from modules.provider import add_prov_attributes, add_router_specification
@@ -18,7 +19,8 @@ def open_file(file_name):
         return yaml.safe_load(input_file)
     except IOError:
         print("Error: Cannot find a required file: " + str(file_name))
-
+        sys.exit(1)
+  
 def _add_provisioning(hostname, host_definitions):
     """ Adds provisioning to the device if the file exists. """
     try:
