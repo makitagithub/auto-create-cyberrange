@@ -93,3 +93,20 @@ The name of the correct network interface can be different for every box. The su
 - tested on Vagrant 2.2.5, VirtualBox 6.0.4 and 6.0.10
 - Vagrantfile and the provision directory contains everything needed by vagrant. Feel free to move them to a different directory after creation. 
 
+### Credits
+
+Cybersecurity laboratory\
+Faculty of Informatics\
+Masaryk University
+
+Lead developer: Attila Farkas
+
+Technology lead: Daniel Tovarňák (KYPO cyber range)
+
+Supervisor: Jan Vykopal
+
+Contributors:
+*  Valdemar Švábenský
+*  Michal Staník
+*  Zdeněk Vydra
+*  Adam Skrášek
