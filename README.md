@@ -101,7 +101,7 @@ Masaryk University
 
 Lead developer: Attila Farkas
 
-Technology lead: Daniel Tovarňák (KYPO cyber range)
+Technology lead: Daniel Tovarňák (KYPO cyber range platform)
 
 Supervisor: Jan Vykopal
 
