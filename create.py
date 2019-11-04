@@ -6,12 +6,14 @@ import jinja2
 
 from modules.file_generator import generate_vagrantfile, generate_ansible_files
 from modules.device_creator import open_file
+from modules.routing import create_border_router
 
 if len(sys.argv) != 2:
     print("Error: Expecting 1 argument (yml file).")
     sys.exit()
 
 device_definitions = open_file(str(sys.argv[1]))
+create_border_router(device_definitions)
 
 generate_vagrantfile(device_definitions)
 generate_ansible_files(device_definitions)

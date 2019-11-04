@@ -51,8 +51,7 @@ def _add_interfaces(hostname, mapping, device_type, networks, definitions):
         "device.vm.network :private_network, ip: \"" + mapping["ip"]
         + "\", virtualbox__intnet: \"" + mapping["network"] + "\"")
 
-    if device_type == "host":
-        _add_netmask(hostname, mapping["network"], networks, definitions)
+    _add_netmask(hostname, mapping["network"], networks, definitions)
 
 def add_networks(hostname, yml, definitions):
     """ Adds ip address and natmask to a host. """

@@ -10,6 +10,14 @@
     - hosts
 
 {% for host in hosts %}
+- name: Configuring host {{ host.host_name }} separately
+  hosts: {{ host.host_name }}
+  become: yes
+  roles:
+    - {{ host.host_name }}
+
+{% endfor %}
+{% for host in hosts %}
 - name: Configuring host {{ host.host_name }}
   hosts: {{ host.host_name }}
   become: yes
@@ -22,10 +30,16 @@
 
 {% endfor %}
 - name: Configuring all routers
-  hosts: {{ routers|map(attribute='router_name')|unique|join(',') }}
+  hosts: {{ routers|map(attribute='router_name')|unique|reject('eq', border_router_name)|join(',') }}
   become: yes
   roles:
     - routers
+
+- name: Configuring border router
+  hosts: {{ border_router_name }}
+  become: yes
+  roles:
+    - br
 
 # Write your custom configuration here:
 

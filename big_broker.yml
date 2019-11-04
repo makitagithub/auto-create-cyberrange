@@ -1,0 +1,65 @@
+---
+name: big-broker
+hosts:
+  - name: Web
+    base_box: generic/debian10
+    memory: 2048
+
+  - name: Workstation
+    base_box: generic/debian10
+    memory: 2048
+
+  - name: Database
+    base_box: generic/debian10
+    memory: 2048
+
+  - name: Attacker
+    base_box: generic/debian10
+    memory: 2048
+
+  - name: Client
+    base_box: generic/debian10
+    memory: 2048
+
+routers:
+  - name: Big-Broker-router
+
+  - name: Internet-router
+
+networks:
+  - name: Big-Broker
+    cidr: 172.18.1.0/24
+
+  - name: Internet
+    cidr: 10.1.0.0/16
+
+net_mappings:
+  - host: Web
+    network: Big-Broker
+    ip: 172.18.1.5
+
+  - host: Workstation
+    network: Big-Broker
+    ip: 172.18.1.132
+
+  - host: Database
+    network: Big-Broker
+    ip: 172.18.1.14
+
+  - host: Attacker
+    network: Internet
+    ip: 10.1.135.83
+
+  - host: Client
+    network: Internet
+    ip: 10.1.17.4
+
+router_mappings:
+  - router: Big-Broker-router
+    network: Big-Broker
+    ip: 172.18.1.1
+
+  - router: Internet-router
+    network: Internet
+    ip: 10.1.0.1
+...

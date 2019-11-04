@@ -18,4 +18,7 @@
     line: {{ router.router_ip }} {{ router.router_name }}
 
 {% endfor %}
+
+- name: Delete default gateway
+  command: route del default
 ...
