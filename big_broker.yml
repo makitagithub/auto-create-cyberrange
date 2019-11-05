@@ -2,23 +2,23 @@
 name: big-broker
 hosts:
   - name: Web
-    base_box: debian/contrib-jessie64
+    base_box: generic/debian10
     memory: 2048
 
   - name: Workstation
-    base_box: debian/contrib-jessie64
+    base_box: generic/debian10
     memory: 2048
 
   - name: Database
-    base_box: debian/contrib-jessie64
+    base_box: generic/debian10
     memory: 2048
 
   - name: Attacker
-    base_box: debian/contrib-jessie64
+    base_box: generic/debian10
     memory: 2048
 
   - name: Client
-    base_box: debian/contrib-jessie64
+    base_box: generic/debian10
     memory: 2048
 
 routers:
