@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
 {% endfor %}
 
   # configuration of devices with ansible
-  config.vm.provision "ansible" do |ansible|
+  config.vm.provision :ansible{% if ansible_local %}_local{% endif %} do |ansible|
     ansible.playbook = "provisioning/playbook.yml"
     ansible.verbose = true
     ansible.extra_vars = {
@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
   end
 
   {% for name in user_files %}
-  config.vm.provision "ansible" do |ansible|
+  config.vm.provision :ansible{% if ansible_local %}_local{% endif %} do |ansible|
     ansible.playbook = "provisioning/{{ name }}.yml"
     ansible.verbose = true
     ansible.extra_vars = {

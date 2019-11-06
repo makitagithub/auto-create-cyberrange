@@ -48,7 +48,7 @@ def add_prov_attributes(host, flavors, provider_attributes, definitions):
         definitions[host['name']].append("end")
 
 
-def add_router_specification(router, definitions):
+def add_router_specification(router, definitions, ansible_local):
     """ Adds the default specification for a router. """
 
     router_box = "generic/debian10"
@@ -62,3 +62,6 @@ def add_router_specification(router, definitions):
         "device.vm.provider \"virtualbox\" do |vb|")
     definitions[router['name']].append("  vb.memory = " + str(router_memory))
     definitions[router['name']].append("end")
+    if ansible_local:
+        definitions[router['name']].append(
+        "config.vm.synced_folder \".\", \"/vagrant\", type: \"rsync\", rsync__exclude: \".git/\"")

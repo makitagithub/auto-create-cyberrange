@@ -54,13 +54,13 @@ def _find_user_ansible_files(definitions):
 
     return host_names
 
-def generate_vagrantfile(definitions):
+def generate_vagrantfile(definitions, ansible_local):
     """ Writes the prepared output to a Vagrantfile. """
-    
-    device_definitions = create_devices(definitions)
+   
+    device_definitions = create_devices(definitions, ansible_local)
     user_ansible_files = _find_user_ansible_files(definitions)
     template = _load_template("vagrantfile")
-    output = template.render(devices=device_definitions, user_files=user_ansible_files)
+    output = template.render(devices=device_definitions, user_files=user_ansible_files, ansible_local=ansible_local)
     _generate_file("Vagrantfile", output)
     
     print("Info: Vagrantfile successfully created.")

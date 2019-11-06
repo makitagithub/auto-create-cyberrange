@@ -46,19 +46,19 @@ def _create_hosts(yml, mappings, flavors):
     return host_definitions
 
 
-def _create_routers(yml):
+def _create_routers(yml, ansible_local):
     """ Creates a dictionary with formatted definition of each router. """
     router_definitions = {}
 
     for router in yml['routers']:
         router_definitions[router['name']] = []
         add_router_ip(router["name"], yml, router_definitions)
-        add_router_specification(router, router_definitions)
+        add_router_specification(router, router_definitions, ansible_local)
 
     return router_definitions
 
 
-def create_devices(definitions):
+def create_devices(definitions, ansible_local):
     """ Returns a merged dictionary of host and router definitions. """
 
     mappings = open_file(MAPPING_FILE)
@@ -66,4 +66,4 @@ def create_devices(definitions):
 
     return {
         **_create_hosts(definitions, mappings, flavors),
-        **_create_routers(definitions)}
+        **_create_routers(definitions, ansible_local)}
