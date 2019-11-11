@@ -3,7 +3,7 @@ import os
 
 from modules.device_creator import create_devices
 from modules.ansible_data_generator import create_network_map, create_host_map, create_network_ips
-from modules.routing import BORDER_ROUTER_IP, BORDER_ROUTER_NAME, BORDER_ROUTER_NETWORK_NAME
+from modules.routing import BORDER_ROUTER_IP, BORDER_ROUTER_NAME, BORDER_ROUTER_NETWORK_NAME, BORDER_ROUTER_PUBLIC_IP
 
 def _load_template(template_name):
     """ Returns a loaded jinja2 template. """
@@ -185,7 +185,7 @@ def _generate_br_role(definitions):
     routers_in_br_network = _get_br_routers(definitions)
 
     template = _load_template("br")
-    output = template.render(hosts = host_map, routers=network, br_routes=routers_in_br_network, border_router_name=BORDER_ROUTER_NAME)
+    output = template.render(hosts = host_map, routers=network, br_routes=routers_in_br_network, border_router_name=BORDER_ROUTER_NAME, border_router_public_ip=BORDER_ROUTER_PUBLIC_IP)
 
     _create_role_directory("br")
     _generate_file("./provisioning/roles/br/tasks/main.yml", output)

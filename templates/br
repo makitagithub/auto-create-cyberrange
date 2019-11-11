@@ -27,5 +27,14 @@
 {% for target_cidr, router_ip in br_routes.items() %} 
 - name: Add routing to network {{ target_cidr }} 
   command: route add -net {{ target_cidr }} gw {{ router_ip }} eth1
-{% endfor %}  
+{% endfor %}
+
+- name: Add postrouting
+  # ssh connection fails without async after execution of iptables commands
+  shell: "sleep 2 && sudo iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source {{ border_router_public_ip }}"
+  async: 1
+  poll: 0
+
+- name: Save postrouting rule
+  command: su -c 'iptables-save > /etc/iptables.rules'
 ...
