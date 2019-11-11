@@ -195,7 +195,8 @@ def generate_ansible_files(device_definitions):
     """ Generates files for ansible. """
     
     _generate_playbook(device_definitions)
-    _generate_device_configuration(device_definitions)
+    # uncomment after the new version of ansible can be used
+    # _generate_device_configuration(device_definitions)
     _generate_hosts_role(device_definitions)
     _generate_separate_hosts_role(device_definitions)
     _generate_routers_role(device_definitions)
