@@ -23,23 +23,23 @@ def _generate_file(filename, output_string):
         print("Error: cannot write to this location.")
 
 
-def _create_role_directory(role_name):
+def _create_role_directory(role_name, provisioning_dir):
     """ Creates directory structure for a role. """
 
     try:
-        os.mkdir("provisioning")
+        os.mkdir(provisioning_dir)
     except FileExistsError:
         pass
     try:
-        os.mkdir("provisioning/roles")
+        os.mkdir(provisioning_dir + "/roles")
     except FileExistsError:
         pass
     try:
-        os.mkdir("provisioning/roles/" + role_name)
+        os.mkdir(provisioning_dir + "/roles/" + role_name)
     except FileExistsError:
         pass
     try:
-        os.mkdir("provisioning/roles/" + role_name +"/tasks")
+        os.mkdir(provisioning_dir + "/roles/" + role_name +"/tasks")
     except FileExistsError:
         pass
 
@@ -71,10 +71,9 @@ def _generate_playbook(definitions):
 
     host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"], definitions["hosts"])
     network = create_network_map(definitions)
-    network_ips = create_network_ips(definitions["networks"])
     
     template = _load_template("playbook")
-    output = template.render(hosts=host_map, routers=network, network_ips=network_ips, border_router_name = BORDER_ROUTER_NAME)
+    output = template.render(hosts=host_map, routers=network)
 
     try:
         os.mkdir("provisioning")
@@ -92,14 +91,14 @@ def _generate_device_configuration(definitions):
     network_ips = create_network_ips(definitions["networks"])
 
     template = _load_template("device_configuration")
-    output = template.render(hosts=host_map, routers=network, network_ips=network_ips)
+    output = template.render(hosts=host_map, routers=network, network_ips=network_ips, border_router_name = BORDER_ROUTER_NAME)
 
     try:
-        os.mkdir("provisioning")
+        os.mkdir("base_provisioning")
     except FileExistsError:
         pass
 
-    _generate_file("./provisioning/device_configuration.yml", output)
+    _generate_file("./base_provisioning/device_configuration.yml", output)
 
 
 def _generate_hosts_role(definitions):
@@ -112,7 +111,13 @@ def _generate_hosts_role(definitions):
     template = _load_template("hosts")
     output = template.render(hosts=host_map, routers=network)
 
-    _create_role_directory("hosts")
+    _create_role_directory("hosts", "base_provisioning")
+    _generate_file("./base_provisioning/roles/hosts/tasks/main.yml", output)
+    
+    user_template = _load_template("user_hosts")
+    user_output = template.render()
+
+    _create_role_directory("hosts", "provisioning")
     _generate_file("./provisioning/roles/hosts/tasks/main.yml", output)
 
 
@@ -125,13 +130,21 @@ def _generate_separate_hosts_role(definitions):
 
         for host_attributes in host_map:
             if host_attributes["host_name"] == host["name"]:
+                host_name = host_attributes["host_name"]
                 router_ip = host_attributes["router_ip"]
                 interface = host_attributes["interface"]
 
         template = _load_template("separate_hosts")
-        output = template.render(router_ip=router_ip, interface=interface)
+        output = template.render(host_name=host_name, router_ip=router_ip, interface=interface)
 
-        _create_role_directory(host["name"])
+        _create_role_directory(host["name"], "base_provisioning")
+        _generate_file("./base_provisioning/roles/" + host["name"]  + "/tasks/main.yml", output)
+
+
+        template = _load_template("user_separate_hosts")
+        output = template.render(host_name=host_name)
+
+        _create_role_directory(host["name"], "provisioning")
         _generate_file("./provisioning/roles/" + host["name"]  + "/tasks/main.yml", output)
 
 def _generate_routers_role(definitions):
@@ -148,8 +161,8 @@ def _generate_routers_role(definitions):
     template = _load_template("routers")
     output = template.render(hosts=host_map, routers=network, border_router_ip=BORDER_ROUTER_IP)
 
-    _create_role_directory("routers")
-    _generate_file("./provisioning/roles/routers/tasks/main.yml", output)
+    _create_role_directory("routers", "base_provisioning")
+    _generate_file("./base_provisioning/roles/routers/tasks/main.yml", output)
 
 
 def _find_cidr(network_name, definitions):
@@ -187,16 +200,15 @@ def _generate_br_role(definitions):
     template = _load_template("br")
     output = template.render(hosts = host_map, routers=network, br_routes=routers_in_br_network, border_router_name=BORDER_ROUTER_NAME, border_router_public_ip=BORDER_ROUTER_PUBLIC_IP)
 
-    _create_role_directory("br")
-    _generate_file("./provisioning/roles/br/tasks/main.yml", output)
+    _create_role_directory("br", "base_provisioning")
+    _generate_file("./base_provisioning/roles/br/tasks/main.yml", output)
 
 
 def generate_ansible_files(device_definitions):
     """ Generates files for ansible. """
     
     _generate_playbook(device_definitions)
-    # uncomment after the new version of ansible can be used
-    # _generate_device_configuration(device_definitions)
+    _generate_device_configuration(device_definitions)
     _generate_hosts_role(device_definitions)
     _generate_separate_hosts_role(device_definitions)
     _generate_routers_role(device_definitions)

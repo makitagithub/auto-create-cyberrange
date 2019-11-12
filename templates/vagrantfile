@@ -19,7 +19,17 @@ Vagrant.configure("2") do |config|
 {{ printAttributes(name) }}  end
 {% endfor %}
 
-  # configuration of devices with ansible
+  # basic ansible configuration of devices and networks
+  config.vm.provision :ansible{% if ansible_local %}_local{% endif %} do |ansible|
+    ansible.playbook = "base_provisioning/device_configuration.yml"
+    ansible.verbose = true
+    ansible.extra_vars = {
+      ansible_python_interpreter: "/usr/bin/python3",
+    }
+  end
+
+
+  # user configuration of devices with ansible
   config.vm.provision :ansible{% if ansible_local %}_local{% endif %} do |ansible|
     ansible.playbook = "provisioning/playbook.yml"
     ansible.verbose = true
