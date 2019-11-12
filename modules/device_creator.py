@@ -29,8 +29,15 @@ def _add_provisioning(hostname, host_definitions):
     except IOError:
         pass
 
+def _add_rsync(box, host_name, definitions):
+    """ add rsync to debian machines """
 
-def _create_hosts(yml, mappings, flavors):
+    if box == "generic/debian10":
+        definitions[host_name].append("# standard shared folder doesn't work on debian")
+        definitions[host_name].append("device.vm.synced_folder \".\", \"/vagrant\", type: \"rsync\", rsync__exclude: \".git/\"")
+
+
+def _create_hosts(yml, mappings, flavors, ansible_local):
     """ Creates a dictionary with formatted definition of each host. """
     host_definitions = {}
 
@@ -42,6 +49,8 @@ def _create_hosts(yml, mappings, flavors):
         add_prov_attributes(
             host, flavors, mappings['need_provider'], host_definitions)
         _add_provisioning(host["name"], host_definitions)
+        if ansible_local:
+            _add_rsync(host["base_box"], host["name"], host_definitions)
 
     return host_definitions
 
@@ -54,6 +63,8 @@ def _create_routers(yml, ansible_local):
         router_definitions[router['name']] = []
         add_router_ip(router["name"], yml, router_definitions)
         add_router_specification(router, router_definitions, ansible_local)
+        if ansible_local:
+            _add_rsync("generic/debian10", router["name"], router_definitions)
 
     return router_definitions
 
@@ -65,5 +76,5 @@ def create_devices(definitions, ansible_local):
     flavors = open_file(FLAVORS_FILE)
 
     return {
-        **_create_hosts(definitions, mappings, flavors),
+        **_create_hosts(definitions, mappings, flavors, ansible_local),
         **_create_routers(definitions, ansible_local)}

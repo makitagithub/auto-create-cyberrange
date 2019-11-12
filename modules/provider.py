@@ -62,6 +62,3 @@ def add_router_specification(router, definitions, ansible_local):
         "device.vm.provider \"virtualbox\" do |vb|")
     definitions[router['name']].append("  vb.memory = " + str(router_memory))
     definitions[router['name']].append("end")
-    if ansible_local:
-        definitions[router['name']].append(
-        "config.vm.synced_folder \".\", \"/vagrant\", type: \"rsync\", rsync__exclude: \".git/\"")
