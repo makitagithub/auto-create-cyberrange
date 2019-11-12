@@ -88,6 +88,7 @@ The name of the correct network interface can be different for every box. The su
 
 ### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues?label_name%5B%5D=known_issue):
 - after running on Windows the output may contain invalid multibyte chars
+- vagrant can somtimes get stuck on "SSH auth method: private key". This is probably an issue of VirtualBox. This was observed using the box generic/debian10 on some computers. In this case try to create the machine again.
 
 ### Notes
 - tested on Vagrant 2.2.5, VirtualBox 6.0.4 and 6.0.10
