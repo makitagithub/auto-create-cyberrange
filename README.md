@@ -9,7 +9,7 @@ create.py is a python program that generates a vagrant source file from a defini
 - VirtualBox 6
 - Ansible 2.3.3.0
 - Vagrant 2.2.5
-- Virtualization must be enabled
+- Virtualization must be [enabled in BIOS]( https://www.tactig.com/enable-intel-vt-x-amd-virtualization-pc-vmware-virtualbox/)
 - DHCP server for vboxnet0 must be turned off in VirtualBox. It can be done manually in VirtualBox or with the command `$ VBoxManage dhcpserver remove --ifname vboxnet0`
 
 ### Usage:
