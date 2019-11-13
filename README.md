@@ -87,9 +87,9 @@ The name of the correct network interface can be different for every box. The su
 - other VirtualBox attributes
 - more complex routing
 
-### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues?label_name%5B%5D=known_issue):
+### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues?scope=all&utf8=✓&state=all&label_name[]=known_issue):
 - After running on Windows the output may contain invalid multibyte chars.
-- Vagrant can somtimes get stuck on "SSH auth method: private key". This is probably an issue of VirtualBox. This was observed using the box generic/debian10 on some computers. In this case try to create the machine again.
+- Vagrant up can somtimes get stuck on "SSH auth method: private key" in case of "generic/debian10" box or on "SSH auth method: password" in case of "kalilinux/rolling-light" box. This is probably an issue of VirtualBox. In this case try to create the machine again. In case of "kalilinux/rolling-light" remove the line `device.ssh.password = "vagrant"` from the generated Vagrantfile and try to bring it up again.
 - On some machines ansible local (flag -l) can get stuck while connecting to the created virtual machine.
 
 ### Notes
