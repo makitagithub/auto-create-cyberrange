@@ -48,7 +48,7 @@ def add_prov_attributes(host, flavors, provider_attributes, definitions):
         definitions[host['name']].append("end")
 
 
-def add_router_specification(router, definitions):
+def add_router_specification(router, definitions, ansible_local):
     """ Adds the default specification for a router. """
 
     router_box = "generic/debian10"

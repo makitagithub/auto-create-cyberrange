@@ -8,6 +8,7 @@ create.py is a python program that generates a vagrant source file from a defini
 - Python 3
 - VirtualBox 6
 - Ansible 2.3.3.0
+- Vagrant 2.2.5
 - Virtualization must be enabled
 - DHCP server for vboxnet0 must be turned off in VirtualBox. It can be done manually in VirtualBox or with the command `$ VBoxManage dhcpserver remove --ifname vboxnet0`
 
@@ -16,7 +17,7 @@ create.py is a python program that generates a vagrant source file from a defini
 2. Install Python dependencies with `pip3 install -r requirements.txt`.
 3. Clone the project.
 4. Navigate to the project folder.
-5. Type `$ python3 create.py sandbox.yml`. 
+5. Type `$ python3 create.py sandbox.yml`. On Windows or in case of an error due to ansible/python use `python3 create.py -l sandbox.yml`. (note: This will rewrite the previously generated Vagrantfile and ansible files.)  
 6. Run `$ vagrant up`
 
 ### Input yaml file structure
@@ -86,11 +87,13 @@ The name of the correct network interface can be different for every box. The su
 - other VirtualBox attributes
 - more complex routing
 
-### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues?label_name%5B%5D=known_issue):
-- after running on Windows the output may contain invalid multibyte chars
+### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues?scope=all&utf8=✓&state=all&label_name[]=known_issue):
+- After running on Windows the output may contain invalid multibyte chars.
+- Vagrant up can somtimes get stuck on "SSH auth method: private key" in case of "generic/debian10" box or on "SSH auth method: password" in case of "kalilinux/rolling-light" box. This is probably an issue of VirtualBox. In this case try to create the machine again. In case of "kalilinux/rolling-light" remove the line `device.ssh.password = "vagrant"` from the generated Vagrantfile and try to bring it up again.
+- On some machines ansible local (flag -l) can get stuck while connecting to the created virtual machine.
 
 ### Notes
-- tested on Vagrant 2.2.5, VirtualBox 6.0.4 and 6.0.10
+- tested on Vagrant 2.2.5, VirtualBox 6.0.4 and 6.0.10, Ansible 2.3.3.0
 - Vagrantfile and the provision directory contains everything needed by vagrant. Feel free to move them to a different directory after creation. 
 
 ### Credits

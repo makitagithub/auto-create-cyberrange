@@ -1,5 +1,5 @@
 ---
-# Configuration of all host devices
+# Basic configuration of all host devices
 
 - name: Install net-tools
   command: apt install net-tools
@@ -18,4 +18,7 @@
     line: {{ router.router_ip }} {{ router.router_name }}
 
 {% endfor %}
+
+- name: Delete default gateway
+  command: route del default
 ...

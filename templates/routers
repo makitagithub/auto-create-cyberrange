@@ -23,4 +23,9 @@
     line: {{ router.router_ip }} {{ router.router_name }}
 
 {% endfor %}
+- name: Delete default gateway
+  command: route del default
+
+- name: Add default path to border router
+  command: route add default gw {{ border_router_ip }} eth2
 ...

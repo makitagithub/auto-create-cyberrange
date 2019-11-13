@@ -1,33 +1,12 @@
 ---
-# Main ansible playbook
-
-#- import_playbook: device_configuration.yml - for new version
-
-- name: Configuring all hosts
-  hosts: {{ hosts|map(attribute='host_name')|unique|join(',') }}
-  become: yes
-  roles:
-    - hosts
-
-{% for host in hosts %}
-- name: Configuring host {{ host.host_name }}
-  hosts: {{ host.host_name }}
-  become: yes
-  tasks:
-{% for network_ip in network_ips %} 
-  - name: Add gateway for {{ network_ip }}
-    command: route add -net {{ network_ip }} gw {{ host.router_ip }} {{ host.interface }}
-{% endfor %}
-
-
-{% endfor %}
-- name: Configuring all routers
-  hosts: {{ routers|map(attribute='router_name')|unique|join(',') }}
-  become: yes
-  roles:
-    - routers
-
+# Main user ansible playbook
 # Write your custom configuration here:
 
+- name: Hello world
+  hosts: all
+  tasks:
 
+    - name: print hello world
+      debug:
+        msg: "Hello World"
 ...

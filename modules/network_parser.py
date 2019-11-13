@@ -1,6 +1,7 @@
 """ This module handles network creation. """
 
 import sys
+from modules.routing import BORDER_ROUTER_NAME, BORDER_ROUTER_PUBLIC_IP
 
 
 def _find_networks(hostname, mappings, device_type):
@@ -50,9 +51,11 @@ def _add_interfaces(hostname, mapping, device_type, networks, definitions):
     definitions[hostname].append(
         "device.vm.network :private_network, ip: \"" + mapping["ip"]
         + "\", virtualbox__intnet: \"" + mapping["network"] + "\"")
+    
+    if hostname == BORDER_ROUTER_NAME:
+        definitions[BORDER_ROUTER_NAME].append("device.vm.network :public_network, ip: \" " + BORDER_ROUTER_PUBLIC_IP + "\"") 
 
-    if device_type == "host":
-        _add_netmask(hostname, mapping["network"], networks, definitions)
+    _add_netmask(hostname, mapping["network"], networks, definitions)
 
 def add_networks(hostname, yml, definitions):
     """ Adds ip address and natmask to a host. """
