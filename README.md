@@ -8,6 +8,7 @@ create.py is a python program that generates a vagrant source file from a defini
 - Python 3
 - VirtualBox 6
 - Ansible 2.3.3.0
+- Vagrant 2.2.5
 - Virtualization must be enabled
 - DHCP server for vboxnet0 must be turned off in VirtualBox. It can be done manually in VirtualBox or with the command `$ VBoxManage dhcpserver remove --ifname vboxnet0`
 
@@ -87,10 +88,11 @@ The name of the correct network interface can be different for every box. The su
 - more complex routing
 
 ### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues?label_name%5B%5D=known_issue):
-- after running on Windows the output may contain invalid multibyte chars
-- vagrant can somtimes get stuck on "SSH auth method: private key". This is probably an issue of VirtualBox. This was observed using the box generic/debian10 on some computers. In this case try to create the machine again.
+- After running on Windows the output may contain invalid multibyte chars.
+- Vagrant can somtimes get stuck on "SSH auth method: private key". This is probably an issue of VirtualBox. This was observed using the box generic/debian10 on some computers. In this case try to create the machine again.
+- On some machines ansible local (flag -l) can get stuck while connecting to the created virtual machine.
 
 ### Notes
-- tested on Vagrant 2.2.5, VirtualBox 6.0.4 and 6.0.10
+- tested on Vagrant 2.2.5, VirtualBox 6.0.4 and 6.0.10, Ansible 2.3.3.0
 - Vagrantfile and the provision directory contains everything needed by vagrant. Feel free to move them to a different directory after creation. 
 

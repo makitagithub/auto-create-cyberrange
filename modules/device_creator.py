@@ -35,7 +35,9 @@ def _add_rsync(box, host_name, definitions):
     if box == "generic/debian10":
         definitions[host_name].append("# standard shared folder doesn't work on debian")
         definitions[host_name].append("device.vm.synced_folder \".\", \"/vagrant\", type: \"rsync\", rsync__exclude: \".git/\"")
-
+    
+    if box == "kalilinux/rolling-light":
+        definitions[host_name].append("device.ssh.password = \"vagrant\"")
 
 def _create_hosts(yml, mappings, flavors, ansible_local):
     """ Creates a dictionary with formatted definition of each host. """
