@@ -53,6 +53,7 @@ def add_router_specification(router, definitions, ansible_local):
 
     router_box = "generic/debian10"
     router_memory = 256
+    router_cpus = 1
 
     definitions[router['name']].append(
         "device.vm.hostname = \"" + router['name'] + "\"")
@@ -61,4 +62,6 @@ def add_router_specification(router, definitions, ansible_local):
     definitions[router['name']].append(
         "device.vm.provider \"virtualbox\" do |vb|")
     definitions[router['name']].append("  vb.memory = " + str(router_memory))
+    definitions[router['name']].append(
+        "  vb.cpus = " + str(router_cpus))
     definitions[router['name']].append("end")
