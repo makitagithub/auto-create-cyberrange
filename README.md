@@ -40,7 +40,7 @@ create.py is a python program that generates a vagrant source file from a defini
 ### Usage:
 1. Type `$ python3 create.py sandbox.yml`. On Windows or in case of an error due to ansible/python use `python create.py -l sandbox.yml`. (note: This will rewrite the previously generated Vagrantfile and ansible files.)
 2. Run `$ vagrant up` to build the virtual environment.
-3. The created virtual machines can be accessed with the command `$ vagrant ssh name\_of\_the\_machine`.
+3. The created virtual machines can be accessed with the command `$ vagrant ssh nameOfTheMachine`.
 4. The environment can be destroyed using the command `vagrant destroy -f`.
 
 ### Input yaml file structure
