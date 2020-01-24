@@ -9,16 +9,39 @@ create.py is a python program that generates a vagrant source file from a defini
 - VirtualBox 6
 - Ansible 2.3.3.0
 - Vagrant 2.2.5
-- Virtualization must be [enabled in BIOS]( https://www.tactig.com/enable-intel-vt-x-amd-virtualization-pc-vmware-virtualbox/)
-- DHCP server for vboxnet0 must be turned off in VirtualBox. It can be done manually in VirtualBox or with the command `$ VBoxManage dhcpserver remove --ifname vboxnet0`
+
+### Installation steps
+
+##### Linux Mint
+
+1. Enable [virtualization in BIOS](https://www.tactig.com/enable-intel-vt-x-amd-virtualization-pc-vmware-virtualbox/).
+2. Install [VirtualBox 6.0](https://www.virtualbox.org/wiki/Download_Old_Builds_6_0).
+3. Install Ansible with the command `$ sudo apt-get install ansible`.
+4. Install [Vagrant](https://www.vagrantup.com/downloads.html).
+5. Install git using the command `$ sudo apt-get install git`.
+6. Clone the project with `$ git clone https://gitlab.ics.muni.cz/cs4eu/sandbox-creator.git` to an arbitrary directory.
+7. Navigate to the project directory (`$ cd sandbox-creator`).
+8. Install pip using `$ sudo apt-get install python3-pip`.
+9. Install setuptools with `$ pip3 install setuptools`.
+10. Install dependencies with the command `pip3 install -r requirements.txt`.
+
+##### Windows 10
+ 
+1. Enable [virtualization in BIOS](https://www.tactig.com/enable-intel-vt-x-amd-virtualization-pc-vmware-virtualbox/).
+2. Install [VirtualBox 6.0](https://www.virtualbox.org/wiki/Download_Old_Builds_6_0).
+3. Install [Vagrant](https://www.vagrantup.com/downloads.html).
+4. Install Ansible using the [guide](https://www.how2shout.com/how-to/how-to-install-ansible-on-windows-10.html).
+5. Install [Python 3](https://www.python.org/downloads/windows/). At the beginning of the installation mark the "Add Python to PATH" option.
+6. Install [git](https://git-scm.com/downloads).
+7. Clone the project with `git clone https://gitlab.ics.muni.cz/cs4eu/sandbox-creator.git` to an arbitrary folder.
+8. Navigate to the project folder (`$ cd sandbox-creator`).
+9. Install Python dependencies using the command `python -m pip install -r .\requirements.txt
 
 ### Usage:
-1. Check the requirements and install/configure everything required.
-2. Install Python dependencies with `pip3 install -r requirements.txt`.
-3. Clone the project.
-4. Navigate to the project folder.
-5. Type `$ python3 create.py sandbox.yml`. On Windows or in case of an error due to ansible/python use `python3 create.py -l sandbox.yml`. (note: This will rewrite the previously generated Vagrantfile and ansible files.)  
-6. Run `$ vagrant up`
+1. Type `$ python3 create.py sandbox.yml`. On Windows or in case of an error due to ansible/python use `python create.py -l sandbox.yml`. (note: This will rewrite the previously generated Vagrantfile and ansible files.)
+2. Run `$ vagrant up` to build the virtual environment.
+3. The created virtual machines can be accessed with the command `$ vagrant ssh name\-of\-the\-machine`.
+4. The environment can be destroyed using the command `vagrant destroy -f`.
 
 ### Input yaml file structure
 
@@ -89,6 +112,7 @@ The name of the correct network interface can be different for every box. The su
 
 ### Known [issues](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/issues?scope=all&utf8=✓&state=all&label_name[]=known_issue):
 - After running on Windows the output may contain invalid multibyte chars.
+- Check if DHCP server for vboxnet0 is turned off in VirtualBox. It can be done manually in VirtualBox or with the command `$ VBoxManage dhcpserver remove --ifname vboxnet0`
 - Vagrant up can somtimes get stuck on "SSH auth method: private key" in case of "generic/debian10" box or on "SSH auth method: password" in case of "kalilinux/rolling-light" box. This is probably an issue of VirtualBox. In this case try to create the machine again. In case of "kalilinux/rolling-light" remove the line `device.ssh.password = "vagrant"` from the generated Vagrantfile and try to bring it up again.
 - On some machines ansible local (flag -l) can get stuck while connecting to the created virtual machine.
 
