@@ -1,32 +1,41 @@
 #!/usr/bin/python3
-""" A script that generates a Vagrantfile from yaml. """
+"""
+This script generates a Vagrantfile and ansible files from a YAML definition
+of virtual machines and network topology.  See the documentation for details.
+"""
 
 import sys
-import jinja2
 
 from modules.file_generator import generate_vagrantfile, generate_ansible_files
 from modules.device_creator import open_file
 from modules.routing import create_border_router
+from modules.input_argument_parser import parse_input_args
 
-if len(sys.argv) == 3:
-    if str(sys.argv[1]) == "-l":
-        ansible_local = True
-        input_file_name = str(sys.argv[2])
-    elif str(sys.argv[2]) == "-l":
-        ansible_local = True
-        input_file_name = str(sys.argv[1])
-    else:
-        print("Error: Expecting a yml file and optionally a flag -l.")
-        sys.exit()
-elif len(sys.argv) == 2:
-    ansible_local = False
-    input_file_name = str(sys.argv[1])
-else:
-    print("Error: Expecting a yml file and optionally a flag -l.")
-    sys.exit()
 
-device_definitions = open_file(input_file_name)
+""" Parsing the input arguments. """
+flags = dict()
+
+try:
+    input_file_name = parse_input_args(sys.argv, flags)
+except Exception:
+    print("Input arguments could not be parsed.")
+    raise
+
+""" Parsing the definitions file. """
+try:
+    device_definitions = open_file(input_file_name)
+except Exception:
+    print("Definitions file could not be parsed.")
+    raise
+
+
+
+# TODO
+
 create_border_router(device_definitions)
+if "ansible_local" in flags and flags["ansible_local"]:
+    generate_vagrantfile(device_definitions, True)
+else:
+    generate_vagrantfile(device_definitions, False)
 
-generate_vagrantfile(device_definitions, ansible_local)
 generate_ansible_files(device_definitions)
