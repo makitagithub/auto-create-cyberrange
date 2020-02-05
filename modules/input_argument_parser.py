@@ -12,6 +12,8 @@ def parse_input_args(argv, flags):
 
     input_file_name = None
 
+    # TODO implement parsing args using an external module
+
     if len(argv) == 3:
         if str(argv[1]) == "-l":
             flags["ansible_local"] = True
