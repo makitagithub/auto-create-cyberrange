@@ -43,12 +43,16 @@ except Exception:
     print("Preprocessing was not successful.")
     sys.exit(1)
 
+""" Generating Vagrantfile. """
+try:
+    generate_vagrantfile(device_definitions, flags)
+except Exception:
+    print("Vagrantfile was not created.")
+    sys.exit(1)
 
-# TODO
-
-if "ansible_local" in flags and flags["ansible_local"]:
-    generate_vagrantfile(device_definitions, True)
-else:
-    generate_vagrantfile(device_definitions, False)
-
-generate_ansible_files(device_definitions)
+""" Generating ansible playbooks. """
+try:
+    generate_ansible_files(device_definitions, flags)
+except Exception:
+    print("Playbooks could not be created.")
+    sys.exit(1)

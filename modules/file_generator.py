@@ -54,9 +54,19 @@ def _find_user_ansible_files(definitions):
 
     return host_names
 
-def generate_vagrantfile(definitions, ansible_local):
-    """ Writes the prepared output to a Vagrantfile. """
-   
+def generate_vagrantfile(definitions, flags):
+    """
+    Creates Vagrantfile from definitions.
+
+    :param definitions: device definitions structure
+    :param flags: command line input flags
+    """
+    
+    if "ansible_local" in flags and flags["ansible_local"]:
+        ansible_local = True
+    else:
+        ansible_local = False
+
     device_definitions = create_devices(definitions, ansible_local)
     user_ansible_files = _find_user_ansible_files(definitions)
     template = _load_template("vagrantfile")
@@ -204,14 +214,19 @@ def _generate_br_role(definitions):
     _generate_file("./base_provisioning/roles/br/tasks/main.yml", output)
 
 
-def generate_ansible_files(device_definitions):
-    """ Generates files for ansible. """
+def generate_ansible_files(definitions, flags):
+    """
+    Generates ansible playbooks.
+
+    :param definitions: device definitions structure
+    :param flags: command line input flags
+    """ 
     
-    _generate_playbook(device_definitions)
-    _generate_device_configuration(device_definitions)
-    _generate_hosts_role(device_definitions)
-    _generate_separate_hosts_role(device_definitions)
-    _generate_routers_role(device_definitions)
-    _generate_br_role(device_definitions)
+    _generate_playbook(definitions)
+    _generate_device_configuration(definitions)
+    _generate_hosts_role(definitions)
+    _generate_separate_hosts_role(definitions)
+    _generate_routers_role(definitions)
+    _generate_br_role(definitions)
 
     print("Info: Ansible files successfully created.")
