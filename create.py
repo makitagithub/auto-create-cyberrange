@@ -8,9 +8,9 @@ import sys
 
 from modules.file_generator import generate_vagrantfile, generate_ansible_files
 from modules.device_creator import open_file
-from modules.routing import create_border_router
 from modules.input_argument_parser import parse_input_args
 from modules.input_file_validator import validate_device_definitions
+from modules.preprocessing import preprocess
 
 
 """ Parsing the input arguments. """
@@ -36,10 +36,16 @@ except Exception:
     print("Device definition validation was not sussessful.")
     sys.exit(1)
 
+""" Preprocessing the definitions before device creation. """
+try:
+    preprocess(device_definitions, flags)
+except Exception:
+    print("Preprocessing was not successful.")
+    sys.exit(1)
+
 
 # TODO
 
-create_border_router(device_definitions)
 if "ansible_local" in flags and flags["ansible_local"]:
     generate_vagrantfile(device_definitions, True)
 else:
