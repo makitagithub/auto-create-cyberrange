@@ -1,10 +1,6 @@
 import sys
+import conf.border_router
 
-BORDER_ROUTER_NAME = "br"
-BORDER_ROUTER_IP = "172.18.0.1"
-BORDER_ROUTER_PUBLIC_IP = "172.18.10.1"
-BORDER_ROUTER_NETWORK_NAME = "BR"
-BORDER_ROUTER_NETWORK_IP = "172.18.0.0/24"
 
 def _are_br_parameters_free(definitions):
     """ Checks if border router parameters are not already taken. """

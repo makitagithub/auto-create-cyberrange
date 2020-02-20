@@ -1,9 +1,9 @@
 import jinja2
 import os
+import conf.border_router
 
 from modules.device_creator import create_devices
 from modules.ansible_data_generator import create_network_map, create_host_map, create_network_ips
-from modules.routing import BORDER_ROUTER_IP, BORDER_ROUTER_NAME, BORDER_ROUTER_NETWORK_NAME, BORDER_ROUTER_PUBLIC_IP
 
 def _load_template(template_name):
     """ Returns a loaded jinja2 template. """

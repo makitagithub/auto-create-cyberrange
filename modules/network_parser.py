@@ -1,7 +1,7 @@
 """ This module handles network creation. """
 
 import sys
-from modules.routing import BORDER_ROUTER_NAME, BORDER_ROUTER_PUBLIC_IP
+from conf.border_router import BORDER_ROUTER_NAME, BORDER_ROUTER_PUBLIC_IP
 
 
 def _find_networks(hostname, mappings, device_type):

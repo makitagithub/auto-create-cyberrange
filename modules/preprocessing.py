@@ -2,7 +2,7 @@
 called after validating the input but before device creation.
 """
 
-from modules.routing import create_border_router
+from modules.border_router import create_border_router
 
 def preprocess(definitions, flags):
     """
