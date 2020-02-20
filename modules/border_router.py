@@ -1,4 +1,3 @@
-import sys
 import conf.border_router
 
 
@@ -35,8 +34,8 @@ def _create_mappings_to_border_router(definitions):
     for router in definitions["routers"]:
         num = definitions["routers"].index(router) + 5
         if num > 255:
-            print("Error: too many routers.")
-            sys.exit(1)
+            print("Error: Too many routers.")
+            raise IndexError
 
         ip = BORDER_ROUTER_IP[:(0-len(str(num)))]
         ip += str(num)
@@ -55,13 +54,10 @@ def create_border_router(definitions):
 
     # TODO this should be later moved to input check
     if not _are_br_parameters_free:
-        print("Error: Device parameter conflict.")
-
-    """ Last number in the ip of routers in border network. """
-    router_n = 5
+        print("Error: A device with the same name as border router already exists.")
+        raise ValueError
 
     _create_mappings_to_border_router(definitions)
-        
 
     definitions["routers"].append({"name":BORDER_ROUTER_NAME })
     definitions["networks"].append({"name":BORDER_ROUTER_NETWORK_NAME
