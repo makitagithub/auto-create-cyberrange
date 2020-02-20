@@ -51,7 +51,11 @@ def _create_mappings_to_border_router(definitions):
         
 
 def create_border_router(definitions):
-    """ Adds the definition of border router to definitions """
+    """
+    Adds the definition of border router to definitions.
+
+    :param definitions: device definition structure
+    """
 
     # TODO this should be later moved to input check
     if not _are_br_parameters_free:
