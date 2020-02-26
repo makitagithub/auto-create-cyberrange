@@ -39,7 +39,7 @@ create.py is a python program that generates a vagrant source file from a defini
 4. Install pip using `$ sudo apt-get install python3-pip`.
 5. Install setuptools with `$ pip3 install setuptools`.
 6. Install dependencies with the command `$ pip3 install -r requirements.txt`.
-1. Type `$ python3 create.py sandbox.yml`.[^1][^2]
+1. Type `$ python3 create.py sandbox.yml`.[^1],[^2]
 
 ##### Windows 10
 
@@ -48,7 +48,7 @@ create.py is a python program that generates a vagrant source file from a defini
 3. Clone the project with `git clone https://gitlab.ics.muni.cz/cs4eu/sandbox-creator.git` to an arbitrary folder.
 4. Navigate to the project folder (`$ cd sandbox-creator`).
 5. Install Python dependencies using the command `python -m pip install -r .\requirements.txt`
-6. Generate files using the command `python create.py -l sandbox.yml`.[^1][^2]
+6. Generate files using the command `python create.py -l sandbox.yml`.[^1] The option -l will use ansible_local as provisioner. [^2]
 
 [^1]: This will rewrite the previously generated Vagrantfile and ansible files.
 [^2]: The current version has a simple hardcoded recognition of network interfaces. This means, that in case of some topologies or boxes the name of the network interfaces is not recognized properly. See known issues for details.
