@@ -1,16 +1,12 @@
 # Sandbox Creator
 
-Sandbox creator is a tool, which can generate portable input files for building lightweight virtual environments using Vagrant and Ansible from a simple YAML definition of topology. The combination of these three tools makes possible to build virtual machines connected to virtual networks even on a desktop computer.
+Sandbox creator is a tool, which can generate portable input files for building lightweight virtual environments using Vagrant and Ansible from a simple YAML definition of topology. The combination of these three tools makes possible to build virtual machines connected with virtual networks even on a desktop computer.
 
 This project is the next generation of [KYPO Creator](https://gitlab.ics.muni.cz/KYPO-content/KYPO-Creator).
 
-## Table of Contents
-
-[[_TOC_]]
-
-----
-
 ## Installation
+
+**Note:** This is just a quick guide how to install and generate files with this tool. For full describtion of how to prepare the host device to be able run the generated environments and how to build the virtual machines check our wiki page.
 
 ### Linux Mint
 
@@ -29,25 +25,21 @@ This project is the next generation of [KYPO Creator](https://gitlab.ics.muni.cz
 4. Navigate to the project folder (`cd sandbox-creator`).
 5. Install Python dependencies using the command `python -m pip install -r .\requirements.txt`.
 
-----
-
 ## Usage
 
 ### Linux Mint
 
-After the installation simply run the command `$ python3 create.py sandbox.yml` to generate the files.[^1],[^2]
+After the installation simply run the command `$ python3 create.py sandbox.yml` to generate the files.
 
 ### Windows 10
 
-Generate the files using the command `python create.py -l sandbox.yml`.[^1],[^2]
-
-----
+Generate the files using the command `python create.py -l sandbox.yml`.
 
 ## Credits
 
 **Cybersecurity laboratory**\
 **Faculty of Informatics**\
-**Masaryk University**\
+**Masaryk University**
 
 **Lead developer**: Attila Farkas
 
@@ -62,8 +54,4 @@ Generate the files using the command `python create.py -l sandbox.yml`.[^1],[^2]
 - Zdeněk Vydra
 - Adam Skrášek
 
-----
-
 ## License
-
-----
