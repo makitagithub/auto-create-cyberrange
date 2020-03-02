@@ -27,5 +27,5 @@
   command: route del default
 
 - name: Add default path to border router
-  command: route add default gw {{ border_router_ip }} eth2
+  command: route add default gw {{ border_router_ip }} eth3
 ...
