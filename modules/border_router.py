@@ -1,4 +1,4 @@
-import conf.border_router
+from conf.border_router import *
 
 
 def _are_br_parameters_free(definitions):
@@ -53,10 +53,10 @@ def create_border_router(definitions):
     """
 
     # TODO this should be later moved to input check
-    if not _are_br_parameters_free:
+    if not _are_br_parameters_free(definitions):
         print("Error: A device with the same name as border router already exists.")
         raise ValueError
-
+    
     _create_mappings_to_border_router(definitions)
 
     definitions["routers"].append({"name":BORDER_ROUTER_NAME })
