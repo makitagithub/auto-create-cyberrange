@@ -6,8 +6,9 @@ of virtual machines and network topology.  See the documentation for details.
 
 import sys
 
-from modules.file_generator import generate_vagrantfile, generate_ansible_files
-from modules.device_creator import open_file
+from modules.file_generator import generate_ansible_files # TODO change this to from modules.ansible_generator import generate_playbooks
+from modules.vagrant_generator import generate_vagrantfile
+from modules.file_manager import open_yaml
 from modules.input_argument_parser import parse_input_args
 from modules.input_file_validator import validate_device_definitions
 from modules.preprocessing import preprocess
@@ -24,7 +25,7 @@ except Exception:
 
 """ Parsing the definitions file. """
 try:
-    device_definitions = open_file(input_file_name)
+    device_definitions = open_yaml(input_file_name)
 except Exception:
     print("Definitions file could not be parsed.")
     sys.exit(1)

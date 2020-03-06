@@ -1,8 +1,6 @@
 import jinja2
 import os
-import conf.border_router
 
-from modules.device_creator import create_devices
 from modules.ansible_data_generator import create_network_map, create_host_map, create_network_ips
 
 def _load_template(template_name):
@@ -44,44 +42,12 @@ def _create_role_directory(role_name, provisioning_dir):
         pass
 
 
-def _find_user_ansible_files(definitions):
-    """ Finds the user ansible files and returns a list of host names. """
-    host_names = []
-
-    for host in definitions["hosts"]:
-        if os.path.isfile("provisioning/" + host["name"] + ".yml" ):
-            host_names.append(host["name"])
-
-    return host_names
-
-def generate_vagrantfile(definitions, flags):
-    """
-    Creates Vagrantfile from definitions.
-
-    :param definitions: device definitions structure
-    :param flags: command line input flags
-    """
-    
-    if "ansible_local" in flags and flags["ansible_local"]:
-        ansible_local = True
-    else:
-        ansible_local = False
-
-    device_definitions = create_devices(definitions, ansible_local)
-    user_ansible_files = _find_user_ansible_files(definitions)
-    template = _load_template("vagrantfile")
-    output = template.render(devices=device_definitions, user_files=user_ansible_files, ansible_local=ansible_local)
-    _generate_file("Vagrantfile", output)
-    
-    print("Info: Vagrantfile successfully created.")
-
-
 def _generate_playbook(definitions):
     """ Generates the main playbook. """
 
     host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"], definitions["hosts"])
     network = create_network_map(definitions)
-    
+
     template = _load_template("playbook")
     output = template.render(hosts=host_map, routers=network)
 
@@ -97,7 +63,7 @@ def _generate_device_configuration(definitions):
     """ Generates a playbook with basic device configutarion. """
 
     host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"], definitions["hosts"])
-    network = create_network_map(definitions) 
+    network = create_network_map(definitions)
     network_ips = create_network_ips(definitions["networks"])
 
     template = _load_template("device_configuration")
@@ -123,7 +89,7 @@ def _generate_hosts_role(definitions):
 
     _create_role_directory("hosts", "base_provisioning")
     _generate_file("./base_provisioning/roles/hosts/tasks/main.yml", output)
-    
+
     user_template = _load_template("user_hosts")
     user_output = template.render()
 
@@ -133,7 +99,7 @@ def _generate_hosts_role(definitions):
 
 def _generate_separate_hosts_role(definitions):
     """ Generate roles for separate host devices. """
-    
+
     host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"], definitions["hosts"])
 
     for host in definitions["hosts"]:
@@ -166,7 +132,7 @@ def _generate_routers_role(definitions):
 
     host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"], definitions["hosts"])
 
-    network = create_network_map(definitions) 
+    network = create_network_map(definitions)
 
     template = _load_template("routers")
     output = template.render(hosts=host_map, routers=network, border_router_ip=BORDER_ROUTER_IP)
@@ -201,8 +167,8 @@ def _generate_br_role(definitions):
         print("Info: No router definition was found. Skipping border router creation.")
         return
 
-    network = create_network_map(definitions) 
-    
+    network = create_network_map(definitions)
+
     host_map = create_host_map(definitions["net_mappings"], definitions["router_mappings"], definitions["hosts"])
 
     routers_in_br_network = _get_br_routers(definitions)
@@ -220,8 +186,8 @@ def generate_ansible_files(definitions, flags):
 
     :param definitions: device definitions structure
     :param flags: command line input flags
-    """ 
-    
+    """
+
     _generate_playbook(definitions)
     _generate_device_configuration(definitions)
     _generate_hosts_role(definitions)
