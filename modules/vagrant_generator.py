@@ -41,7 +41,7 @@ def _create_commands(device_attributes, device_type, input_definitions, flags):
         vb["name"] = "virtualbox"
         vb["commands"] = vb_commands
         commands.append(vb)
-    
+
     return commands
 
 
@@ -49,7 +49,7 @@ def _create_ansible_commands(playbook_location, flags):
     """ Creates commands for running a playbook from the Vagrantfile. """
 
     commands = []
-    
+
     playbook = dict()
     playbook["type"] = "string"
     playbook["command"] = "playbook"
@@ -94,14 +94,14 @@ def _add_all_networks(vagrant_definitions, input_definitions, flags):
 
     for definition in vagrant_definitions:
         if definition["type"] == "host":
-            _add_networks_to_device(definition, input_definitions["net_mappings"], input_definitions)      
+            _add_networks_to_device(definition, input_definitions["net_mappings"], input_definitions)
         elif definition["type"] == "router":
             _add_networks_to_device(definition, input_definitions["router_mappings"], input_definitions)
 
 
 def _call_provisioner(flags):
     """ Creates entry to vagrant definitions for calling the provisioner. """
-    
+
     provisioner_calls = []
 
     config_playbook = dict()
@@ -125,7 +125,7 @@ def _call_provisioner(flags):
     user_playbook["note"] = "user configuration of devices"
     user_playbook["commands"] = _create_ansible_commands(
             "base_provisioning/playbook.yml", flags)
-    
+
     provisioner_calls.append(user_playbook)
 
     return provisioner_calls
@@ -153,9 +153,9 @@ def _build_vagrant_definitions(input_definitions, flags):
         vagrant_definitions.append(device)
 
     _add_all_networks(vagrant_definitions, input_definitions, flags)
-    
+
     vagrant_definitions.extend(_call_provisioner(flags))
-    
+
     return vagrant_definitions
 
 
@@ -165,11 +165,10 @@ def _build_vagrantfile(vagrant_definitions):
     definitions.
     """
 
-# TODO change newvagrantfile to vagrantfile 
-    template = load_template("newvagrantfile")
+    template = load_template("vagrantfile")
     output = template.render(defs=vagrant_definitions)
     generate_file("Vagrantfile", output)
-    
+
 
 def generate_vagrantfile(input_definitions, flags):
     """
