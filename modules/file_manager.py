@@ -11,6 +11,8 @@ def open_yaml(file_name):
     except IOError:
         print("Error: Cannot open the required file: " + str(file_name))
         raise
+    finally:
+        input_file.close()
 
 def generate_file(filename, output_string):
     """
