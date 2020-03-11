@@ -6,9 +6,9 @@ of virtual machines and network topology.  See the documentation for details.
 
 import sys
 
-from modules.file_generator import generate_ansible_files # TODO change this to from modules.ansible_generator import generate_playbooks
+from modules.ansible_generator import generate_playbooks
 from modules.vagrant_generator import generate_vagrantfile
-from modules.file_manager import open_yaml
+from modules.file_manager import open_yaml, prepare_directories
 from modules.input_argument_parser import parse_input_args
 from modules.input_file_validator import validate_device_definitions
 from modules.preprocessing import preprocess
@@ -44,6 +44,13 @@ except Exception:
     print("Preprocessing was not successful.")
     sys.exit(1)
 
+""" Preparing the directory structure. """
+try:
+    prepare_directories(device_definitions)
+except Exception:
+    print("Directory structure was not created.")
+    sys.exit(1)
+
 """ Generating Vagrantfile. """
 try:
     generate_vagrantfile(device_definitions, flags)
@@ -53,7 +60,7 @@ except Exception:
 
 """ Generating ansible playbooks. """
 try:
-    generate_ansible_files(device_definitions, flags)
+    generate_playbooks(device_definitions, flags)
 except Exception:
     print("Playbooks could not be created.")
     sys.exit(1)
