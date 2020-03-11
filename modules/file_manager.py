@@ -48,6 +48,7 @@ def load_template(template_name):
     return template_env.get_template(template_name)
 
 def _create_provisioning_directories(directory, device_definitions):
+    """ Creates all subdirectories for privisioning. """
 
     try:
         os.mkdir(OUTPUT_DIRECTORY + "/" + directory)
