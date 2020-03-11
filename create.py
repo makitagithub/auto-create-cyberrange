@@ -59,8 +59,8 @@ except Exception:
     sys.exit(1)
 
 """ Generating ansible playbooks. """
-try:
-    generate_playbooks(device_definitions, flags)
-except Exception:
-    print("Playbooks could not be created.")
-    sys.exit(1)
+#try:
+generate_playbooks(device_definitions, flags)
+#except Exception:
+#    print("Playbooks could not be created.")
+#    sys.exit(1)
