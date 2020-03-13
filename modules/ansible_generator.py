@@ -14,7 +14,6 @@ def _create_inventory(input_definitions):
     inventory_template = load_template("inventory")
     output = inventory_template.render(hosts=host_names, routers=router_names)
     generate_file("provisioning/inventory.ini", output)
-    generate_file("base_provisioning/inventory.ini", output)
 
 
 def generate_playbooks(input_definitions, flags):

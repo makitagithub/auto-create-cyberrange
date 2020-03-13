@@ -6,6 +6,10 @@ from modules.file_manager import load_template, generate_file, open_yaml
 
 VAGRANT_MAPPING = open_yaml("conf/vagrant_mapping.yml")
 VIRTUALBOX_MAPPING = open_yaml("conf/virtualbox_mapping.yml")
+BASE_PLAYBOOK = "base_provisioning/device_configuration.yml"
+USER_PLAYBOOK = "provisioning/playbook.yml"
+INVENTORY_FILE = "provisioning/inventory.ini"
+
 
 
 def _create_simple_attribute(key, value, attribute_type):
@@ -55,6 +59,12 @@ def _create_ansible_commands(playbook_location, flags):
     playbook["command"] = "playbook"
     playbook["value"] = playbook_location
     commands.append(playbook)
+
+    inventory = dict()
+    inventory["type"] = "string"
+    inventory["command"] = "inventory_path"
+    inventory["value"] = INVENTORY_FILE
+    commands.append(inventory)
 
     if "verbose_ansible" in flags and flags["verbose_ansible"]:
         verbosity = dict()
@@ -112,7 +122,7 @@ def _call_provisioner(flags):
         config_playbook["provisioner"] = "ansible"
     config_playbook["note"] = "basic configuration of devices and networks"
     config_playbook["commands"] = _create_ansible_commands(
-            "base_provisioning/device_configuration.yml", flags)
+            BASE_PLAYBOOK, flags)
 
     provisioner_calls.append(config_playbook)
 
@@ -124,7 +134,7 @@ def _call_provisioner(flags):
         user_playbook["provisioner"] = "ansible"
     user_playbook["note"] = "user configuration of devices"
     user_playbook["commands"] = _create_ansible_commands(
-            "base_provisioning/playbook.yml", flags)
+            USER_PLAYBOOK, flags)
 
     provisioner_calls.append(user_playbook)
 
