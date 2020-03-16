@@ -2,19 +2,23 @@
 # Basic configuration of all defined devices
 
 - name: Configuring all hosts
-  hosts: {{ hosts|map(attribute='host_name')|unique|join(',') }}
+  hosts: hosts
   become: yes
   roles:
     - hosts
 
-{% for host in hosts %}
-- name: Configuring host {{ host.host_name }} separately
-  hosts: {{ host.host_name }}
+- name: Configuring host {{ item.name }} separately
+  hosts: {{ item.name }}
   become: yes
+  loop: "{{ hosts }}"
   roles:
-    - {{ host.host_name }}
+    - {{ item.name }}
 
-{% endfor %}
+
+{# TODO finish playbook #}
+
+
+
 {% for host in hosts %}
 - name: Configuring host {{ host.host_name }}
   hosts: {{ host.host_name }}

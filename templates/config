@@ -1,0 +1,9 @@
+hosts:
+  {% for host in hosts %}
+  - name: {{ host.name }}
+  {% endfor %}
+
+routers:
+  {% for router in routers %}
+  - name: {{ router.name }}
+  {% endfor %}
