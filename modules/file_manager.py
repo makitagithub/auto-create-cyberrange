@@ -20,13 +20,21 @@ def open_yaml(file_name):
         input_file.close()
 
 
-def generate_file(filename, output_string):
-    """
-    Generates a file from output string.
+def generate_file(template, filename, **template_args):
+    """ Generates a file using a template.
     
-    :param filename: name of the file to create
-    :param output_string: string to write to the file
+    :param template: name of the template file
+    :param filename: path to the output file inside the output directory
+    :param template_args: arbitrary number of named args for the template
     """
+
+    inventory_template = _load_template(template)
+    output = inventory_template.render(**template_args)
+    _write_to_file(filename, output)
+
+
+def _write_to_file(filename, output_string):
+    """ Generates a file from output string. """
 
     try:
         new_file = open(OUTPUT_DIRECTORY + "/" + filename, "w")
@@ -36,12 +44,8 @@ def generate_file(filename, output_string):
         raise
 
 
-def load_template(template_name):
-    """
-    Returns a loaded jinja2 template.
-    
-    :param template_name: name of the template file
-    """
+def _load_template(template_name):
+    """ Returns a loaded jinja2 template. """
 
     template_loader = jinja2.FileSystemLoader(searchpath="templates")
     template_env = jinja2.Environment(loader=template_loader, trim_blocks=True, lstrip_blocks=True)

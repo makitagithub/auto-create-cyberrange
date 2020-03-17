@@ -1,4 +1,4 @@
-from modules.file_manager import load_template, generate_file
+from modules.file_manager import generate_file
 
 def _create_inventory(input_definitions):
     """ Creates an inventory file with host groups. """
@@ -11,9 +11,7 @@ def _create_inventory(input_definitions):
     for router in input_definitions["routers"]:
         router_names.append(router["name"])
 
-    inventory_template = load_template("inventory")
-    output = inventory_template.render(hosts=host_names, routers=router_names)
-    generate_file("provisioning/inventory.ini", output)
+    generate_file("inventory", "provisioning/inventory.ini", hosts=host_names, routers=router_names)
 
 
 def _create_config(input_definitions, flags):
@@ -31,9 +29,7 @@ def _create_config(input_definitions, flags):
         new_router["name"] = router["name"]
         routers.append(new_router)
     
-    config_template = load_template("config")
-    output = config_template.render(hosts=hosts, routers=routers)
-    generate_file("base_provisioning/config.yml", output)
+    generate_file("config", "base_provisioning/config.yml", hosts=hosts, routers=routers)
     
 def _create_config_playbooks(input_definitions, flags):
     """ Generates playbooks and roles for basic device configuration. """
@@ -44,24 +40,15 @@ def _create_config_playbooks(input_definitions, flags):
 def _create_user_playbooks(input_definitions):
     """ Generates template playbooks and roles for users. """
 
-    playbook_template = load_template("playbook")
-    generate_file("provisioning/playbook.yml", playbook_template.render())
+    generate_file("playbook", "provisioning/playbook.yml")
+    generate_file("user_hosts", "provisioning/roles/hosts/tasks/main.yml")
+    generate_file("user_routers", "provisioning/roles/routers/tasks/main.yml")
 
-    user_hosts_template = load_template("user_hosts")
-    generate_file("provisioning/roles/hosts/tasks/main.yml", user_hosts_template.render())
-
-    user_routers_template = load_template("user_routers")
-    generate_file("provisioning/roles/routers/tasks/main.yml", user_routers_template.render())
-
-    user_host_template = load_template("user_separate_hosts")
     for host in input_definitions["hosts"]:
-        output = user_host_template.render(host_name=host["name"])
-        generate_file("provisioning/roles/" + host["name"] + "/tasks/main.yml", output)
+        generate_file("user_separate_hosts", "provisioning/roles/" + host["name"] + "/tasks/main.yml", host_name=host["name"])
 
-    user_router_template = load_template("user_separate_routers")
     for router in input_definitions["routers"]:
-        output = user_router_template.render(router_name=router["name"])
-        generate_file("provisioning/roles/" + router["name"] + "/tasks/main.yml", output)
+        generate_file("user_separate_routers", "provisioning/roles/" + router["name"] + "/tasks/main.yml", router_name=router["name"])
 
 
 

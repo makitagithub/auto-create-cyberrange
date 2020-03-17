@@ -2,7 +2,7 @@
 
 import jinja2
 
-from modules.file_manager import load_template, generate_file, open_yaml
+from modules.file_manager import generate_file, open_yaml
 
 VAGRANT_MAPPING = open_yaml("conf/vagrant_mapping.yml")
 VIRTUALBOX_MAPPING = open_yaml("conf/virtualbox_mapping.yml")
@@ -169,17 +169,6 @@ def _build_vagrant_definitions(input_definitions, flags):
     return vagrant_definitions
 
 
-def _build_vagrantfile(vagrant_definitions):
-    """
-    Generates the Vagrantfile using the vagrantfile template and vagrant
-    definitions.
-    """
-
-    template = load_template("vagrantfile")
-    output = template.render(defs=vagrant_definitions)
-    generate_file("Vagrantfile", output)
-
-
 def generate_vagrantfile(input_definitions, flags):
     """
     This method is responsible for Vagrantfile generation.
@@ -195,7 +184,7 @@ def generate_vagrantfile(input_definitions, flags):
        raise
 
     try:
-       _build_vagrantfile(vagrant_definitions)
+       generate_file("vagrantfile", "Vagrantfile", defs=vagrant_definitions)
     except Exception:
        print("Could not generate Vagrantfile.")
        raise
