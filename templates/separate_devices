@@ -1,0 +1,5 @@
+- name: Add aliases
+  loop: {{ "{{ aliases|dict2items }}" }}
+  lineinfile:
+    path: /etc/hosts
+    line: {{ "{{ item.value }} \"{{ item.key }}\"" }}

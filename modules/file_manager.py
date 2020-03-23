@@ -20,6 +20,23 @@ def open_yaml(file_name):
         input_file.close()
 
 
+def dump_to_yaml(data, filename):
+    """ Writes a data structure to a YAML document.
+
+    :param data: a dict or list which should be written to file
+    :param filename: name of the target file
+    """
+
+    try:
+        stream = open(OUTPUT_DIRECTORY + "/" + filename, 'w')
+        yaml.dump(data, stream)
+    except IOError:
+        print("Error: cannot write to this location.")
+        raise
+    finally:
+        stream.close()
+
+
 def generate_file(template, filename, **template_args):
     """ Generates a file using a template.
     
@@ -61,16 +78,20 @@ def _create_provisioning_directories(directory, device_definitions):
         if device_definitions["hosts"]:
             os.mkdir(OUTPUT_DIRECTORY + "/" + directory + "/roles/hosts")
             os.mkdir(OUTPUT_DIRECTORY + "/" + directory + "/roles/hosts/tasks")
+            os.mkdir(OUTPUT_DIRECTORY + "/" + directory + "/roles/hosts/vars")
         for host in device_definitions["hosts"]:
             os.mkdir(OUTPUT_DIRECTORY + "/" + directory + "/roles/" + host["name"])
             os.mkdir(OUTPUT_DIRECTORY + "/" + directory + "/roles/" + host["name"] + "/tasks")
+            os.mkdir(OUTPUT_DIRECTORY + "/" + directory + "/roles/" + host["name"] + "/vars")
 
         if device_definitions["routers"]:
             os.mkdir(OUTPUT_DIRECTORY + "/" + directory + "/roles/routers")
             os.mkdir(OUTPUT_DIRECTORY + "/" + directory + "/roles/routers/tasks")
+            os.mkdir(OUTPUT_DIRECTORY + "/" + directory + "/roles/routers/vars")
         for router in device_definitions["routers"]:
             os.mkdir(OUTPUT_DIRECTORY + "/" + directory + "/roles/" + router["name"])
             os.mkdir(OUTPUT_DIRECTORY + "/" + directory + "/roles/" + router["name"] + "/tasks")
+            os.mkdir(OUTPUT_DIRECTORY + "/" + directory + "/roles/" + router["name"] + "/vars")
 
     except FileExistsError:
         pass

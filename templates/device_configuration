@@ -1,27 +1,31 @@
 ---
 # Basic configuration of all defined devices
 
+- name: include common variables
+  include_vars:
+    file: config.yml
+    name: config
+
 - name: Configuring all hosts
   hosts: hosts
   become: yes
   roles:
     - hosts
 
-- name: Configuring host {{ item.name }} separately
-  hosts: {{ item.name }}
+- name: Configuring hosts separately
+  hosts: {{ "{{ item.name }}" }}
   become: yes
-  loop: "{{ hosts }}"
+  loop: {{ "\"{{ config.hosts }}\"" }}
   roles:
-    - {{ item.name }}
+    - {{ "{{ item.name }}" }}
 
 
 {# TODO finish playbook #}
 
 
 
-{% for host in hosts %}
 - name: Configuring host {{ host.host_name }}
-  hosts: {{ host.host_name }}
+  hosts: hosts
   become: yes
   tasks:
 {% for network_ip in network_ips %}
@@ -29,7 +33,10 @@
     command: route add -net {{ network_ip }} gw {{ host.router_ip }} {{ host.interface }}
 {% endfor %}
 
-{% endfor %}
+
+
+
+
 - name: Configuring all routers
   hosts: {{ routers|map(attribute='router_name')|unique|reject('eq', border_router_name)|join(',') }}
   become: yes
