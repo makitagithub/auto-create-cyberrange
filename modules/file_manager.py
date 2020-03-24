@@ -19,6 +19,13 @@ def open_yaml(file_name):
     finally:
         input_file.close()
 
+def copy_template_file(template, destination):
+    """ Copies playbook templates that does not need jinja or yaml to the
+    destination.
+    """
+
+    copyfile("templates/" + template, "sandbox/" + destination)
+
 
 def dump_to_yaml(data, filename):
     """ Writes a data structure to a YAML document.
