@@ -1,9 +1,9 @@
 """ This module handles file imports and creations in general. """
 
-import jinja2
 import os
-import shutil
-import yaml
+from jinja2 import Environment, FileSystemLoader
+from shutil import copyfile, rmtree
+from yaml import dump, safe_load
 
 OUTPUT_DIRECTORY = "sandbox"
 
@@ -12,19 +12,24 @@ def open_yaml(file_name):
     """ Opens and returns a file from the argument. """
     try:
         input_file = open(str(file_name))
-        return yaml.safe_load(input_file)
+        return safe_load(input_file)
     except IOError:
         print("Error: Cannot open the required file: " + str(file_name))
         raise
     finally:
         input_file.close()
 
+
 def copy_template_file(template, destination):
     """ Copies playbook templates that does not need jinja or yaml to the
     destination.
     """
 
-    copyfile("templates/" + template, "sandbox/" + destination)
+    try:
+        copyfile("templates/" + template, "sandbox/" + destination)
+    except IOError:
+        print("Error: cannot write to this location.")
+        raise
 
 
 def dump_to_yaml(data, filename):
@@ -36,7 +41,7 @@ def dump_to_yaml(data, filename):
 
     try:
         stream = open(OUTPUT_DIRECTORY + "/" + filename, 'w')
-        yaml.dump(data, stream)
+        dump(data, stream)
     except IOError:
         print("Error: cannot write to this location.")
         raise
@@ -71,9 +76,10 @@ def _write_to_file(filename, output_string):
 def _load_template(template_name):
     """ Returns a loaded jinja2 template. """
 
-    template_loader = jinja2.FileSystemLoader(searchpath="templates")
-    template_env = jinja2.Environment(loader=template_loader, trim_blocks=True, lstrip_blocks=True)
+    template_loader = FileSystemLoader(searchpath="templates")
+    template_env = Environment(loader=template_loader, trim_blocks=True, lstrip_blocks=True)
     return template_env.get_template(template_name)
+
 
 def _create_provisioning_directories(directory, device_definitions):
     """ Creates all subdirectories for privisioning. """
@@ -107,11 +113,10 @@ def _create_provisioning_directories(directory, device_definitions):
         raise
 
 
-
 def prepare_directories(device_definitions):
     """ Prepares the necessary directory structure. """
 
-    shutil.rmtree(OUTPUT_DIRECTORY, True)
+    rmtree(OUTPUT_DIRECTORY, True)
     
     try:
         os.mkdir(OUTPUT_DIRECTORY)
@@ -121,8 +126,3 @@ def prepare_directories(device_definitions):
 
     _create_provisioning_directories("base_provisioning", device_definitions)
     _create_provisioning_directories("provisioning", device_definitions)
-    
-
-    
-    
-

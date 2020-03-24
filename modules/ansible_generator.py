@@ -1,4 +1,4 @@
-from modules.file_manager import generate_file
+from modules.file_manager import generate_file, copy_template_file
 from modules.ansible_vars_generator import generate_ansible_vars
 
     
@@ -15,9 +15,9 @@ def _create_config_playbooks(input_definitions, flags):
 def _create_user_playbooks(input_definitions):
     """ Generates template playbooks and roles for users. """
 
-    generate_file("playbook", "provisioning/playbook.yml")
-    generate_file("user_hosts", "provisioning/roles/hosts/tasks/main.yml")
-    generate_file("user_routers", "provisioning/roles/routers/tasks/main.yml")
+    copy_template_file("playbook", "provisioning/playbook.yml")
+    copy_template_file("user_hosts", "provisioning/roles/hosts/tasks/main.yml")
+    copy_template_file("user_routers", "provisioning/roles/routers/tasks/main.yml")
 
     for host in input_definitions["hosts"]:
         generate_file("user_separate_hosts", "provisioning/roles/" + host["name"] + "/tasks/main.yml", host_name=host["name"])
