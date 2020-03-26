@@ -1,5 +1,7 @@
 """ This module contains functions to parse input arguments. """
 
+import argparse
+
 def parse_input_args(argv, flags):
     """ 
     Parses the given input arguments for input file name and flags.
@@ -7,27 +9,20 @@ def parse_input_args(argv, flags):
     :param argv: input arguments (list of strings)
     :param flags: dictionary to write the parsed flags
     :returns: name of the input file
-    :raise AttributeError: invalid number of args or unknown flag
     """
 
     input_file_name = None
+    parser = argparse.ArgumentParser()
 
-    # TODO implement parsing args using an external module
+    parser.add_argument("definition_file", help="path to the input yaml definition")
+    parser.add_argument("--ansible_local", help="uses ansible_local for provisioning instead of ansible", action="store_true")
+    parser.add_argument("--verbose_vagrant", help="sets verbose output for vagrant", action="store_true")
+    parser.add_argument("--border_router", help="creates a border router with connection to all routers", action="store_true")
+    args = parser.parse_args()
 
-    if len(argv) == 3:
-        if str(argv[1]) == "-l":
-            flags["ansible_local"] = True
-            input_file_name = str(argv[2])
-        elif str(argv[2]) == "-l":
-            flags["ansible_local"] = True
-            input_file_name = str(argv[1])
-        else:
-            print("Error: Expecting a yml file and optionally a flag -l.")
-            raise AttributeError
-    elif len(argv) == 2:
-        input_file_name = str(argv[1])
-    else:
-        print("Error: Expecting a yml file and optionally a flag -l.")
-        raise AttributeError
+    input_file_name = args.definition_file
+    flags["ansible_local"] = args.ansible_local
+    flags["verbose_vagrant"] = args.verbose_vagrant
+    flags["border_router"] = args.border_router
 
     return input_file_name
