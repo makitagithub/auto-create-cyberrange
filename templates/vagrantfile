@@ -56,7 +56,7 @@
 , netmask: "{{ item.netmask }}"
 {%- endif %}
 {%- if item.network_type == "private_network" %}
-, virtualbox__intnet: "{{ item.name }}"  
+, virtualbox__intnet: "{{ item.name }}"
 {% endif %}
 {% endmacro -%}
 
