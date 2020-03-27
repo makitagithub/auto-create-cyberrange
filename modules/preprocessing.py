@@ -45,7 +45,8 @@ def preprocess(definitions, flags):
     """
 
     try:
-        create_border_router(definitions)
+        if "border_router" in flags and flags["border_router"]:
+            create_border_router(definitions)
     except Exception:
         print("Could not create border router.")
         raise

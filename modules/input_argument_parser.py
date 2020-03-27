@@ -16,13 +16,13 @@ def parse_input_args(argv, flags):
 
     parser.add_argument("definition_file", help="path to the input yaml definition")
     parser.add_argument("--ansible_local", help="uses ansible_local for provisioning instead of ansible", action="store_true")
-    parser.add_argument("--verbose_vagrant", help="sets verbose output for vagrant", action="store_true")
+    parser.add_argument("--verbose_ansible", help="sets verbose output for ansible", action="store_true")
     parser.add_argument("--border_router", help="creates a border router with connection to all routers", action="store_true")
     args = parser.parse_args()
 
     input_file_name = args.definition_file
     flags["ansible_local"] = args.ansible_local
-    flags["verbose_vagrant"] = args.verbose_vagrant
+    flags["verbose_ansible"] = args.verbose_ansible
     flags["border_router"] = args.border_router
 
     return input_file_name

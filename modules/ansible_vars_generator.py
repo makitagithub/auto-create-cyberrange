@@ -59,10 +59,9 @@ def _add_aliases(device_name, input_definitions, flags):
 
     for router in input_definitions["routers"]:
         if router["name"] not in aliases:
-# TODO uncomment when br flag is active
-#            if "border_router" not in flags:
-#                print("Error: " + device_name + " has no connection to " + router["name"] + " .")
-#                raise AttributeError
+            if "border_router" not in flags:
+                print("Error: " + device_name + " has no connection to " + router["name"] + " .")
+                raise AttributeError
             for router_mapping in input_definitions["router_mappings"]:
                 if router_mapping["router"] == router["name"] and router_mapping["network"] == BORDER_ROUTER_NETWORK_NAME:
                     aliases[router_mapping["router"]] = router_mapping["ip"]
@@ -88,20 +87,6 @@ def _generate_device_vars(input_definitions, flags):
         variables = dict()
         variables["aliases"] = _add_aliases(target_router["name"], input_definitions, flags)
         dump_to_yaml(variables, "base_provisioning/roles/" + target_router["name"] + "/vars/main.yml")
-        
-
-def _create_inventory(input_definitions):
-    """ Creates an inventory file with host groups. """
-
-    host_names = []
-    for host in input_definitions["hosts"]:
-        host_names.append(host["name"])
-
-    router_names = []
-    for router in input_definitions["routers"]:
-        router_names.append(router["name"])
-
-    generate_file("inventory", "provisioning/inventory.ini", hosts=host_names, routers=router_names)
 
 
 def _generate_hosts_vars(input_definitions, flags):
@@ -139,8 +124,8 @@ def _find_default_route(device_name, input_definitions, flags):
     return None
 
 
-def _generate_config_vars(input_definitions, flags):
-    """ Generates vars file for all devices. """
+def _generate_config_vars(input_definitions, flags): # TODO check what vars needs to be in config
+    """ Generates vars file for all devices. """     # TODO dump to yaml without jinja
 
     hosts = []
     for host in input_definitions["hosts"]:
