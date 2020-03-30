@@ -1,51 +1,50 @@
 ---
 # Basic configuration of all defined devices
 
-- name: include common variables
-  include_vars:
-    file: config.yml
-    name: config
+- name: Including variables
+  hosts: all
+  tasks:
 
-- name: Configuring all hosts
+  - name: Including common variables
+    include_vars:
+      file: config.yml
+      name: config
+
+- name: Configuring hosts
   hosts: hosts
-  become: yes
   roles:
     - hosts
 
-- name: Configuring hosts separately
-  hosts: {{ "{{ item.name }}" }}
-  become: yes
-  loop: {{ "\"{{ config.hosts }}\"" }}
-  roles:
-    - {{ "{{ item.name }}" }}
+#- name: Configuring routers
+#  hosts: routers
+#  roles:
+#    - routers
 
-
-{# TODO finish playbook #}
-
-
-
-- name: Configuring host {{ host.host_name }}
-  hosts: hosts
-  become: yes
+- name: Configuring devices separately
+  hosts: all
   tasks:
-{% for network_ip in network_ips %}
-  - name: Add gateway for {{ network_ip }}
-    command: route add -net {{ network_ip }} gw {{ host.router_ip }} {{ host.interface }}
-{% endfor %}
-
-
-
-
-
-- name: Configuring all routers
-  hosts: {{ routers|map(attribute='router_name')|unique|reject('eq', border_router_name)|join(',') }}
-  become: yes
-  roles:
-    - routers
-
-- name: Configuring border router
-  hosts: {{ border_router_name }}
-  become: yes
-  roles:
-    - br
+    
+  - name: include role
+    include_role:
+      name: "{{ inventory_hostname }}"
 ...
+
+
+
+
+#- name: Configuring host {{ host.host_name }}
+#  hosts: hosts
+#  become: yes
+#  tasks:
+#{% for network_ip in network_ips %}
+#  - name: Add gateway for {{ network_ip }}
+#    command: route add -net {{ network_ip }} gw {{ host.router_ip }} {{ host.interface }}
+#{% endfor %}
+
+
+#- name: Configuring border router
+#  hosts: {{ border_router_name }}
+#  become: yes
+#  roles:
+#    - br
+#...

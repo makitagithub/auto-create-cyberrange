@@ -2,20 +2,6 @@ from modules.file_manager import generate_file, dump_to_yaml
 from conf.border_router import BORDER_ROUTER_NETWORK_NAME
 
 
-def _create_inventory(input_definitions):
-    """ Creates an inventory file with host groups. """
-
-    host_names = []
-    for host in input_definitions["hosts"]:
-        host_names.append(host["name"])
-
-    router_names = []
-    for router in input_definitions["routers"]:
-        router_names.append(router["name"])
-
-    generate_file("inventory", "provisioning/inventory.ini", hosts=host_names, routers=router_names)
-
-
 def _find_networks_of_device(name, input_definitions):
     """ Returns a list of network names in which the device have an
     interface.
@@ -149,7 +135,6 @@ def _generate_config_vars(input_definitions, flags): # TODO check what vars need
 def generate_ansible_vars(input_definitions, flags):
     """ Generates files with variables for ansible. """
 
-    _create_inventory(input_definitions)
     _generate_config_vars(input_definitions, flags)
     _generate_hosts_vars(input_definitions, flags)
     _generate_routers_vars(input_definitions, flags)

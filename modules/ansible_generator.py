@@ -5,8 +5,11 @@ from modules.ansible_vars_generator import generate_ansible_vars
 def _create_config_playbooks(input_definitions, flags):
     """ Generates playbooks and roles for basic device configuration. """
 
+    copy_template_file("device_configuration", "base_provisioning/device_configuration.yml")
+    copy_template_file("hosts", "base_provisioning/roles/hosts/tasks/main.yml")
+
     for device in input_definitions["hosts"] + input_definitions["routers"]:
-        generate_file("separate_devices", "base_provisioning/roles/" + device["name"] + "/tasks/main.yml")
+        copy_template_file("separate_devices", "base_provisioning/roles/" + device["name"] + "/tasks/main.yml")
 
     # TODO create other playbooks
     return

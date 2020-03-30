@@ -5,6 +5,6 @@
   apt:
     name: net-tools
 
-- name: Delete default gateway
-  command: route del default
+# name: Delete default gateway
+#  command: route del default
 ...

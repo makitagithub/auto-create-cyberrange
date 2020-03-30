@@ -8,8 +8,6 @@ VAGRANT_MAPPING = open_yaml("conf/vagrant_mapping.yml")
 VIRTUALBOX_MAPPING = open_yaml("conf/virtualbox_mapping.yml")
 BASE_PLAYBOOK = "base_provisioning/device_configuration.yml"
 USER_PLAYBOOK = "provisioning/playbook.yml"
-INVENTORY_FILE = "provisioning/inventory.ini"
-
 
 
 def _create_simple_attribute(key, value, attribute_type):
@@ -49,7 +47,7 @@ def _create_commands(device_attributes, device_type, input_definitions, flags):
     return commands
 
 
-def _create_ansible_commands(playbook_location, flags):
+def _create_ansible_commands(playbook_location, input_definitions, flags):
     """ Creates commands for running a playbook from the Vagrantfile. """
 
     commands = []
@@ -60,18 +58,26 @@ def _create_ansible_commands(playbook_location, flags):
     playbook["value"] = playbook_location
     commands.append(playbook)
 
-    inventory = dict()
-    inventory["type"] = "string"
-    inventory["command"] = "inventory_path"
-    inventory["value"] = INVENTORY_FILE
-    commands.append(inventory)
-
     if "verbose_ansible" in flags and flags["verbose_ansible"]:
         verbosity = dict()
         verbosity["type"] = "boolean"
         verbosity["command"] = "verbose"
         verbosity["value"] = True
         commands.append(verbosity)
+
+    groups = dict()
+    groups["type"] = "dictionary"
+    groups["command"] = "groups"
+    groups["dictionary"] = dict()
+    host_names = []
+    for host in input_definitions["hosts"]:
+        host_names.append(host["name"])
+    groups["dictionary"]["hosts"] = host_names
+    router_names = []
+    for router in input_definitions["routers"]:
+        router_names.append(router["name"])
+    groups["dictionary"]["routers"] = router_names
+    commands.append(groups)
 
     return commands
 
@@ -109,7 +115,7 @@ def _add_all_networks(vagrant_definitions, input_definitions, flags):
             _add_networks_to_device(definition, input_definitions["router_mappings"], input_definitions)
 
 
-def _call_provisioner(flags):
+def _call_provisioner(input_definitions, flags):
     """ Creates entry to vagrant definitions for calling the provisioner. """
 
     provisioner_calls = []
@@ -122,7 +128,7 @@ def _call_provisioner(flags):
         config_playbook["provisioner"] = "ansible"
     config_playbook["note"] = "basic configuration of devices and networks"
     config_playbook["commands"] = _create_ansible_commands(
-            BASE_PLAYBOOK, flags)
+            BASE_PLAYBOOK, input_definitions, flags)
 
     provisioner_calls.append(config_playbook)
 
@@ -134,7 +140,7 @@ def _call_provisioner(flags):
         user_playbook["provisioner"] = "ansible"
     user_playbook["note"] = "user configuration of devices"
     user_playbook["commands"] = _create_ansible_commands(
-            USER_PLAYBOOK, flags)
+            USER_PLAYBOOK, input_definitions, flags)
 
     provisioner_calls.append(user_playbook)
 
@@ -164,7 +170,7 @@ def _build_vagrant_definitions(input_definitions, flags):
 
     _add_all_networks(vagrant_definitions, input_definitions, flags)
 
-    vagrant_definitions.extend(_call_provisioner(flags))
+    vagrant_definitions.extend(_call_provisioner(input_definitions, flags))
 
     return vagrant_definitions
 
