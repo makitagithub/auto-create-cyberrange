@@ -31,7 +31,7 @@ def _add_flavors(definitions):
             if "memory" not in host:
                 host["memory"] = FLAVORS[host["flavor"]]["memory"]
             if "cpus" not in host:
-                host["memory"] = FLAVORS[host["flavor"]]["cpus"]
+                host["memory"] = FLAVORS[host["flavor"]]["cores"]
             host.pop("flavor")
 
 
