@@ -59,10 +59,10 @@ def create_border_router(definitions):
     
     _create_mappings_to_border_router(definitions)
 
-    definitions["routers"].append({"name":BORDER_ROUTER_NAME })
-    definitions["networks"].append({"name":BORDER_ROUTER_NETWORK_NAME
+    definitions["routers"].insert(0, {"name":BORDER_ROUTER_NAME })
+    definitions["networks"].insert(0, {"name":BORDER_ROUTER_NETWORK_NAME
                                     ,"cidr":BORDER_ROUTER_NETWORK_IP})
-    definitions["router_mappings"].append({"router":BORDER_ROUTER_NAME
+    definitions["router_mappings"].insert(0, {"router":BORDER_ROUTER_NAME
                                           ,"network":BORDER_ROUTER_NETWORK_NAME
                                           ,"ip":BORDER_ROUTER_IP} )
 
