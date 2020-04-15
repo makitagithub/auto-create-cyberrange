@@ -14,53 +14,15 @@ from modules.input_file_validator import validate_device_definitions
 from modules.preprocessing import preprocess
 
 
-""" Parsing the input arguments. """
 flags = dict()
+input_file_name = parse_input_args(sys.argv, flags)
+device_definitions = open_yaml(input_file_name)
 
-try:
-    input_file_name = parse_input_args(sys.argv, flags)
-except Exception:
-    print("Input arguments could not be parsed.")
-    sys.exit(1)
+validate_device_definitions(device_definitions)
+preprocess(device_definitions, flags)
+prepare_directories(device_definitions)
 
-""" Parsing the definitions file. """
-try:
-    device_definitions = open_yaml(input_file_name)
-except Exception:
-    print("Definitions file could not be parsed.")
-    sys.exit(1)
-
-""" Validating device definitions. """
-try:
-    validate_device_definitions(device_definitions)
-except Exception:
-    print("Device definition validation was not sussessful.")
-    sys.exit(1)
-
-""" Preprocessing the definitions before device creation. """
-try:
-    preprocess(device_definitions, flags)
-except Exception:
-    print("Preprocessing was not successful.")
-    sys.exit(1)
-
-""" Preparing the directory structure. """
-try:
-    prepare_directories(device_definitions)
-except Exception:
-    print("Directory structure was not created.")
-    sys.exit(1)
-
-""" Generating Vagrantfile. """
-try:
-    generate_vagrantfile(device_definitions, flags)
-except Exception:
-    print("Vagrantfile was not created.")
-    sys.exit(1)
-
-""" Generating ansible playbooks. """
-#try:
+generate_vagrantfile(device_definitions, flags)
 generate_playbooks(device_definitions, flags)
-#except Exception:
-#    print("Playbooks could not be created.")
-#    sys.exit(1)
+
+print("Sandbox was successfully created.")

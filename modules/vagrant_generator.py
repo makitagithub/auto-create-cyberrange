@@ -183,14 +183,6 @@ def generate_vagrantfile(input_definitions, flags):
     :param flags: command line flags
     """
 
-    try:
-        vagrant_definitions = _build_vagrant_definitions(input_definitions, flags)
-    except Exception:
-       print("Could not create definitions for Vagrantfile.")
-       raise
+    vagrant_definitions = _build_vagrant_definitions(input_definitions, flags)
 
-    try:
-       generate_file("vagrantfile", "Vagrantfile", defs=vagrant_definitions)
-    except Exception:
-       print("Could not generate Vagrantfile.")
-       raise
+    generate_file("vagrantfile", "Vagrantfile", defs=vagrant_definitions)

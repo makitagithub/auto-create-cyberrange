@@ -20,7 +20,6 @@ def _are_br_parameters_free(definitions):
         if net_mapping["ip"] == BORDER_ROUTER_IP:
             return False
 
-
     for router_mapping in definitions["router_mappings"]:
         if router_mapping["ip"] == BORDER_ROUTER_IP:
             return False
@@ -34,8 +33,7 @@ def _create_mappings_to_border_router(definitions):
     for router in definitions["routers"]:
         num = definitions["routers"].index(router) + 5
         if num > 255:
-            print("Error: Too many routers.")
-            raise IndexError
+            raise IndexError("Too many routers.")
 
         ip = BORDER_ROUTER_IP[:(0-len(str(num)))]
         ip += str(num)
@@ -54,8 +52,7 @@ def create_border_router(definitions):
 
     # TODO this should be later moved to input check
     if not _are_br_parameters_free(definitions):
-        print("Error: A device with the same name as border router already exists.")
-        raise ValueError
+        raise ValueError("A device with the same name as border router already exists.")
     
     _create_mappings_to_border_router(definitions)
 

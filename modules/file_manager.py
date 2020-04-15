@@ -1,23 +1,25 @@
 """ This module handles file imports and creations in general. """
 
 import os
-from jinja2 import Environment, FileSystemLoader
-from shutil import copyfile, rmtree
-from yaml import dump, safe_load
+import shutil
+import sys
+
+import jinja2
+import yaml
 
 OUTPUT_DIRECTORY = "sandbox"
 
 
 def open_yaml(file_name):
     """ Opens and returns a file from the argument. """
+
     try:
-        input_file = open(str(file_name))
-        return safe_load(input_file)
+        with open(str(file_name)) as input_file:
+            return yaml.safe_load(input_file)
+    except yaml.YAMLError:
+        cleanup_and_exit("Could not parse yaml file " + str(file_name) + ".")
     except IOError:
-        print("Error: Cannot open the required file: " + str(file_name))
-        raise
-    finally:
-        input_file.close()
+        cleanup_and_exit("Could not open yaml file " + str(file_name) + ".")
 
 
 def copy_template_file(template, destination):
@@ -26,10 +28,9 @@ def copy_template_file(template, destination):
     """
 
     try:
-        copyfile("templates/" + template, "sandbox/" + destination)
+        shutil.copyfile("templates/" + template, "sandbox/" + destination)
     except IOError:
-        print("Error: cannot write to this location.")
-        raise
+        cleanup_and_exit("Could not copy template file " + str(file_name) + ".")
 
 
 def dump_to_yaml(data, filename):
@@ -39,14 +40,13 @@ def dump_to_yaml(data, filename):
     :param filename: name of the target file
     """
 
+    file_path = OUTPUT_DIRECTORY + "/" + str(filename)
+
     try:
-        stream = open(OUTPUT_DIRECTORY + "/" + filename, 'w')
-        dump(data, stream)
+        with open(file_path, 'w') as stream:
+            yaml.dump(data, stream)
     except IOError:
-        print("Error: cannot write to this location.")
-        raise
-    finally:
-        stream.close()
+        cleanup_and_exit("Could not create yaml file " + file_path + ".")
 
 
 def generate_file(template, filename, **template_args):
@@ -69,16 +69,29 @@ def _write_to_file(filename, output_string):
         new_file = open(OUTPUT_DIRECTORY + "/" + filename, "w")
         new_file.write(output_string)
     except IOError:
-        print("Error: cannot write to this location.")
-        raise
+        cleanup_and_exit("Could not create file " + str(filename) + ".")
 
 
 def _load_template(template_name):
     """ Returns a loaded jinja2 template. """
 
-    template_loader = FileSystemLoader(searchpath="templates")
-    template_env = Environment(loader=template_loader, trim_blocks=True, lstrip_blocks=True)
-    return template_env.get_template(template_name)
+    try:
+        template_loader = jinja2.FileSystemLoader(searchpath="templates")
+        template_env = jinja2.Environment(loader=template_loader, trim_blocks=True, lstrip_blocks=True)
+        return template_env.get_template(template_name)
+    except jinja2.TemplateNotFound:
+        cleanup_and_exit("Could not find template " + str(template_name) + ".")
+
+
+def _copy_directory(source, destination):
+    """ Copies directory recursively form templates directory to the
+    destination.
+    """
+
+    try:
+        shutil.copytree("./templates/" + source, destination)
+    except OSError:
+        cleanup_and_exit("Could not copy directory " + str(source) + ".")
 
 
 def _create_provisioning_directories(directory, device_definitions):
@@ -109,20 +122,32 @@ def _create_provisioning_directories(directory, device_definitions):
     except FileExistsError:
         pass
     except IOError:
-        print("Could not create directories for provisioning.")
-        raise
+        cleanup_and_exit("Could not create directories for provisioning.")
 
 
 def prepare_directories(device_definitions):
     """ Prepares the necessary directory structure. """
 
-    rmtree(OUTPUT_DIRECTORY, True)
+    shutil.rmtree(OUTPUT_DIRECTORY, True)
     
     try:
         os.mkdir(OUTPUT_DIRECTORY)
     except IOError:
-        print("Could not create directory ./" + OUTPUT_DIRECTORY + ".")
-        raise
+        cleanup_and_exit("Could not create directory ./" + OUTPUT_DIRECTORY + ".")
 
     _create_provisioning_directories("base_provisioning", device_definitions)
     _create_provisioning_directories("provisioning", device_definitions)
+
+    _copy_directory("interface", OUTPUT_DIRECTORY + "/base_provisioning/roles/interface")
+    _copy_directory("common", OUTPUT_DIRECTORY + "/base_provisioning/roles/common")
+
+
+def cleanup_and_exit(error):
+    """ A cleanup function that is called in case of an error. """
+
+    # TODO cleanup
+
+    print("Sandbox creation was NOT successful:")
+    print("Error: ", error)
+
+    sys.exit(1)
