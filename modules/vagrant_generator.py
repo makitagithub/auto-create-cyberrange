@@ -21,6 +21,22 @@ def _create_simple_attribute(key, value, attribute_type):
     return attribute
 
 
+def _create_complex_attribute(key, value):
+    """ Creates complex vagrant attributes that are not string, integer or
+    boolean.
+    """
+
+    SEPARATORS = {VAGRANT_MAPPING["other"]["synced_folder"]: ""}
+
+    attribute = dict()
+    attribute["type"] = "other"
+    attribute["command"] = key
+    attribute["separator"] = SEPARATORS[key]
+    attribute["value"] = value
+
+    return attribute
+
+
 def _create_commands(device_attributes, device_type, input_definitions, flags):
     """ This function creates basic vagrant definition commands for a device. """
 
@@ -34,6 +50,8 @@ def _create_commands(device_attributes, device_type, input_definitions, flags):
             commands.append(_create_simple_attribute(VAGRANT_MAPPING["boolean"][attribute], value, "boolean"))
         elif attribute in VAGRANT_MAPPING["integer"]:
             commands.append(_create_simple_attribute(VAGRANT_MAPPING["integer"][attribute], value, "integer"))
+        elif attribute in VAGRANT_MAPPING["other"]:
+            commands.append(_create_complex_attribute(VAGRANT_MAPPING["other"][attribute], value))
         elif attribute in VIRTUALBOX_MAPPING["integer"]:
             vb_commands.append(_create_simple_attribute(VIRTUALBOX_MAPPING["integer"][attribute], value, "integer"))
 
@@ -60,24 +78,31 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
 
     if "verbose_ansible" in flags and flags["verbose_ansible"]:
         verbosity = dict()
-        verbosity["type"] = "boolean"
+        verbosity["type"] = "string"
         verbosity["command"] = "verbose"
-        verbosity["value"] = True
+        verbosity["value"] = "vvvv"
         commands.append(verbosity)
 
     groups = dict()
-    groups["type"] = "dictionary"
-    groups["command"] = "groups"
-    groups["dictionary"] = dict()
+    groups["type"] = "groups"
+    groups["groups"] = dict()
     host_names = []
     for host in input_definitions["hosts"]:
         host_names.append(host["name"])
-    groups["dictionary"]["hosts"] = host_names
+    groups["groups"]["hosts"] = host_names
     router_names = []
     for router in input_definitions["routers"]:
         router_names.append(router["name"])
-    groups["dictionary"]["routers"] = router_names
+    groups["groups"]["routers"] = router_names
     commands.append(groups)
+
+    if "ansible_local" in flags and flags["ansible_local"]:
+        extravars = dict()
+        extravars["type"] = "dictionary"
+        extravars["command"] = "extra_vars"
+        extravars["dictionary"] = dict()
+        extravars["dictionary"]["ansible_python_interpreter"] = "\"/usr/bin/python3\""
+        commands.append(extravars)
 
     return commands
 
