@@ -1,6 +1,4 @@
-""" This module generates a Vagrantfile from input device definitions. """
-
-import jinja2
+"""Contains functions for generating a Vagrantfile from input definitions."""
 
 from modules.file_manager import generate_file, open_yaml
 
@@ -11,8 +9,7 @@ USER_PLAYBOOK = "provisioning/playbook.yml"
 
 
 def _create_simple_attribute(key, value, attribute_type):
-    """ Creates simple vagrant attributes like string, integer or boolean. """
-
+    """Create simple vagrant attributes like string, integer or boolean."""
     attribute = dict()
     attribute["type"] = attribute_type
     attribute["command"] = key
@@ -22,52 +19,57 @@ def _create_simple_attribute(key, value, attribute_type):
 
 
 def _create_complex_attribute(key, value):
-    """ Creates complex vagrant attributes that are not string, integer or
-    boolean.
-    """
-
-    SEPARATORS = {VAGRANT_MAPPING["other"]["synced_folder"]: ""}
+    """Create complex vagrant attributes that are not string, int or bool."""
+    separators = {VAGRANT_MAPPING["other"]["synced_folder"]: ""}
 
     attribute = dict()
     attribute["type"] = "other"
     attribute["command"] = key
-    attribute["separator"] = SEPARATORS[key]
+    attribute["separator"] = separators[key]
     attribute["value"] = value
 
     return attribute
 
 
-def _create_commands(device_attributes, device_type, input_definitions, flags):
-    """ This function creates basic vagrant definition commands for a device. """
-
+def _create_commands(device_attributes):
+    """Create basic vagrant definition commands for a device."""
     commands = []
     vb_commands = []
 
     for attribute, value in device_attributes.items():
         if attribute in VAGRANT_MAPPING["string"]:
-            commands.append(_create_simple_attribute(VAGRANT_MAPPING["string"][attribute], value, "string"))
+            vagrant_attribute = VAGRANT_MAPPING["string"][attribute]
+            commands.append(_create_simple_attribute(vagrant_attribute, value,
+                                                     "string"))
         elif attribute in VAGRANT_MAPPING["boolean"]:
-            commands.append(_create_simple_attribute(VAGRANT_MAPPING["boolean"][attribute], value, "boolean"))
+            vagrant_attribute = VAGRANT_MAPPING["boolean"][attribute]
+            commands.append(_create_simple_attribute(vagrant_attribute, value,
+                                                     "boolean"))
         elif attribute in VAGRANT_MAPPING["integer"]:
-            commands.append(_create_simple_attribute(VAGRANT_MAPPING["integer"][attribute], value, "integer"))
+            vagrant_attribute = VAGRANT_MAPPING["integer"][attribute]
+            commands.append(_create_simple_attribute(vagrant_attribute, value,
+                                                     "integer"))
         elif attribute in VAGRANT_MAPPING["other"]:
-            commands.append(_create_complex_attribute(VAGRANT_MAPPING["other"][attribute], value))
+            vagrant_attribute = VAGRANT_MAPPING["other"][attribute]
+            commands.append(_create_complex_attribute(vagrant_attribute,
+                                                      value))
         elif attribute in VIRTUALBOX_MAPPING["integer"]:
-            vb_commands.append(_create_simple_attribute(VIRTUALBOX_MAPPING["integer"][attribute], value, "integer"))
+            vagrant_attribute = VIRTUALBOX_MAPPING["integer"][attribute]
+            vb_commands.append(_create_simple_attribute(vagrant_attribute,
+                                                        value, "integer"))
 
     if vb_commands:
-        vb = dict()
-        vb["type"] = "provider"
-        vb["name"] = "virtualbox"
-        vb["commands"] = vb_commands
-        commands.append(vb)
+        virtual_box_command = dict()
+        virtual_box_command["type"] = "provider"
+        virtual_box_command["name"] = "virtualbox"
+        virtual_box_command["commands"] = vb_commands
+        commands.append(virtual_box_command)
 
     return commands
 
 
 def _create_ansible_commands(playbook_location, input_definitions, flags):
-    """ Creates commands for running a playbook from the Vagrantfile. """
-
+    """Create commands for running a playbook from the Vagrantfile."""
     commands = []
 
     playbook = dict()
@@ -97,28 +99,34 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
     commands.append(groups)
 
     if "ansible_local" in flags and flags["ansible_local"]:
+        install_mode = dict()
+        install_mode["type"] = "string"
+        install_mode["command"] = "install_mode"
+        install_mode["value"] = "pip"
+        commands.append(install_mode)
+
         extravars = dict()
         extravars["type"] = "dictionary"
         extravars["command"] = "extra_vars"
         extravars["dictionary"] = dict()
-        extravars["dictionary"]["ansible_python_interpreter"] = "\"/usr/bin/python3\""
+        extravars["dictionary"]["ansible_python_interpreter"] = \
+            "\"/usr/bin/python3\""
         commands.append(extravars)
 
     return commands
 
 
 def _find_netmask(network_name, networks):
-    """ Returns the netmask of a network address from network name. """
-
+    """Return the netmask of a network address from network name."""
     for network in networks:
         if network['name'] == network_name:
             address, netmask = network['cidr'].split('/')
             return netmask
+    return None
 
 
 def _add_networks_to_device(definition, mappings, input_definitions):
-    """ Adds networks to the vagrant definition of one device. """
-
+    """Add networks to the vagrant definition of one device."""
     for mapping in mappings:
         if mapping[definition["type"]] == definition["name"]:
             network = dict()
@@ -126,23 +134,26 @@ def _add_networks_to_device(definition, mappings, input_definitions):
             network["network_type"] = "private_network"
             network["name"] = mapping["network"]
             network["ip"] = mapping["ip"]
-            network["netmask"] = _find_netmask(mapping["network"], input_definitions["networks"])
+            network["netmask"] = _find_netmask(mapping["network"],
+                                               input_definitions["networks"])
             definition["commands"].append(network)
 
 
 def _add_all_networks(vagrant_definitions, input_definitions, flags):
-    """ Adds all networks to vagrant definitions. """
-
+    """Add all networks to vagrant definitions."""
     for definition in vagrant_definitions:
         if definition["type"] == "host":
-            _add_networks_to_device(definition, input_definitions["net_mappings"], input_definitions)
+            _add_networks_to_device(definition,
+                                    input_definitions["net_mappings"],
+                                    input_definitions)
         elif definition["type"] == "router":
-            _add_networks_to_device(definition, input_definitions["router_mappings"], input_definitions)
+            _add_networks_to_device(definition,
+                                    input_definitions["router_mappings"],
+                                    input_definitions)
 
 
 def _call_provisioner(input_definitions, flags):
-    """ Creates entry to vagrant definitions for calling the provisioner. """
-
+    """Create entry to vagrant definitions for calling the provisioner."""
     provisioner_calls = []
 
     config_playbook = dict()
@@ -152,8 +163,9 @@ def _call_provisioner(input_definitions, flags):
     else:
         config_playbook["provisioner"] = "ansible"
     config_playbook["note"] = "basic configuration of devices and networks"
-    config_playbook["commands"] = _create_ansible_commands(
-            BASE_PLAYBOOK, input_definitions, flags)
+    config_playbook["commands"] = _create_ansible_commands(BASE_PLAYBOOK,
+                                                           input_definitions,
+                                                           flags)
 
     provisioner_calls.append(config_playbook)
 
@@ -164,8 +176,9 @@ def _call_provisioner(input_definitions, flags):
     else:
         user_playbook["provisioner"] = "ansible"
     user_playbook["note"] = "user configuration of devices"
-    user_playbook["commands"] = _create_ansible_commands(
-            USER_PLAYBOOK, input_definitions, flags)
+    user_playbook["commands"] = _create_ansible_commands(USER_PLAYBOOK,
+                                                         input_definitions,
+                                                         flags)
 
     provisioner_calls.append(user_playbook)
 
@@ -173,24 +186,24 @@ def _call_provisioner(input_definitions, flags):
 
 
 def _build_vagrant_definitions(input_definitions, flags):
-    """
-    Creates a definition structure that is more suitable for Vagrantfile
-    generation than input definitions.
-    """
+    """Create a definition structure for vagrant.
 
+    This structure is more suitable for Vagrantfile generation than input
+    definitions.
+    """
     vagrant_definitions = []
     for router in input_definitions["routers"]:
         device = dict()
         device["type"] = "router"
         device["name"] = router["name"]
-        device["commands"] = _create_commands(router, "router", input_definitions, flags)
+        device["commands"] = _create_commands(router)
         vagrant_definitions.append(device)
 
     for host in input_definitions["hosts"]:
         device = dict()
         device["type"] = "host"
         device["name"] = host["name"]
-        device["commands"] = _create_commands(host, "host", input_definitions, flags)
+        device["commands"] = _create_commands(host)
         vagrant_definitions.append(device)
 
     _add_all_networks(vagrant_definitions, input_definitions, flags)
@@ -201,13 +214,11 @@ def _build_vagrant_definitions(input_definitions, flags):
 
 
 def generate_vagrantfile(input_definitions, flags):
-    """
-    This method is responsible for Vagrantfile generation.
+    """Generate the Vagrantfile.
 
     :param input_definitions: device definitions from the input file
     :param flags: command line flags
     """
-
     vagrant_definitions = _build_vagrant_definitions(input_definitions, flags)
 
     generate_file("vagrantfile", "Vagrantfile", defs=vagrant_definitions)
