@@ -1,3 +1,4 @@
+{% if hosts %}
 hosts:
   {% for host in hosts %}
   - name: {{ host.name }}
@@ -8,7 +9,11 @@ hosts:
     {{ network }}: {{ ip }}
   {% endfor %}
   {% endfor %}
+{% else %}
+hosts: []
+{% endif %}
 
+{% if routers %}
 routers:
   {% for router in routers %}
   - name: {{ router.name }}
@@ -19,3 +24,6 @@ routers:
     {{ network }}: {{ ip }}
   {% endfor %}
   {% endfor %}
+{% else %}
+routers: []
+{% endif %}

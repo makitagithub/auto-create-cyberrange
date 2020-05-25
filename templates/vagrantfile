@@ -49,10 +49,32 @@
   {{ namespace }}.{{ item.command }} = {{ item.value }}
 {% endmacro -%}
 
+{# Macro for general items (not str int or bool) #}
+{% macro other(item, namespace) %}
+{% if item.separator %}
+  {{ namespace }}.{{ item.command }} {{ item.separator }} {{ item.value }}
+{% else %}
+  {{ namespace }}.{{ item.command }} {{ item.value }}
+{% endif %}
+{% endmacro -%}
+
 {# Macro for dictionaries #}
 {% macro dictionary(item, namespace) %}
   {{ namespace }}.{{ item.command }} = {
   {% for key, value in item.dictionary.items() %}
+    {% if loop.last %}
+      {{ key }}: {{ value }}
+    {% else %}
+      {{ key }}: {{ value }},
+    {% endif %}
+  {% endfor %}
+    }
+{% endmacro -%}
+
+{# Macro for dictionaries #}
+{% macro groups(item, namespace) %}
+  {{ namespace }}.groups = {
+  {% for key, value in item.groups.items() %}
     {% if loop.last %}
       "{{ key }}" => {{ value }}
     {% else %}
@@ -96,12 +118,16 @@ end
   {{ boolean(item, namespace) -}}
 {% elif item.type == "integer" %}
   {{ integer(item, namespace) -}}
+{% elif item.type == "other" %}
+  {{ other(item, namespace) -}}
 {% elif item.type == "provider" %}
   {{ provider(item, namespace) -}}
 {% elif item.type == "network" %}
   {{ network(item, namespace) -}}
 {% elif item.type == "dictionary" %}
   {{ dictionary(item, namespace) -}}
+{% elif item.type == "groups" %}
+  {{ groups(item, namespace) -}}
 {% endif %}
 {% endfor %}
   end

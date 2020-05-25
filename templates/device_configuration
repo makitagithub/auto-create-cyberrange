@@ -12,39 +12,21 @@
 
 - name: Configuring hosts
   hosts: hosts
+  become: yes
   roles:
     - hosts
 
-#- name: Configuring routers
-#  hosts: routers
-#  roles:
-#    - routers
+- name: Configuring routers
+  hosts: routers
+  become: yes
+  roles:
+    - routers
 
 - name: Configuring devices separately
   hosts: all
+  become: yes
   tasks:
-    
   - name: include role
     include_role:
       name: "{{ inventory_hostname }}"
 ...
-
-
-
-
-#- name: Configuring host {{ host.host_name }}
-#  hosts: hosts
-#  become: yes
-#  tasks:
-#{% for network_ip in network_ips %}
-#  - name: Add gateway for {{ network_ip }}
-#    command: route add -net {{ network_ip }} gw {{ host.router_ip }} {{ host.interface }}
-#{% endfor %}
-
-
-#- name: Configuring border router
-#  hosts: {{ border_router_name }}
-#  become: yes
-#  roles:
-#    - br
-#...

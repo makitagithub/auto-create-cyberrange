@@ -1,5 +1,28 @@
-- name: Add aliases
-  loop: "{{ aliases|dict2items }}"
+- name: Adding aliases
+  loop: "{{ aliases | dict2items }}"
   lineinfile:
     path: /etc/hosts
-    line: {{ item.value }} "{{ item.key }}"
+    line: "{{ item.value }} {{ item.key }}"
+
+- name: Configuring nondefault routes
+  include_role:
+    name: interface
+  vars:
+    interface_ip: "{{ route.interface_ip }}"
+    interface_routes:
+      - gateway: "{{ route.gateway }}"
+        network: "{{ route.network }}"
+        mask: "{{ route.netmask }}"
+  loop: "{{ routings.simple }}"
+  loop_control:
+    loop_var: route
+
+- name: Configuring default routes
+  include_role:
+    name: interface
+  vars:
+    interface_ip: "{{ route.interface_ip }}"
+    interface_default_gateway: "{{ route.gateway }}"
+  loop: "{{ routings.default }}"
+  loop_control:
+    loop_var: route

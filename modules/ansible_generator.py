@@ -12,6 +12,10 @@ def _create_config_playbooks(input_definitions):
         copy_template_file("hosts",
                            "base_provisioning/roles/hosts/tasks/main.yml")
 
+    if input_definitions["routers"]:
+        copy_template_file("routers",
+                           "base_provisioning/roles/routers/tasks/main.yml")
+
     for device in input_definitions["hosts"] + input_definitions["routers"]:
         copy_template_file("separate_devices", "base_provisioning/roles/" +
                            device["name"] + "/tasks/main.yml")
