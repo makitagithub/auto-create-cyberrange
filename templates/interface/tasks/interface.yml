@@ -9,10 +9,10 @@
           auto {{ interface_device }}
           iface {{ interface_device }} inet static
               address {{ interface_ip }}
-              netmask {{ interface_routes[0]['mask'] }}
+              netmask 24
               mtu {{ interface_mtu }}
               {% if interface_default_gateway -%}
-              gateway {{ interface_default_gateway }}
+              up ip route del 0/0
               up route add default gw {{ interface_default_gateway }}
               {% endif -%}
               {% if interface_routes -%}
