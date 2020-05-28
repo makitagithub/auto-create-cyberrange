@@ -51,7 +51,7 @@ def _create_user_playbooks(input_definitions):
 def generate_playbooks(input_definitions, flags):
     """Generate ansible vars and playbooks.
 
-    :param definitions: device definitions structure
+    :param input_definitions: device definitions structure
     :param flags: command line input flags
     """
     generate_ansible_vars(input_definitions, flags)
