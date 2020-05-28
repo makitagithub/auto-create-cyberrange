@@ -2,9 +2,10 @@
 
 from modules.file_manager import generate_file, copy_template_file
 from modules.ansible_vars_generator import generate_ansible_vars
+from conf.border_router import BORDER_ROUTER_NAME
 
 
-def _create_config_playbooks(input_definitions):
+def _create_config_playbooks(input_definitions, flags):
     """Generate playbooks and roles for basic device configuration."""
     copy_template_file("device_configuration",
                        "base_provisioning/device_configuration.yml")
@@ -17,8 +18,13 @@ def _create_config_playbooks(input_definitions):
                            "base_provisioning/roles/routers/tasks/main.yml")
 
     for device in input_definitions["hosts"] + input_definitions["routers"]:
-        copy_template_file("separate_devices", "base_provisioning/roles/" +
-                           device["name"] + "/tasks/main.yml")
+        if "border_router" in flags and flags["border_router"] and\
+           device["name"] == BORDER_ROUTER_NAME:
+            copy_template_file("br", "base_provisioning/roles/" +
+                               device["name"] + "/tasks/main.yml")
+        else:
+            copy_template_file("separate_devices", "base_provisioning/roles/" +
+                               device["name"] + "/tasks/main.yml")
 
 
 def _create_user_playbooks(input_definitions):
@@ -49,5 +55,5 @@ def generate_playbooks(input_definitions, flags):
     :param flags: command line input flags
     """
     generate_ansible_vars(input_definitions, flags)
-    _create_config_playbooks(input_definitions)
+    _create_config_playbooks(input_definitions, flags)
     _create_user_playbooks(input_definitions)
