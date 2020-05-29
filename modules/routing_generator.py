@@ -62,23 +62,27 @@ def _find_router_ip_in_br_network(other_network, input_definitions):
            router_mapping["network"] == BORDER_ROUTER_NETWORK_NAME:
             return router_mapping["ip"]
 
+
 def _create_host_routing(target_host_name, input_definitions, flags):
-    """Generate routings for the given host."""
-    simple_routings = []
-    default_routings = []
+    """Generate routes for the given host."""
+    simple_routes = []
+    default_route = None
+    mapping = None
 
     for host_mapping in input_definitions["net_mappings"]:
         if host_mapping["host"] == target_host_name:
             mapping = host_mapping
             break
 
+    if not mapping:
+        raise ValueError("Host was not found: " + target_host_name)
+
     if flags["border_router"]:
-        routing_to_router = dict()
-        routing_to_router["interface_ip"] = mapping["ip"]
+        default_route = dict()
+        default_route["interface_ip"] = mapping["ip"]
         gateway = _find_router_in_network(mapping["network"],
                                           input_definitions)
-        routing_to_router["gateway"] = gateway
-        default_routings.append(routing_to_router)
+        default_route["gateway"] = gateway
     else:
         for network in input_definitions["networks"]:
             if network["name"] == mapping["network"]:
@@ -91,32 +95,31 @@ def _create_host_routing(target_host_name, input_definitions, flags):
             net_ip, mask = network["cidr"].split('/')
             routing_to_other_hosts["network"] = net_ip
             routing_to_other_hosts["netmask"] = mask
-            simple_routings.append(routing_to_other_hosts)
+            simple_routes.append(routing_to_other_hosts)
 
-    return simple_routings, default_routings
+    return simple_routes, default_route
 
 
 def _create_router_routing(router_name, input_definitions, flags):
-    """Generate routings for the given router."""
-    simple_routings = []
-    default_routings = []
+    """Generate routes for the given router."""
+    simple_routes = []
+    default_route = None
 
     if flags["border_router"]:
-        routing_to_br = dict()
+        default_route = dict()
         interface_ip = _find_iface_ip_in_network(router_name,
                                                  BORDER_ROUTER_NETWORK_NAME,
                                                  input_definitions)
-        routing_to_br["interface_ip"] = interface_ip
-        routing_to_br["gateway"] = BORDER_ROUTER_IP
-        default_routings.append(routing_to_br)
+        default_route["interface_ip"] = interface_ip
+        default_route["gateway"] = BORDER_ROUTER_IP
 
-    return simple_routings, default_routings
+    return simple_routes, default_route
 
 
-def _create_border_router_routing(input_definitions, flags):
-    """Generate routings for the border router."""
-    simple_routings = []
-    default_routings = []
+def _create_border_router_routing(input_definitions):
+    """Generate routes for the border router."""
+    simple_routes = []
+    default_route = None
 
     for network in input_definitions["networks"]:
         if network["name"] == BORDER_ROUTER_NETWORK_NAME:
@@ -129,13 +132,13 @@ def _create_border_router_routing(input_definitions, flags):
         gateway = _find_router_ip_in_br_network(network["name"],
                                                 input_definitions)
         routing_to_hosts["gateway"] = gateway
-        simple_routings.append(routing_to_hosts)
+        simple_routes.append(routing_to_hosts)
 
-    return simple_routings, default_routings
+    return simple_routes, default_route
 
 
 def add_routings(device_name, device_type, input_definitions, flags):
-    """Generate simple and default routings for the given device.
+    """Generate simple and default routes for the given device.
 
     Returns a list of dicts with the syntax:
     - gateway: ip of the target device
@@ -146,22 +149,22 @@ def add_routings(device_name, device_type, input_definitions, flags):
     if not input_definitions["routers"]:
         return dict()
 
-    routings = {"simple": [], "default": []}
+    routes = {"simple": [], "default": dict()}
 
     if device_type == "host":
         simple, default = _create_host_routing(device_name, input_definitions,
                                                flags)
-        routings["simple"].extend(simple)
-        routings["default"].extend(default)
     elif device_type == "router":
         if device_name != BORDER_ROUTER_NAME:
-            simple, default =  _create_router_routing(device_name,
-                                                      input_definitions, flags)
-            routings["simple"].extend(simple)
-            routings["default"].extend(default)
+            simple, default = _create_router_routing(device_name,
+                                                     input_definitions, flags)
         else:
-            simple, default = _create_border_router_routing(input_definitions,
-                                                        flags)
-            routings["simple"].extend(simple)
-            routings["default"].extend(default)
-    return routings
+            simple, default = _create_border_router_routing(input_definitions)
+    else:
+        raise KeyError("Unsupported device type: " + str(device_type))
+
+    routes["simple"] = simple
+    if default:
+        routes["default"] = default
+
+    return routes

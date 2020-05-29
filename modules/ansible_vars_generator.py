@@ -69,8 +69,8 @@ def _generate_device_vars(input_definitions, flags):
         variables = dict()
         variables["aliases"] = _add_aliases(target_host["name"],
                                             input_definitions, flags)
-        variables["routings"] = add_routings(target_host["name"], "host",
-                                             input_definitions, flags)
+        variables["routes"] = add_routings(target_host["name"], "host",
+                                           input_definitions, flags)
         dump_to_yaml(variables, "base_provisioning/roles/" +
                      target_host["name"] + "/vars/main.yml")
 
@@ -78,8 +78,8 @@ def _generate_device_vars(input_definitions, flags):
         variables = dict()
         variables["aliases"] = _add_aliases(target_router["name"],
                                             input_definitions, flags)
-        variables["routings"] = add_routings(target_router["name"], "router",
-                                             input_definitions, flags)
+        variables["routes"] = add_routings(target_router["name"], "router",
+                                           input_definitions, flags)
         dump_to_yaml(variables, "base_provisioning/roles/" +
                      target_router["name"] + "/vars/main.yml")
 
@@ -109,14 +109,6 @@ def _find_ip(device_name, input_definitions):
     return networks
 
 
-def _find_default_route(device_name, input_definitions, flags):
-    """Return the ip to which the device should be routed defaultly.
-
-    None is returned if the change of default routing is not required.
-    """
-    return None
-
-
 def _generate_config_vars(input_definitions, flags):
     """Generate vars file for all devices."""
 # TODO check what vars needs to be in config
@@ -126,8 +118,6 @@ def _generate_config_vars(input_definitions, flags):
         new_host = dict()
         new_host["name"] = host["name"]
         new_host["networks"] = _find_ip(host["name"], input_definitions)
-        new_host["route_to"] = _find_default_route(host["name"],
-                                                   input_definitions, flags)
         hosts.append(new_host)
 
     routers = []
@@ -135,8 +125,6 @@ def _generate_config_vars(input_definitions, flags):
         new_router = dict()
         new_router["name"] = router["name"]
         new_router["networks"] = _find_ip(router["name"], input_definitions)
-        new_router["route_to"] = _find_default_route(router["name"],
-                                                     input_definitions, flags)
         routers.append(new_router)
 
     generate_file("config", "base_provisioning/config.yml", hosts=hosts,

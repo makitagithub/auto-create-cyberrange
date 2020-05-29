@@ -16,19 +16,17 @@
       - gateway: "{{ route.gateway }}"
         network: "{{ route.network }}"
         mask: "{{ route.netmask }}"
-  loop: "{{ routings.simple }}"
+  loop: "{{ routes.simple }}"
   loop_control:
     loop_var: route
 
-- name: Set up default route
+- name: Configuring default routes
   include_role:
     name: interface
   vars:
-    interface_ip: "{{ route.interface_ip }}"
-    interface_default_gateway: "{{ route.gateway }}"
-  loop: "{{ routings.default }}"
-  loop_control:
-    loop_var: route
+    interface_ip: "{{ routes.default.interface_ip }}"
+    interface_default_gateway: "{{ routes.default.gateway }}"
+  when: routes.default
 
 - name: Set up postrouting
   iptables:
