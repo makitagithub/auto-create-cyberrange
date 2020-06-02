@@ -2,7 +2,7 @@
 
 from conf.border_router import BORDER_ROUTER_NETWORK_NAME
 from modules.file_manager import generate_file, dump_to_yaml
-from modules.routing_generator import add_routings
+from modules.routing_generator import add_routes
 
 
 def _find_networks_of_device(name, input_definitions):
@@ -69,8 +69,8 @@ def _generate_device_vars(input_definitions, flags):
         variables = dict()
         variables["aliases"] = _add_aliases(target_host["name"],
                                             input_definitions, flags)
-        variables["routes"] = add_routings(target_host["name"], "host",
-                                           input_definitions, flags)
+        variables["routes"] = add_routes(target_host["name"], "host",
+                                         input_definitions, flags)
         dump_to_yaml(variables, "base_provisioning/roles/" +
                      target_host["name"] + "/vars/main.yml")
 
@@ -78,8 +78,8 @@ def _generate_device_vars(input_definitions, flags):
         variables = dict()
         variables["aliases"] = _add_aliases(target_router["name"],
                                             input_definitions, flags)
-        variables["routes"] = add_routings(target_router["name"], "router",
-                                           input_definitions, flags)
+        variables["routes"] = add_routes(target_router["name"], "router",
+                                         input_definitions, flags)
         dump_to_yaml(variables, "base_provisioning/roles/" +
                      target_router["name"] + "/vars/main.yml")
 

@@ -1,32 +1,20 @@
 ---
-# Configuration of the border router
-
 - name: Adding aliases
   loop: "{{ aliases | dict2items }}"
   lineinfile:
     path: /etc/hosts
     line: "{{ item.value }} {{ item.key }}"
 
-- name: Set up nondefault routes
+- name: Configuring routes
   include_role:
     name: interface
   vars:
-    interface_ip: "{{ route.interface_ip }}"
-    interface_routes:
-      - gateway: "{{ route.gateway }}"
-        network: "{{ route.network }}"
-        mask: "{{ route.netmask }}"
-  loop: "{{ routes.simple }}"
+    interface_ip: "{{ interface.interface_ip }}"
+    interface_default_gateway: "{{ interface.interface_default_gateway }}"
+    interface_routes: "{{ interface.interface_routes }}"
+  loop: "{{ routes }}"
   loop_control:
-    loop_var: route
-
-- name: Configuring default routes
-  include_role:
-    name: interface
-  vars:
-    interface_ip: "{{ routes.default.interface_ip }}"
-    interface_default_gateway: "{{ routes.default.gateway }}"
-  when: routes.default
+    loop_var: interface
 
 - name: Set up postrouting
   iptables:
