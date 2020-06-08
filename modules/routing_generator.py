@@ -92,9 +92,23 @@ def _add_default_route(default_gateway, target_interface_ip,
     target_routes_list.append(new_interface)
 
 
+def _configure_auto_on_ansible_interface(target_routes_list,
+                                         is_border_router=False):
+    """Call interfaces role on the main interface to set auto."""
+    new_interface = dict()
+    new_interface["interface_ip"] = "{{ ansible_default_ipv4.address  |" \
+                                    "default(ansible_all_ipv4_addresses[0]) }}"
+    if is_border_router:
+        new_interface["interface_default_gateway"] =\
+            "{{ ansible_default_ipv4.gateway }}"
+    target_routes_list.insert(0, new_interface)
+
+
 def _create_host_routing(target_host_name, input_definitions, flags):
     """Generate list of routes for the given host."""
     routes = []
+    if "border_router" in flags and flags["border_router"]:
+        _configure_auto_on_ansible_interface(routes)
     mapping = None
 
     for host_mapping in input_definitions["net_mappings"]:
@@ -127,6 +141,8 @@ def _create_host_routing(target_host_name, input_definitions, flags):
 def _create_router_routing(router_name, input_definitions, flags):
     """Generate list of routes for the given router."""
     routes = []
+    if "border_router" in flags and flags["border_router"]:
+        _configure_auto_on_ansible_interface(routes)
 
     if flags["border_router"]:
         interface_ip = _find_iface_ip_in_network(router_name,
@@ -140,6 +156,7 @@ def _create_router_routing(router_name, input_definitions, flags):
 def _create_border_router_routing(input_definitions):
     """Generate routes for the border router."""
     routes = []
+    _configure_auto_on_ansible_interface(routes, True)
 
     for network in input_definitions["networks"]:
         if network["name"] == BORDER_ROUTER_NETWORK_NAME:

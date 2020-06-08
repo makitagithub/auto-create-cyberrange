@@ -12,7 +12,7 @@
               netmask 24
               mtu {{ interface_mtu }}
               {% if interface_default_gateway -%}
-              up ip route del 0/0
+              gateway {{ interface_default_gateway }}
               up route add default gw {{ interface_default_gateway }}
               {% endif -%}
               {% if interface_routes -%}
