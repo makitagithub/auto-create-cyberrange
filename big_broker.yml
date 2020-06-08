@@ -14,7 +14,7 @@ hosts:
     memory: 2048
 
   - name: attacker
-    base_box: kalilinux/rolling-light
+    base_box: mu/kali-2019.4
     memory: 2048
 
   - name: client
@@ -31,7 +31,7 @@ networks:
     cidr: 172.18.1.0/24
 
   - name: internet
-    cidr: 10.1.0.0/16
+    cidr: 10.1.0.0/24
 
 net_mappings:
   - host: web
@@ -48,11 +48,11 @@ net_mappings:
 
   - host: attacker
     network: internet
-    ip: 10.1.135.83
+    ip: 10.1.0.83
 
   - host: client
     network: internet
-    ip: 10.1.17.4
+    ip: 10.1.0.4
 
 router_mappings:
   - router: big-broker-router
