@@ -82,7 +82,7 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
         verbosity = dict()
         verbosity["type"] = "string"
         verbosity["command"] = "verbose"
-        verbosity["value"] = "vvvv"
+        verbosity["value"] = "vv"
         commands.append(verbosity)
 
     groups = dict()

@@ -19,7 +19,7 @@ def parse_input_args():
                         help="uses ansible_local for provisioning instead"
                         "of ansible", action="store_true")
     parser.add_argument("--verbose_ansible",
-                        help="sets verbose output for ansible (-vvvv)",
+                        help="sets verbose output for ansible (-vv)",
                         action="store_true")
     parser.add_argument("--border_router",
                         help="creates a border router with connection to"
