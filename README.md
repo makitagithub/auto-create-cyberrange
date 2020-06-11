@@ -27,13 +27,13 @@ Cyber Sandbox Creator is a tool, which can generate portable input files for bui
 
 ### Linux (Ubuntu/Debian)
 
-1. After the installation simply run the command `$ python3 create.py sandbox.yml` to generate files.
+1. After the installation simply run the command `$ python3 create.py topology.yml` to generate files.
 2. Navigate to the newly created directory `sandbox` and run `$ vagrant up` to build the virtual environment.
 3. The built environment can be deleted using the command `$ vagrant destroy -f`.
 
 ### Windows 10
 
-1. Generate files using the command `python create.py --ansible_local sandbox.yml`.
+1. Generate files using the command `python create.py --ansible_local topology.yml`.
 2. Navigate to the newly created folder `sandbox` and run the command `vagrant up` to build the virtual environment.
 3. The built environment can be deleted using the command `vagrant destroy -f`.
 
