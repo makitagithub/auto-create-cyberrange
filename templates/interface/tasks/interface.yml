@@ -9,7 +9,7 @@
           auto {{ interface_device }}
           iface {{ interface_device }} inet static
               address {{ interface_ip }}
-              netmask 24
+              netmask {{ interface_netmask }}
               mtu {{ interface_mtu }}
               {% if interface_default_gateway -%}
               gateway {{ interface_default_gateway }}
