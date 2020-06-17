@@ -19,8 +19,11 @@
 - name: Configuring routers
   hosts: routers
   become: yes
-  roles:
-    - routers
+  tasks:
+  - name: include role
+    include_role:
+      name: routers
+    when: config.routers
 
 - name: Configuring devices separately
   hosts: all
