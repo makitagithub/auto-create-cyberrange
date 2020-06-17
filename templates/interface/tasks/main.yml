@@ -1,0 +1,11 @@
+
+- name: check existence of single interface identifier
+  fail:
+      msg: there must be set exactly one of [interface_ip|interface_mac|interface_name] variables, got {{ interface_identifiers }}
+  when: interface_condition_single_interface_identifier
+
+- include: clean.yml
+  when: interface_clean is defined and interface_clean
+
+- include: interface.yml
+

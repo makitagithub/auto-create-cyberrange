@@ -1,32 +1,26 @@
 #!/usr/bin/python3
-""" A script that generates a Vagrantfile from yaml. """
+"""Generates Vagrantfile from YAML definition.
 
-import sys
-import jinja2
+Generate a Vagrantfile and ansible files from a YAML definition of virtual
+machines and network topology. See the documentation for details.
+"""
 
-from modules.file_generator import generate_vagrantfile, generate_ansible_files
-from modules.device_creator import open_file
-from modules.routing import create_border_router
+from modules.ansible_generator import generate_playbooks
+from modules.vagrant_generator import generate_vagrantfile
+from modules.file_manager import open_yaml, prepare_directories
+from modules.input_argument_parser import parse_input_args
+from modules.input_file_validator import validate_device_definitions
+from modules.preprocessing import preprocess
 
-if len(sys.argv) == 3:
-    if str(sys.argv[1]) == "-l":
-        ansible_local = True
-        input_file_name = str(sys.argv[2])
-    elif str(sys.argv[2]) == "-l":
-        ansible_local = True
-        input_file_name = str(sys.argv[1])
-    else:
-        print("Error: Expecting a yml file and optionally a flag -l.")
-        sys.exit()
-elif len(sys.argv) == 2:
-    ansible_local = False
-    input_file_name = str(sys.argv[1])
-else:
-    print("Error: Expecting a yml file and optionally a flag -l.")
-    sys.exit()
 
-device_definitions = open_file(input_file_name)
-create_border_router(device_definitions)
+INPUT_FILE_NAME, FLAGS = parse_input_args()
+device_definitions = open_yaml(INPUT_FILE_NAME)
 
-generate_vagrantfile(device_definitions, ansible_local)
-generate_ansible_files(device_definitions)
+validate_device_definitions(device_definitions)
+preprocess(device_definitions, FLAGS)
+prepare_directories(device_definitions)
+
+generate_vagrantfile(device_definitions, FLAGS)
+generate_playbooks(device_definitions, FLAGS)
+
+print("Sandbox was successfully created.")

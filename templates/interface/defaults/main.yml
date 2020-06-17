@@ -1,0 +1,40 @@
+
+interface_default_file: /etc/network/interfaces
+interface_directory: '{{ interface_default_file }}.d'
+interface_file_name:
+interface_file: '
+    {%- if interface_file_name is defined and interface_file_name -%}
+        {{ interface_directory }}/{{ interface_file_name }}
+    {%- else -%}
+        {{ interface_default_file }}
+    {%- endif %}'
+
+interface_clean: True
+interface_mtu: 1442
+
+interface_ip:
+interface_mac:
+interface_name:
+interface_default_gateway:
+interface_routes: []
+# - gateway:
+#   network:
+#   mask:
+
+interface_device: '
+    {%- import "roles/common/templates/network.j2" as network with context -%}
+    {%- if interface_ip is defined and interface_ip -%}
+        {{ network.ip_to_interface(interface_ip) | default("") }}
+    {%- endif -%}
+    {%- if interface_mac is defined and interface_mac -%}
+        {{ network.mac_to_interface(interface_mac) | default("") }}
+    {%- endif -%}
+    {%- if interface_name is defined and interface_name -%}
+        {{ interface_name }}
+    {%- endif -%}'
+interface_identifiers:
+    interface_ip: '{{ interface_ip }}'
+    interface_mac: '{{ interface_mac }}'
+    interface_name: '{{ interface_name }}'
+interface_condition_single_interface_identifier: '{{ interface_identifiers | dict2items | map(attribute="value") | select("string") | select("ne", "") | list | length != 1 }}'
+

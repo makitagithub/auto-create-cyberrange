@@ -1,18 +1,16 @@
-name: small-sandbox
+# Topology with one router connecting 2 separate networks, each with 1 host
+name: 2-networks
 hosts:
   - name: server
-    base_box: ubuntu/xenial64
-    flavor: csirtmu.tiny1x4
-    cpus: 2
+    base_box: generic/debian10
+    memory: 512
 
   - name: home
-    base_box: ubuntu/xenial64
-    boot_timeout: 1000
-    box_check_update: false
+    base_box: generic/debian10
+    memory: 512
 
 routers:
   - name: router
-    cidr: 100.100.100.0/29
 
 networks:
   - name: server-switch

@@ -1,0 +1,23 @@
+
+# 1 network with a host and a router
+name: 1-router-1-host
+hosts:
+  - name: debian10
+    base_box: generic/debian10
+    memory: 512
+
+routers:
+  - name: router
+
+networks:
+  - name: network
+
+net_mappings:
+    - host: debian10
+      network: network
+      ip: 10.10.30.5
+
+router_mappings:
+    - router: router
+      network: network
+      ip: 10.10.30.1

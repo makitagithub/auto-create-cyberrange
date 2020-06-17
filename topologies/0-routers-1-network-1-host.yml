@@ -1,0 +1,16 @@
+# A simple topology with 1 debian 10 host in a network
+name: 0-routers-1-networks-1-hosts
+hosts:
+  - name: debian10
+    base_box: generic/debian10
+    flavor: csirtmu.tiny1x4
+    cpus: 2
+
+networks:
+  - name: network
+    cidr: 10.10.30.0/24
+
+net_mappings:
+    - host: debian10
+      network: network
+      ip: 10.10.30.5

@@ -1,6 +1,6 @@
-# Sandbox Creator
+# Cyber Sandbox Creator
 
-Sandbox creator is a tool, which can generate portable input files for building lightweight virtual environments using Vagrant and Ansible from a simple YAML definition of topology. The combination of these three tools makes possible to build virtual machines connected with virtual networks even on a desktop computer.
+Cyber Sandbox Creator is a tool, which can generate portable input files for building lightweight virtual environments using Vagrant and Ansible from a simple YAML definition of topology. The combination of these three tools makes possible to build virtual machines connected with virtual networks even on a desktop computer.
 
 ## Installation
 
@@ -27,15 +27,19 @@ Sandbox creator is a tool, which can generate portable input files for building 
 
 ### Linux (Ubuntu/Debian)
 
-After the installation simply run the command `$ python3 create.py sandbox.yml` to generate the files.
+1. After the installation simply run the command `$ python3 create.py topology.yml` to generate files.
+2. Navigate to the newly created directory `sandbox` and run `$ vagrant up` to build the virtual environment.
+3. The built environment can be deleted using the command `$ vagrant destroy -f`.
 
 ### Windows 10
 
-Generate the files using the command `python create.py -l sandbox.yml`.
+1. Generate files using the command `python create.py --ansible_local topology.yml`.
+2. Navigate to the newly created folder `sandbox` and run the command `vagrant up` to build the virtual environment.
+3. The built environment can be deleted using the command `vagrant destroy -f`.
 
 ## Credits
 
-**Cybersecurity laboratory**\
+**Cybersecurity Laboratory**\
 **Faculty of Informatics**\
 **Masaryk University**
 
@@ -48,6 +52,7 @@ Generate the files using the command `python create.py -l sandbox.yml`.
 **Contributors**:
 
 - Valdemar Švábenský
+- Kamil Andoniadis (KYPO cyber range platform)
 - Michal Staník
 - Zdeněk Vydra
 - Adam Skrášek

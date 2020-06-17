@@ -1,5 +1,5 @@
 ---
-# Main user ansible playbook
+# Main user ansible playbook.
 # Write your custom configuration here:
 
 - name: Hello world

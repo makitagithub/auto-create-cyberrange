@@ -1,0 +1,43 @@
+# A simple topology with various boxes in 1 network
+name: 1-network-various-boxes
+hosts:
+  - name: debian10
+    base_box: generic/debian10
+    memory: 512
+
+  - name: debian9
+    base_box: generic/debian9
+    memory: 512
+
+  - name: debian-stretch
+    base_box: debian/contrib-stretch64
+    memory: 512
+
+  - name: ubuntu-xenial
+    base_box: ubuntu/xenial64
+    memory: 1024
+
+  - name: mu-kali
+    base_box: mu/kali-2019.4
+    memory: 2048
+
+networks:
+  - name: network
+    cidr: 10.10.30.0/24
+
+net_mappings:
+    - host: debian10
+      network: network
+      ip: 10.10.30.5
+    - host: debian9
+      network: network
+      ip: 10.10.30.6
+    - host: debian-stretch
+      network: network
+      ip: 10.10.30.7
+    - host: ubuntu-xenial
+      network: network
+      ip: 10.10.30.8
+    - host: mu-kali
+      network: network
+      ip: 10.10.30.9

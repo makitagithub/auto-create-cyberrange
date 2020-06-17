@@ -1,0 +1,29 @@
+{% if hosts %}
+hosts:
+  {% for host in hosts %}
+  - name: {{ host.name }}
+  {% if "networks" in host %}
+  - networks:
+  {% endif %}
+  {% for network, ip in host.networks.items() %}
+    {{ network }}: {{ ip }}
+  {% endfor %}
+  {% endfor %}
+{% else %}
+hosts: []
+{% endif %}
+
+{% if routers %}
+routers:
+  {% for router in routers %}
+  - name: {{ router.name }}
+  {% if "networks" in router %}
+  - networks:
+  {% endif %}
+  {% for network, ip in router.networks.items() %}
+    {{ network }}: {{ ip }}
+  {% endfor %}
+  {% endfor %}
+{% else %}
+routers: []
+{% endif %}
