@@ -1,3 +1,4 @@
+# A simple topology with various boxes in 1 network
 name: 1-network-various-boxes
 hosts:
   - name: debian10

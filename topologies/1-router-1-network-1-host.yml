@@ -1,3 +1,5 @@
+
+# 1 network with a host and a router
 name: 1-router-1-host
 hosts:
   - name: debian10

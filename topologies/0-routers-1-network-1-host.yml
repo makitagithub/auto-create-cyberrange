@@ -1,4 +1,5 @@
-name: 1-network-1-host
+# A simple topology with 1 debian 10 host in a network
+name: 0-routers-1-networks-1-hosts
 hosts:
   - name: debian10
     base_box: generic/debian10

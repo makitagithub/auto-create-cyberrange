@@ -1,3 +1,4 @@
+# Topology with one router connecting 2 separate networks, each with 1 host
 name: 2-networks
 hosts:
   - name: server
