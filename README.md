@@ -2,6 +2,8 @@
 
 Cyber Sandbox Creator is a tool, which can generate portable input files for building lightweight virtual environments using Vagrant and Ansible from a simple YAML definition of topology. The combination of these three tools makes possible to build virtual machines connected with virtual networks even on a desktop computer.
 
+![usage](doc/sandbox_creator_general.png "Usage")
+
 ## Installation
 
 **Note:** This is just a quick guide how to install and generate files with this tool. For full description of how to prepare the host device to be able run the generated environments and how to build the virtual machines check our [wiki page](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/-/wikis/Installation-and-Usage).
