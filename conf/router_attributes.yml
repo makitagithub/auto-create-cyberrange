@@ -1,0 +1,3 @@
+base_box: generic/debian10
+memory: 256
+cpus: 1

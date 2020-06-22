@@ -1,0 +1,25 @@
+
+- name: configure interface
+  blockinfile:
+      path: '{{ interface_file }}'
+      create: yes
+      marker: '# {mark} {{ interface_device }}'
+      block: |
+          allow-hotplug {{ interface_device }}
+          auto {{ interface_device }}
+          iface {{ interface_device }} inet static
+              address {{ interface_ip }}
+              netmask {{ interface_netmask }}
+              mtu {{ interface_mtu }}
+              {% if interface_default_gateway -%}
+              gateway {{ interface_default_gateway }}
+              up route add default gw {{ interface_default_gateway }}
+              {% endif -%}
+              {% if interface_routes -%}
+              {% for route in interface_routes -%}
+              post-up ip route add {{ route['network'] }}/{{ route['mask'] }} via {{ route['gateway'] }}
+              pre-down ip route del {{ route['network'] }}/{{ route['mask'] }} via {{ route['gateway'] }}
+              {% endfor %}
+              {% endif %}
+  notify: interface_networking_restart
+

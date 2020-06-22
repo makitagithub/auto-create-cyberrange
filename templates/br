@@ -1,40 +1,27 @@
 ---
-# Configuration for the border router
-
-- name: Enable IP forwarding
-  copy:
-    dest: "/etc/sysctl.conf"
-    content: "net.ipv4.ip_forward=1"
-
-- name: Restarting procps service
-  command: /etc/init.d/procps restart
-
-{% for host in hosts %}
-- name: Add {{ host.host_name }} alias
+- name: Adding aliases
+  loop: "{{ aliases | dict2items }}"
   lineinfile:
     path: /etc/hosts
-    line: {{ host.host_ip }} {{ host.host_name }}
+    line: "{{ item.value }} {{ item.key }}"
 
-{% endfor %}
-{% for router in routers %}
-- name: Add {{ router.router_name }} alias
-  lineinfile:
-    path: /etc/hosts
-    line: {{ router.router_ip }} {{ router.router_name }}
+- name: Configuring routes
+  include_role:
+    name: interface
+  vars:
+    interface_ip: "{{ interface.interface_ip }}"
+    interface_netmask: "{{ interface.interface_netmask }}"
+    interface_default_gateway: "{{ interface.interface_default_gateway | default('') }}"
+    interface_routes: "{{ interface.interface_routes | default([]) }}"
+  loop: "{{ routes }}"
+  loop_control:
+    loop_var: interface
 
-{% endfor %}
-
-{% for target_cidr, router_ip in br_routes.items() %} 
-- name: Add routing to network {{ target_cidr }} 
-  command: route add -net {{ target_cidr }} gw {{ router_ip }} eth1
-{% endfor %}
-
-- name: Add postrouting
-  # ssh connection fails without async after execution of iptables commands
-  shell: "sleep 2 && sudo iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source {{ border_router_public_ip }}"
-  async: 1
-  poll: 0
-
-{# name: Save postrouting rule #}
-{# command: su -c 'iptables-save > /etc/iptables.rules' #}
+- name: Set up postrouting
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    out_interface: "{{ ansible_default_ipv4.interface }}"
+    jump: SNAT
+    to_source: "{{ ansible_default_ipv4.address }}"
 ...
