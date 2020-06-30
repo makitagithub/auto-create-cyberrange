@@ -1,6 +1,7 @@
 """Contain functions for ansible file generation."""
 
-from modules.file_manager import generate_file, copy_template_file
+from modules.file_manager import generate_file, copy_template_file,\
+    copy_user_provisioning_dir
 from modules.ansible_vars_generator import generate_ansible_vars
 from conf.border_router import BORDER_ROUTER_NAME
 
@@ -27,8 +28,9 @@ def _create_config_playbooks(input_definitions, flags):
                                device["name"] + "/tasks/main.yml")
 
 
-def _create_user_playbooks(input_definitions):
-    """Generate template playbooks and roles for users."""
+def _generate_user_playbooks(input_definitions):
+    """Generate example user playbooks."""
+
     copy_template_file("playbook", "provisioning/playbook.yml")
     if input_definitions["hosts"]:
         copy_template_file("user_hosts",
@@ -48,6 +50,15 @@ def _create_user_playbooks(input_definitions):
                       "/tasks/main.yml", router_name=router["name"])
 
 
+def _create_user_playbooks(input_definitions, flags):
+    """Copy or generate template playbooks and roles for users."""
+
+    if "provisioning_dir" in flags and flags["provisioning_dir"]:
+        copy_user_provisioning_dir(flags["provisioning_dir"])
+    else:
+        _generate_user_playbooks(input_definitions)
+
+
 def generate_playbooks(input_definitions, flags):
     """Generate ansible vars and playbooks.
 
@@ -56,4 +67,4 @@ def generate_playbooks(input_definitions, flags):
     """
     generate_ansible_vars(input_definitions, flags)
     _create_config_playbooks(input_definitions, flags)
-    _create_user_playbooks(input_definitions)
+    _create_user_playbooks(input_definitions, flags)

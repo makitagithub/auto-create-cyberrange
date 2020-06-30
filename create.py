@@ -18,7 +18,7 @@ device_definitions = open_yaml(INPUT_FILE_NAME)
 
 validate_device_definitions(device_definitions)
 preprocess(device_definitions, FLAGS)
-prepare_directories(device_definitions)
+prepare_directories(device_definitions, FLAGS)
 
 generate_vagrantfile(device_definitions, FLAGS)
 generate_playbooks(device_definitions, FLAGS)
