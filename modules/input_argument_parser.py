@@ -24,11 +24,15 @@ def parse_input_args():
     parser.add_argument("--border_router",
                         help="creates a border router with connection to "
                         "all routers", action="store_true")
+    parser.add_argument("--provisioning_dir",
+                        help="path to directory with user provisioning files",
+                        action="store")
     args = parser.parse_args()
 
     input_file_name = args.definition_file
     flags["ansible_local"] = args.ansible_local
     flags["verbose_ansible"] = args.verbose_ansible
     flags["border_router"] = args.border_router
+    flags["provisioning_dir"] = args.provisioning_dir
 
     return input_file_name, flags

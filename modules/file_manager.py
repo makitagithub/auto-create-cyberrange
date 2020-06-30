@@ -81,7 +81,7 @@ def _load_template(template_name):
 def _copy_directory(source, destination):
     """Copy directory recursively form templates dir to the destination."""
     try:
-        shutil.copytree("./templates/" + source, destination)
+        shutil.copytree(source, destination)
     except OSError:
         cleanup_and_exit("Could not copy directory " + str(source) + ".")
 
@@ -124,7 +124,7 @@ def _create_provisioning_directories(directory, device_definitions):
         cleanup_and_exit("Could not create directories for provisioning.")
 
 
-def prepare_directories(device_definitions):
+def prepare_directories(device_definitions, flags):
     """Prepare the necessary directory structure."""
     _remove_sandbox()
 
@@ -135,12 +135,18 @@ def prepare_directories(device_definitions):
                          ".")
 
     _create_provisioning_directories("base_provisioning", device_definitions)
-    _create_provisioning_directories("provisioning", device_definitions)
+    if "provisioning_dir" not in flags or not flags["provisioning_dir"]:
+        _create_provisioning_directories("provisioning", device_definitions)
 
-    _copy_directory("interface", OUTPUT_DIRECTORY +
+    _copy_directory("./templates/interface", OUTPUT_DIRECTORY +
                     "/base_provisioning/roles/interface")
-    _copy_directory("common", OUTPUT_DIRECTORY +
+    _copy_directory("./templates/common", OUTPUT_DIRECTORY +
                     "/base_provisioning/roles/common")
+
+
+def copy_user_provisioning_dir(path):
+    """Copy provisioning files provided by the user to the correct dir."""
+    _copy_directory(path, OUTPUT_DIRECTORY + "/provisioning")
 
 
 def _remove_sandbox():
