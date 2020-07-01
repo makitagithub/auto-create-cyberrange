@@ -11,6 +11,7 @@ from modules.file_manager import open_yaml, cleanup_and_exit
 
 FLAVORS = open_yaml("conf/flavors.yml")
 ROUTER_ATTRIBUTES = open_yaml("conf/router_attributes.yml")
+DUMMY_ROUTER_NAME = "dummy-router"
 
 
 def _add_missing_tags(definitions):
@@ -62,6 +63,14 @@ def _add_flavors(definitions):
             host.pop("flavor")
 
 
+def _delete_dummy_router(definitions):
+    """Delete dummy router if it is defined."""
+    for router in definitions["routers"]:
+        if router["name"] == DUMMY_ROUTER_NAME:
+            definitions["routers"].remove(router)
+            return
+
+
 def preprocess(definitions, flags):
     """Run preprocessing.
 
@@ -74,6 +83,12 @@ def preprocess(definitions, flags):
     except Exception:
         cleanup_and_exit("Preprocessing not successful: "
                          "Could not add missing tags.")
+
+    try:
+        _delete_dummy_router(definitions)
+    except Exception:
+        cleanup_and_exit("Preprocessing not successful: "
+                         "Could not delete dummy router.")
 
     try:
         if "border_router" in flags and flags["border_router"]:
