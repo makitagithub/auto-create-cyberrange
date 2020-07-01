@@ -96,6 +96,9 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
     for router in input_definitions["routers"]:
         router_names.append(router["name"])
     groups["groups"]["routers"] = router_names
+    if "groups" in input_definitions:
+        for group in input_definitions["groups"]:
+            groups["groups"][group["name"]] = group["nodes"]
     commands.append(groups)
 
     if "ansible_local" in flags and flags["ansible_local"]:
