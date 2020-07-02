@@ -2,11 +2,13 @@
 name: 2-networks
 hosts:
   - name: server
-    base_box: generic/debian10
+    base_box:
+      image: generic/debian10
     memory: 512
 
   - name: home
-    base_box: generic/debian10
+    base_box:
+      image: generic/debian10
     memory: 512
 
 routers:

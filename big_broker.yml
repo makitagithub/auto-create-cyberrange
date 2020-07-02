@@ -2,23 +2,28 @@
 name: big-broker
 hosts:
   - name: web
-    base_box: generic/debian10
+    base_box:
+      image: generic/debian10
     memory: 2048
 
   - name: workstation
-    base_box: generic/debian10
+    base_box:
+      image: generic/debian10
     memory: 2048
 
   - name: database
-    base_box: generic/debian10
+    base_box:
+      image: generic/debian10
     memory: 2048
 
   - name: attacker
-    base_box: mu/kali-2019.4
+    base_box:
+      image: kali-2019.4
     memory: 2048
 
   - name: client
-    base_box: generic/debian10
+    base_box:
+      image: generic/debian10
     memory: 2048
 
 routers:

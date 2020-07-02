@@ -2,7 +2,8 @@
 name: 0-routers-1-networks-1-hosts
 hosts:
   - name: debian10
-    base_box: generic/debian10
+    base_box:
+      image: generic/debian10
     flavor: csirtmu.tiny1x4
     cpus: 2
 
