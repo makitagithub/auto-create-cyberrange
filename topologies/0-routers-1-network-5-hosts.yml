@@ -2,23 +2,28 @@
 name: 1-network-various-boxes
 hosts:
   - name: debian10
-    base_box: generic/debian10
+    base_box:
+      image: generic/debian10
     memory: 512
 
   - name: debian9
-    base_box: generic/debian9
+    base_box:
+      image: generic/debian9
     memory: 512
 
   - name: debian-stretch
-    base_box: debian/contrib-stretch64
+    base_box:
+      image: debian/contrib-stretch64
     memory: 512
 
   - name: ubuntu-xenial
-    base_box: ubuntu/xenial64
+    base_box:
+      image: ubuntu/xenial64
     memory: 1024
 
   - name: mu-kali
-    base_box: mu/kali-2019.4
+    base_box:
+      image: kali-2019.4
     memory: 2048
 
 networks:

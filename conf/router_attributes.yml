@@ -1,3 +1,4 @@
-base_box: debian/stretch64
+base_box:
+  image: debian/stretch64
 memory: 256
 cpus: 1

@@ -4,6 +4,7 @@ from modules.file_manager import generate_file, open_yaml
 
 VAGRANT_MAPPING = open_yaml("conf/vagrant_mapping.yml")
 VIRTUALBOX_MAPPING = open_yaml("conf/virtualbox_mapping.yml")
+BOX_MAPPING = open_yaml("conf/box_mapping.yml")
 BASE_PLAYBOOK = "base_provisioning/device_configuration.yml"
 USER_PLAYBOOK = "provisioning/playbook.yml"
 
@@ -31,6 +32,28 @@ def _create_complex_attribute(key, value):
     return attribute
 
 
+def _create_special_commands(attribute, value):
+    """Create special commands that cannot be mapped to a single command."""
+    special_attributes = []
+    if attribute == "base_box":
+        if "image" in value:
+            if value["image"] in BOX_MAPPING:
+                value["image"] = BOX_MAPPING[value["image"]]
+            box_name = dict()
+            box_name["type"] = "string"
+            box_name["command"] = "vm.box"
+            box_name["value"] = value["image"]
+            special_attributes.append(box_name)
+        if "man_user" in value:
+            user = dict()
+            user["type"] = "string"
+            user["command"] = "ssh.username"
+            user["value"] = value["man_user"]
+            special_attributes.append(user)
+
+    return special_attributes
+
+
 def _create_commands(device_attributes):
     """Create basic vagrant definition commands for a device."""
     commands = []
@@ -53,6 +76,8 @@ def _create_commands(device_attributes):
             vagrant_attribute = VAGRANT_MAPPING["other"][attribute]
             commands.append(_create_complex_attribute(vagrant_attribute,
                                                       value))
+        elif attribute in VAGRANT_MAPPING["special"]:
+            commands.extend(_create_special_commands(attribute, value))
         elif attribute in VIRTUALBOX_MAPPING["integer"]:
             vagrant_attribute = VIRTUALBOX_MAPPING["integer"][attribute]
             vb_commands.append(_create_simple_attribute(vagrant_attribute,
