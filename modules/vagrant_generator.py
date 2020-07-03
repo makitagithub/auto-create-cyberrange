@@ -105,13 +105,13 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
         install_mode["value"] = "pip"
         commands.append(install_mode)
 
-        extravars = dict()
-        extravars["type"] = "dictionary"
-        extravars["command"] = "extra_vars"
-        extravars["dictionary"] = dict()
-        extravars["dictionary"]["ansible_python_interpreter"] = \
-            "\"/usr/bin/python3\""
-        commands.append(extravars)
+    extravars = dict()
+    extravars["type"] = "dictionary"
+    extravars["command"] = "extra_vars"
+    extravars["dictionary"] = dict()
+    extravars["dictionary"]["ansible_python_interpreter"] = \
+        "\"/usr/bin/python3\""
+    commands.append(extravars)
 
     return commands
 
