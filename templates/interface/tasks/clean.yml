@@ -11,14 +11,14 @@
 - name: remove old iface settings for retrieved interface name
   replace:
       path: '{{ item }}'
-      regexp: ^iface[ \t]{{ interface_device }}[ \t].*(\n[ \t]+.*)*
+      regexp: ^iface[ \t]{{ interface_name }}[ \t].*(\n[ \t]+.*)*
   notify: interface_networking_restart
   with_items: '{{ interface_config_files }}'
 
 - name: remove the rest of old settings for retrieved interface name
   replace:
       path: '{{ item }}'
-      regexp: '^.*(?<=\s){{ interface_device }}(?=\s).*$'
+      regexp: '^.*(?<=\s){{ interface_name }}(?=\s).*$'
   notify: interface_networking_restart
   with_items: '{{ interface_config_files }}'
 

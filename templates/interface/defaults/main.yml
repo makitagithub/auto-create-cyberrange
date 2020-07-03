@@ -2,39 +2,49 @@
 interface_default_file: /etc/network/interfaces
 interface_directory: '{{ interface_default_file }}.d'
 interface_file_name:
-interface_file: '
+interface_file: >-
     {%- if interface_file_name is defined and interface_file_name -%}
         {{ interface_directory }}/{{ interface_file_name }}
     {%- else -%}
         {{ interface_default_file }}
-    {%- endif %}'
+    {%- endif -%}
 
 interface_clean: True
-interface_mtu: 1442
 
-interface_ip:
-interface_mac:
-interface_name:
+interface_identification:
+interface_name: >-
+    {%- import "roles/common/templates/network.j2" as network with context -%}
+    {%- if interface_identification in ansible_interfaces -%}
+        {{ interface_identification }}
+    {%- elif interface_identification | ipv4 -%}
+        {{ network.ip_to_interface(interface_identification) }}
+    {%- elif interface_identification | regex_search("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")-%}
+        {{ network.mac_to_interface(interface_identification) }}
+    {%- else -%}
+        ""
+    {%- endif -%}
+interface_configuration_type: dhcp
+
+interface_static_ip:
+interface_static_netmask:
+
+interface_mtu: 1442
 interface_default_gateway:
 interface_routes: []
 # - gateway:
 #   network:
-#   mask:
+#   netmask:
 
-interface_device: '
-    {%- import "roles/common/templates/network.j2" as network with context -%}
-    {%- if interface_ip is defined and interface_ip -%}
-        {{ network.ip_to_interface(interface_ip) | default("") }}
+interface_sanity_check_msg: >-
+    {%- if not interface_identification -%}
+        interface_identification is not set,
     {%- endif -%}
-    {%- if interface_mac is defined and interface_mac -%}
-        {{ network.mac_to_interface(interface_mac) | default("") }}
+    {%- if interface_configuration_type not in ["dhcp", "static"] -%}
+        unknown interface_configuration_type,
     {%- endif -%}
-    {%- if interface_name is defined and interface_name -%}
-        {{ interface_name }}
-    {%- endif -%}'
-interface_identifiers:
-    interface_ip: '{{ interface_ip }}'
-    interface_mac: '{{ interface_mac }}'
-    interface_name: '{{ interface_name }}'
-interface_condition_single_interface_identifier: '{{ interface_identifiers | dict2items | map(attribute="value") | select("string") | select("ne", "") | list | length != 1 }}'
+    {%- if interface_configuration_type == "static" and
+            (interface_static_ip is undefined or not interface_static_ip or
+            interface_static_netmask is undefined or not interface_static_netmask) -%}
+        interface_static_ip or interface_static_netmask is not defined
+    {%- endif -%}
 

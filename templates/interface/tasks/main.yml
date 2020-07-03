@@ -1,8 +1,8 @@
 
-- name: check existence of single interface identifier
+- name: sanity check
   fail:
-      msg: there must be set exactly one of [interface_ip|interface_mac|interface_name] variables, got {{ interface_identifiers }}
-  when: interface_condition_single_interface_identifier
+      msg: '{{ interface_sanity_check_msg }}'
+  when: interface_sanity_check_msg | length > 0
 
 - include: clean.yml
   when: interface_clean is defined and interface_clean
