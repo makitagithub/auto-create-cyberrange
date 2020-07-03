@@ -1,12 +1,14 @@
 name: small-sandbox
 hosts:
   - name: server
-    base_box: ubuntu/xenial64
+    base_box:
+      image: ubuntu/xenial64
     flavor: csirtmu.tiny1x4
     cpus: 2
 
   - name: home
-    base_box: ubuntu/xenial64
+    base_box:
+      image: ubuntu/xenial64
     boot_timeout: 1000
     box_check_update: false
 
