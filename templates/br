@@ -9,8 +9,10 @@
   include_role:
     name: interface
   vars:
-    interface_ip: "{{ interface.interface_ip }}"
-    interface_netmask: "{{ interface.interface_netmask }}"
+    interface_configuration_type: static
+    interface_identification: "{{ interface.interface_ip }}"
+    interface_static_ip: "{{ interface.interface_ip }}"
+    interface_static_netmask: "{{ interface.interface_netmask }}"
     interface_default_gateway: "{{ interface.interface_default_gateway | default('') }}"
     interface_routes: "{{ interface.interface_routes | default([]) }}"
   loop: "{{ routes }}"

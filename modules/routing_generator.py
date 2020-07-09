@@ -156,7 +156,7 @@ def _create_host_routing(target_host_name, input_definitions, flags):
             routing_to_other_hosts["gateway"] = gateway
             net_ip, mask = network["cidr"].split('/')
             routing_to_other_hosts["network"] = net_ip
-            routing_to_other_hosts["mask"] = mask
+            routing_to_other_hosts["netmask"] = mask
             if_mask = _find_netmask(mapping["ip"], input_definitions)
             _add_interface_route(routing_to_other_hosts, mapping["ip"], if_mask,
                                  routes)
@@ -191,7 +191,7 @@ def _create_border_router_routing(input_definitions):
         routing_to_hosts = dict()
         net_ip, mask = network["cidr"].split('/')
         routing_to_hosts["network"] = net_ip
-        routing_to_hosts["mask"] = mask
+        routing_to_hosts["netmask"] = mask
         gateway = _find_router_ip_in_br_network(network["name"],
                                                 input_definitions)
         routing_to_hosts["gateway"] = gateway
