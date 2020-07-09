@@ -14,7 +14,7 @@
               {% endif -%}
               mtu {{ interface_mtu }}
               {% if interface_default_gateway -%}
-              up route add default gw {{ interface_default_gateway }} 
+              up ip route add default via {{ interface_default_gateway }}
               {% endif -%}
               {% if interface_routes -%}
               {% for route in interface_routes -%}
