@@ -139,6 +139,9 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
     extravars["dictionary"] = dict()
     extravars["dictionary"]["ansible_python_interpreter"] = \
         "\"/usr/bin/python3\""
+    if "extra_vars" in flags and flags["extra_vars"]:
+        user_extra_vars = open_yaml(flags["extra_vars"])
+        extravars["dictionary"].update(user_extra_vars)
     commands.append(extravars)
 
     return commands
