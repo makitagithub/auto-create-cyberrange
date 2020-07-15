@@ -12,6 +12,7 @@ routers:
 
 networks:
   - name: network
+    cidr: 10.10.30.0/24
 
 net_mappings:
     - host: debian10
