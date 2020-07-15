@@ -114,24 +114,21 @@ def _add_default_route(default_gateway, target_interface_ip, interface_mask,
 
 
 def _configure_auto_on_ansible_interface(target_routes_list,
-                                         is_border_router=False):
+                                         default_route="{{ ansible_default_ipv4.gateway }}"):
     """Call interfaces role on the main interface to set auto."""
     new_interface = dict()
     new_interface["interface_ip"] = "{{ ansible_default_ipv4.address  | " \
                                     "default(ansible_all_ipv4_addresses[0]) }}"
     new_interface["interface_netmask"] = "{{ ansible_default_ipv4.netmask  | " \
                                          "default('24') }}"
-    if is_border_router:
-        new_interface["interface_default_gateway"] =\
-            "{{ ansible_default_ipv4.gateway }}"
+    new_interface["interface_default_gateway"] = default_route
+
     target_routes_list.insert(0, new_interface)
 
 
 def _create_host_routing(target_host_name, input_definitions, flags):
     """Generate list of routes for the given host."""
     routes = []
-    if "border_router" in flags and flags["border_router"]:
-        _configure_auto_on_ansible_interface(routes)
     mapping = None
 
     for host_mapping in input_definitions["net_mappings"]:
@@ -143,10 +140,12 @@ def _create_host_routing(target_host_name, input_definitions, flags):
         raise ValueError("Host was not found: " + target_host_name)
 
     if flags["border_router"]:
+        _configure_auto_on_ansible_interface(routes, "")
         gateway = _find_router_in_network(mapping["network"], input_definitions)
         if_netmask = _find_netmask(mapping["ip"], input_definitions)
         _add_default_route(gateway, mapping["ip"], if_netmask, routes)
     else:
+        _configure_auto_on_ansible_interface(routes)
         for network in input_definitions["networks"]:
             if network["name"] == mapping["network"]:
                 continue
@@ -156,7 +155,7 @@ def _create_host_routing(target_host_name, input_definitions, flags):
             routing_to_other_hosts["gateway"] = gateway
             net_ip, mask = network["cidr"].split('/')
             routing_to_other_hosts["network"] = net_ip
-            routing_to_other_hosts["mask"] = mask
+            routing_to_other_hosts["netmask"] = mask
             if_mask = _find_netmask(mapping["ip"], input_definitions)
             _add_interface_route(routing_to_other_hosts, mapping["ip"], if_mask,
                                  routes)
@@ -167,15 +166,16 @@ def _create_host_routing(target_host_name, input_definitions, flags):
 def _create_router_routing(router_name, input_definitions, flags):
     """Generate list of routes for the given router."""
     routes = []
-    if "border_router" in flags and flags["border_router"]:
-        _configure_auto_on_ansible_interface(routes)
 
     if flags["border_router"]:
+        _configure_auto_on_ansible_interface(routes, "")
         interface_ip = _find_iface_ip_in_network(router_name,
                                                  BORDER_ROUTER_NETWORK_NAME,
                                                  input_definitions)
         net_ip, mask = BORDER_ROUTER_NETWORK_IP.split("/")
         _add_default_route(BORDER_ROUTER_IP, interface_ip, mask, routes)
+    else:
+        _configure_auto_on_ansible_interface(routes)
 
     return routes
 
@@ -183,7 +183,7 @@ def _create_router_routing(router_name, input_definitions, flags):
 def _create_border_router_routing(input_definitions):
     """Generate routes for the border router."""
     routes = []
-    _configure_auto_on_ansible_interface(routes, True)
+    _configure_auto_on_ansible_interface(routes)
 
     for network in input_definitions["networks"]:
         if network["name"] == BORDER_ROUTER_NETWORK_NAME:
@@ -191,7 +191,7 @@ def _create_border_router_routing(input_definitions):
         routing_to_hosts = dict()
         net_ip, mask = network["cidr"].split('/')
         routing_to_hosts["network"] = net_ip
-        routing_to_hosts["mask"] = mask
+        routing_to_hosts["netmask"] = mask
         gateway = _find_router_ip_in_br_network(network["name"],
                                                 input_definitions)
         routing_to_hosts["gateway"] = gateway
