@@ -1,0 +1,40 @@
+# Topology with 2 routers in two separate networks
+# Works only with a border router enabled
+name: 2-networks-connected-by-br
+hosts:
+  - name: server
+    base_box:
+      image: generic/debian10
+    memory: 512
+
+  - name: home
+    base_box:
+      image: generic/debian10
+    memory: 512
+
+routers:
+  - name: server-router
+  - name: home-router
+
+networks:
+  - name: server-switch
+    cidr: 10.10.20.0/24
+
+  - name: home-switch
+    cidr: 10.10.30.0/24
+
+net_mappings:
+    - host: server
+      network: server-switch
+      ip: 10.10.20.5
+    - host: home
+      network: home-switch
+      ip: 10.10.30.5
+
+router_mappings:
+    - router: server-router
+      network: server-switch
+      ip: 10.10.20.1
+    - router: home-router
+      network: home-switch
+      ip: 10.10.30.1
