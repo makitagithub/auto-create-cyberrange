@@ -27,6 +27,10 @@ def parse_input_args():
     parser.add_argument("--provisioning_dir",
                         help="path to directory with user provisioning files",
                         action="store")
+    parser.add_argument("--extra_vars",
+                        help="path to file with extra_vars for ansible",
+                        action="store")
+
     args = parser.parse_args()
 
     input_file_name = args.definition_file
@@ -34,5 +38,6 @@ def parse_input_args():
     flags["verbose_ansible"] = args.verbose_ansible
     flags["border_router"] = args.border_router
     flags["provisioning_dir"] = args.provisioning_dir
+    flags["extra_vars"] = args.extra_vars
 
     return input_file_name, flags
