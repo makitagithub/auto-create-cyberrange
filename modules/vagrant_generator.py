@@ -133,15 +133,23 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
         install_mode["value"] = "pip"
         commands.append(install_mode)
 
+    if "extra_vars" in flags and flags["extra_vars"]:
+        if "ansible_local" in flags and flags["ansible_local"]:
+            extra_vars_location = "/vagrant/extra_vars.yml"
+        else:
+            extra_vars_location = flags["ansible_local"]
+        user_extra_vars = dict()
+        user_extra_vars["type"] = "string"
+        user_extra_vars["command"] = "raw_arguments"
+        user_extra_vars["value"] = "--extra-vars=@" + extra_vars_location
+        commands.append(user_extra_vars)
+
     extravars = dict()
     extravars["type"] = "dictionary"
     extravars["command"] = "extra_vars"
     extravars["dictionary"] = dict()
     extravars["dictionary"]["ansible_python_interpreter"] = \
         "\"/usr/bin/python3\""
-    if "extra_vars" in flags and flags["extra_vars"]:
-        user_extra_vars = open_yaml(flags["extra_vars"])
-        extravars["dictionary"].update(user_extra_vars)
     commands.append(extravars)
 
     return commands
@@ -186,6 +194,25 @@ def _add_all_networks(vagrant_definitions, input_definitions, flags):
 def _call_provisioner(input_definitions, flags):
     """Create entry to vagrant definitions for calling the provisioner."""
     provisioner_calls = []
+
+    if "extra_vars" in flags and flags["extra_vars"] and\
+        "ansible_local" in flags and flags["ansible_local"]:
+        copy_extra_vars = dict()
+        copy_extra_vars["type"] = "provision"
+        copy_extra_vars["provisioner"] = "file"
+        copy_extra_vars["note"] = "copy extra_vars to target machine"
+
+        source_arg = dict()
+        source_arg["type"] = "string"
+        source_arg["command"] = "source"
+        source_arg["value"] = flags["extra_vars"]
+        destination_arg = dict()
+        destination_arg["type"] = "string"
+        destination_arg["command"] = "destination"
+        destination_arg["value"] = "/vagrant/extra_vars.yml"
+        copy_extra_vars["commands"] = [source_arg, destination_arg]
+        provisioner_calls.append(copy_extra_vars)
+
 
     config_playbook = dict()
     config_playbook["type"] = "provision"
