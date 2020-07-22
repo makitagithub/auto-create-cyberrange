@@ -137,7 +137,7 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
         if "ansible_local" in flags and flags["ansible_local"]:
             extra_vars_location = "/vagrant/extra_vars.yml"
         else:
-            extra_vars_location = flags["ansible_local"]
+            extra_vars_location = flags["extra_vars"]
         user_extra_vars = dict()
         user_extra_vars["type"] = "string"
         user_extra_vars["command"] = "raw_arguments"
