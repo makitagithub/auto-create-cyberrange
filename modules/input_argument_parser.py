@@ -1,6 +1,7 @@
 """This module contains functions to parse input arguments."""
 
 import argparse
+import os
 
 
 def parse_input_args():
@@ -37,7 +38,10 @@ def parse_input_args():
     flags["ansible_local"] = args.ansible_local
     flags["verbose_ansible"] = args.verbose_ansible
     flags["border_router"] = args.border_router
-    flags["provisioning_dir"] = args.provisioning_dir
-    flags["extra_vars"] = args.extra_vars
+    flags["target_location"] = "sandbox"
+    if args.provisioning_dir:
+        flags["provisioning_dir"] = os.path.abspath(os.path.expanduser(args.provisioning_dir))
+    if args.extra_vars:
+        flags["extra_vars"] = os.path.abspath(os.path.expanduser(args.extra_vars))
 
     return input_file_name, flags
