@@ -137,10 +137,9 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
 
     if "extra_vars" in flags and flags["extra_vars"]:
         if "ansible_local" in flags and flags["ansible_local"]:
-            extra_vars_location = "/vagrant/extra_vars.yml"
+            extra_vars_location = "/vagrant/user_files/extra_vars.yml"
         else:
-            extra_vars_location = os.path.relpath(flags["extra_vars"],
-                                                  flags["target_location"])
+            extra_vars_location = "user_files/extra_vars.yml"
         user_extra_vars = dict()
         user_extra_vars["type"] = "string"
         user_extra_vars["command"] = "raw_arguments"
@@ -197,25 +196,6 @@ def _add_all_networks(vagrant_definitions, input_definitions, flags):
 def _call_provisioner(input_definitions, flags):
     """Create entry to vagrant definitions for calling the provisioner."""
     provisioner_calls = []
-
-    if "extra_vars" in flags and flags["extra_vars"] and \
-       "ansible_local" in flags and flags["ansible_local"]:
-        copy_extra_vars = dict()
-        copy_extra_vars["type"] = "provision"
-        copy_extra_vars["provisioner"] = "file"
-        copy_extra_vars["note"] = "copy extra_vars to target machine"
-
-        source_arg = dict()
-        source_arg["type"] = "string"
-        source_arg["command"] = "source"
-        source_arg["value"] = os.path.relpath(flags["extra_vars"],
-                                              flags["target_location"])
-        destination_arg = dict()
-        destination_arg["type"] = "string"
-        destination_arg["command"] = "destination"
-        destination_arg["value"] = "/vagrant/extra_vars.yml"
-        copy_extra_vars["commands"] = [source_arg, destination_arg]
-        provisioner_calls.append(copy_extra_vars)
 
     config_playbook = dict()
     config_playbook["type"] = "provision"
