@@ -1,7 +1,5 @@
 """Contains functions for generating a Vagrantfile from input definitions."""
 
-import os
-
 from modules.file_manager import generate_file, open_yaml
 
 VAGRANT_MAPPING = open_yaml("conf/vagrant_mapping.yml")
