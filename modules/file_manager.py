@@ -134,6 +134,14 @@ def prepare_directories(device_definitions, flags):
         cleanup_and_exit("Could not create directory ./" + OUTPUT_DIRECTORY +
                          ".")
 
+    if "extra_vars" in flags and flags["extra_vars"]:
+        try:
+            os.mkdir(OUTPUT_DIRECTORY + "/user_files")
+            shutil.copyfile(flags["extra_vars"],
+                            OUTPUT_DIRECTORY + "/user_files/extra_vars.yml")
+        except IOError:
+            cleanup_and_exit("Could not import extra_vars.")
+
     _create_provisioning_directories("base_provisioning", device_definitions)
     if "provisioning_dir" not in flags or not flags["provisioning_dir"]:
         _create_provisioning_directories("provisioning", device_definitions)

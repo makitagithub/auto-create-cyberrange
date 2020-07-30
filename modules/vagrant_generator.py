@@ -133,15 +133,23 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
         install_mode["value"] = "pip"
         commands.append(install_mode)
 
+    if "extra_vars" in flags and flags["extra_vars"]:
+        if "ansible_local" in flags and flags["ansible_local"]:
+            extra_vars_location = "/vagrant/user_files/extra_vars.yml"
+        else:
+            extra_vars_location = "user_files/extra_vars.yml"
+        user_extra_vars = dict()
+        user_extra_vars["type"] = "string"
+        user_extra_vars["command"] = "raw_arguments"
+        user_extra_vars["value"] = "--extra-vars=@" + extra_vars_location
+        commands.append(user_extra_vars)
+
     extravars = dict()
     extravars["type"] = "dictionary"
     extravars["command"] = "extra_vars"
     extravars["dictionary"] = dict()
     extravars["dictionary"]["ansible_python_interpreter"] = \
         "\"/usr/bin/python3\""
-    if "extra_vars" in flags and flags["extra_vars"]:
-        user_extra_vars = open_yaml(flags["extra_vars"])
-        extravars["dictionary"].update(user_extra_vars)
     commands.append(extravars)
 
     return commands
