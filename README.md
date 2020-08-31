@@ -47,6 +47,8 @@ Cyber Sandbox Creator is a tool, which can generate portable input files for bui
 
 **Lead developer**: Attila Farkas
 
+**Developer**: Jana Ziková
+
 **Technology lead**: Daniel Tovarňák (KYPO cyber range platform)
 
 **Supervisor**: Jan Vykopal
@@ -55,9 +57,8 @@ Cyber Sandbox Creator is a tool, which can generate portable input files for bui
 
 - Valdemar Švábenský
 - Kamil Andoniadis (KYPO cyber range platform)
-- Michal Staník
-- Zdeněk Vydra
-- Adam Skrášek
+
+**Student contributors:** Michal Staník, Zdeněk Vydra,  Adam Skrášek
 
 ## License
 
