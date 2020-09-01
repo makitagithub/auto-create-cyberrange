@@ -1,0 +1,13 @@
+# Configuration file for integration testing.
+# Tests example topology 4 (see wiki) with all basic optional arguments and host machine's OS images changed to Ubuntu Xenial.
+
+topologies:
+  - file: ./topologies/1-router-2-networks-2-hosts.yml
+    arguments:
+      - no-arguments
+      - ansible_local
+      - border_router
+      - [ansible_local, border_router]
+    boxes:
+      - ubuntu/xenial64
+    original_boxes: false  
