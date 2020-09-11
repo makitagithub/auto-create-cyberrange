@@ -6,7 +6,7 @@ Cyber Sandbox Creator is a tool, which can generate portable input files for bui
 
 ## Installation
 
-**Note:** This is just a quick guide how to install and generate files with this tool. For full description of how to prepare the host device to be able run the generated environments and how to build the virtual machines check our [wiki page](https://gitlab.ics.muni.cz/cs4eu/sandbox-creator/-/wikis/Installation-and-Usage).
+**Note:** This is just a quick guide how to install and generate files with this tool. For full description of how to prepare the host device to be able run the generated environments and how to build the virtual machines check our [wiki page](https://gitlab.ics.muni.cz/muni-kypo-csc/cyber-sandbox-creator/-/wikis/Installation-and-Usage).
 
 ### Linux (Ubuntu/Debian)
 
