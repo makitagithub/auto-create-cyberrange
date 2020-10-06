@@ -7,6 +7,7 @@ creation.
 import itertools
 
 from modules.border_router import create_border_router
+from modules.controller import create_controller
 from modules.file_manager import open_yaml, cleanup_and_exit
 
 FLAVORS = open_yaml("conf/flavors.yml")
@@ -105,6 +106,13 @@ def preprocess(definitions, flags):
     except (ValueError, IndexError) as error:
         cleanup_and_exit("Preprocessing not successful: "
                          "Could not create border router (" + error + ")")
+
+    try:
+        if _find_windows_boxes(definitions):
+            create_controller(definitions)
+    except (ValueError, IndexError) as error:
+        cleanup_and_exit("Preprocessing not successful: "
+                         "Could not create controller (" + error + ")")
 
     try:
         _configure_routers(definitions)
