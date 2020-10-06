@@ -71,6 +71,15 @@ def _delete_dummy_router(definitions):
             return
 
 
+def _find_windows_boxes(definitions):
+    """Find and return list of host names with windows boxes."""
+    windows_hosts = []
+    for host in definitions["hosts"]:
+        if "windows" in host["base_box"]["image"].lower():
+            windows_hosts.append(host["name"])
+    return windows_hosts
+
+
 def preprocess(definitions, flags):
     """Run preprocessing.
 
