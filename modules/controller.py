@@ -5,6 +5,8 @@ from netaddr import *
 from itertools import chain
 
 CONTROLLER_NAME = "controller"
+CONTROLLER_BOX_NAME = "debian/contrib-stretch64"
+CONTROLLER_MEMORY = 512
 
 
 def _are_controller_parameters_free(definitions):
@@ -36,7 +38,18 @@ def _find_available_ip(definitions):
 
 def _add_controller(definitions):
     """Add controller to definitions"""
-    ip = _find_available_ip(definitions)
+    controller_ip = _find_available_ip(definitions)
+    controller = dict()
+    controller["name"] = CONTROLLER_NAME
+    controller["base_box"] = dict()
+    controller["base_box"]["image"] = CONTROLLER_BOX_NAME
+    controller["memory"] = CONTROLLER_MEMORY
+    definitions["hosts"].append(controller)
+    mapping = dict()
+    mapping["host"] = CONTROLLER_NAME
+    mapping["network"] = definitions["networks"][0]["name"]
+    mapping["ip"] = controller_ip
+    definitions["net_mappings"].append(mapping)
 
 
 def create_controller(definitions):
@@ -51,5 +64,4 @@ def create_controller(definitions):
                          "already exists.")
 
     _add_controller(definitions)
-
-    return
+    print(definitions)
