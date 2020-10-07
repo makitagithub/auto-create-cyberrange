@@ -64,4 +64,3 @@ def create_controller(definitions):
                          "already exists.")
 
     _add_controller(definitions)
-    print(definitions)
