@@ -1,6 +1,9 @@
 """Contains functions for controller creation."""
 
 
+from netaddr import *
+from itertools import chain
+
 CONTROLLER_NAME = "controller"
 
 
@@ -14,6 +17,28 @@ def _are_controller_parameters_free(definitions):
     return True
 
 
+def _is_ip_available(ip, definitions):
+    """Check if the given ip is used somewhere"""
+    for mapping in chain(definitions["router_mappings"],
+                         definitions["net_mappings"]):
+        if mapping["ip"] == ip:
+            return False
+    return True
+
+
+def _find_available_ip(definitions):
+    """Return an available ip for the controller"""
+    network = IPNetwork(definitions["networks"][0]["cidr"])
+    for ip in network:
+        if _is_ip_available(ip, definitions):
+            return str(ip)
+
+
+def _add_controller(definitions):
+    """Add controller to definitions"""
+    ip = _find_available_ip(definitions)
+
+
 def create_controller(definitions):
     """Add the definition of controller to definitions.
 
@@ -24,5 +49,7 @@ def create_controller(definitions):
     if not _are_controller_parameters_free(definitions):
         raise ValueError("A device with the same name as border router "
                          "already exists.")
+
+    _add_controller(definitions)
 
     return
