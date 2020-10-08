@@ -1,5 +1,7 @@
 """Contains functions for generating a Vagrantfile from input definitions."""
 
+import netaddr
+
 from modules.file_manager import generate_file, open_yaml
 
 VAGRANT_MAPPING = open_yaml("conf/vagrant_mapping.yml")
@@ -173,8 +175,10 @@ def _add_networks_to_device(definition, mappings, input_definitions):
             network["network_type"] = "private_network"
             network["name"] = mapping["network"]
             network["ip"] = mapping["ip"]
-            network["netmask"] = _find_netmask(mapping["network"],
-                                               input_definitions["networks"])
+            netmask = netaddr.IPNetwork("0.0.0.0/" +
+                                        _find_netmask(mapping["network"],
+                                                      input_definitions["networks"])).netmask
+            network["netmask"] = str(netmask)
             definition["commands"].append(network)
 
 
