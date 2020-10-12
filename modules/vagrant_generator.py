@@ -3,6 +3,7 @@
 import netaddr
 
 from modules.file_manager import generate_file, open_yaml
+from modules.controller import CONTROLLER_NAME
 
 VAGRANT_MAPPING = open_yaml("conf/vagrant_mapping.yml")
 VIRTUALBOX_MAPPING = open_yaml("conf/virtualbox_mapping.yml")
@@ -228,6 +229,15 @@ def _call_provisioner(input_definitions, flags):
     return provisioner_calls
 
 
+def _find_windows_boxes(definitions):
+    """Find and return list of host names with windows boxes."""
+    windows_hosts = []
+    for host in definitions["hosts"]:
+        if "windows" in host["base_box"]["image"].lower():
+            windows_hosts.append(host["name"])
+    return windows_hosts
+
+
 def _build_vagrant_definitions(input_definitions, flags):
     """Create a definition structure for vagrant.
 
@@ -243,12 +253,19 @@ def _build_vagrant_definitions(input_definitions, flags):
         device["commands"].extend(_call_provisioner(input_definitions, flags))
         vagrant_definitions.append(device)
 
+    windows_hosts = _find_windows_boxes(input_definitions)
+    windows_provisioning_commands = []
     for host in input_definitions["hosts"]:
         device = dict()
         device["type"] = "host"
         device["name"] = host["name"]
         device["commands"] = _create_commands(host)
-        device["commands"].extend(_call_provisioner(input_definitions, flags))
+        if host["name"] in windows_hosts:
+            windows_provisioning_commands.extend(_call_provisioner(input_definitions, flags))
+        else:
+            device["commands"].extend(_call_provisioner(input_definitions, flags))
+        if host["name"] == CONTROLLER_NAME:
+            device["commands"].extend(windows_provisioning_commands)
         vagrant_definitions.append(device)
 
     _add_all_networks(vagrant_definitions, input_definitions, flags)
