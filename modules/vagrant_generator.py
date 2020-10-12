@@ -240,6 +240,7 @@ def _build_vagrant_definitions(input_definitions, flags):
         device["type"] = "router"
         device["name"] = router["name"]
         device["commands"] = _create_commands(router)
+        device["commands"].extend(_call_provisioner(input_definitions, flags))
         vagrant_definitions.append(device)
 
     for host in input_definitions["hosts"]:
@@ -247,11 +248,10 @@ def _build_vagrant_definitions(input_definitions, flags):
         device["type"] = "host"
         device["name"] = host["name"]
         device["commands"] = _create_commands(host)
+        device["commands"].extend(_call_provisioner(input_definitions, flags))
         vagrant_definitions.append(device)
 
     _add_all_networks(vagrant_definitions, input_definitions, flags)
-
-    vagrant_definitions.extend(_call_provisioner(input_definitions, flags))
 
     return vagrant_definitions
 

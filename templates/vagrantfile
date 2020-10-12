@@ -26,8 +26,8 @@
 {# Macro for provision items #}
 {% macro provision(item, namespace) %}
   # {{ item.note }}
-  {{ namespace }}.vm.provision :{{ item.provisioner }} do |provisioner|
-{{ layer2(item.commands, "provisioner") }}
+    {{ namespace }}.vm.provision :{{ item.provisioner }} do |provisioner|
+{{ layer3(item.commands, "provisioner") }}
 {% endmacro -%}
 
 {# Macro for string items #}
@@ -63,12 +63,12 @@
   {{ namespace }}.{{ item.command }} = {
   {% for key, value in item.dictionary.items() %}
     {% if loop.last %}
-      {{ key }}: {{ value }}
+        {{ key }}: {{ value }}
     {% else %}
-      {{ key }}: {{ value }},
+        {{ key }}: {{ value }},
     {% endif %}
   {% endfor %}
-    }
+      }
 {% endmacro -%}
 
 {# Macro for dictionaries #}
@@ -76,12 +76,12 @@
   {{ namespace }}.groups = {
   {% for key, value in item.groups.items() %}
     {% if loop.last %}
-      "{{ key }}" => {{ value }}
+        "{{ key }}" => {{ value }}
     {% else %}
-      "{{ key }}" => {{ value }},
+        "{{ key }}" => {{ value }},
     {% endif %}
   {% endfor %}
-    }
+      }
 {% endmacro -%}
 
 {# Macro for network items #}
@@ -102,8 +102,6 @@
 {{ router(item, namespace) }}
 {% elif item.type == "host" %}
 {{ host(item, namespace) }}
-{% elif item.type == "provision" %}
-{{ provision(item, namespace) }}
 {% endif %}
 {% endfor %}
 end
@@ -128,6 +126,8 @@ end
   {{ dictionary(item, namespace) -}}
 {% elif item.type == "groups" %}
   {{ groups(item, namespace) -}}
+{% elif item.type == "provision" %}
+  {{ provision(item, namespace) }}
 {% endif %}
 {% endfor %}
   end
@@ -142,6 +142,10 @@ end
     {{ boolean(item, namespace) -}}
 {% elif item.type == "integer" %}
     {{ integer(item, namespace) -}}
+{% elif item.type == "dictionary" %}
+    {{ dictionary(item, namespace) -}}
+{% elif item.type == "groups" %}
+    {{ groups(item, namespace) -}}
 {% endif %}
 {% endfor %}
     end
