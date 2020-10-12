@@ -96,7 +96,7 @@ def _create_commands(device_attributes):
     return commands
 
 
-def _create_ansible_commands(playbook_location, input_definitions, flags):
+def _create_ansible_commands(device_name, playbook_location, input_definitions, flags):
     """Create commands for running a playbook from the Vagrantfile."""
     commands = []
 
@@ -105,6 +105,12 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
     playbook["command"] = "playbook"
     playbook["value"] = playbook_location
     commands.append(playbook)
+
+    limit = dict()
+    limit["type"] = "string"
+    limit["command"] = "limit"
+    limit["value"] = device_name
+    commands.append(limit)
 
     if "verbose_ansible" in flags and flags["verbose_ansible"]:
         verbosity = dict()
@@ -196,7 +202,7 @@ def _add_all_networks(vagrant_definitions, input_definitions, flags):
                                     input_definitions)
 
 
-def _call_provisioner(input_definitions, flags):
+def _call_provisioner(device_name, input_definitions, flags):
     """Create entry to vagrant definitions for calling the provisioner."""
     provisioner_calls = []
 
@@ -207,7 +213,8 @@ def _call_provisioner(input_definitions, flags):
     else:
         config_playbook["provisioner"] = "ansible"
     config_playbook["note"] = "basic configuration of devices and networks"
-    config_playbook["commands"] = _create_ansible_commands(BASE_PLAYBOOK,
+    config_playbook["commands"] = _create_ansible_commands(device_name,
+                                                           BASE_PLAYBOOK,
                                                            input_definitions,
                                                            flags)
 
@@ -220,7 +227,8 @@ def _call_provisioner(input_definitions, flags):
     else:
         user_playbook["provisioner"] = "ansible"
     user_playbook["note"] = "user configuration of devices"
-    user_playbook["commands"] = _create_ansible_commands(USER_PLAYBOOK,
+    user_playbook["commands"] = _create_ansible_commands(device_name,
+                                                         USER_PLAYBOOK,
                                                          input_definitions,
                                                          flags)
 
@@ -250,7 +258,7 @@ def _build_vagrant_definitions(input_definitions, flags):
         device["type"] = "router"
         device["name"] = router["name"]
         device["commands"] = _create_commands(router)
-        device["commands"].extend(_call_provisioner(input_definitions, flags))
+        device["commands"].extend(_call_provisioner(device["name"], input_definitions, flags))
         vagrant_definitions.append(device)
 
     windows_hosts = _find_windows_boxes(input_definitions)
@@ -261,9 +269,9 @@ def _build_vagrant_definitions(input_definitions, flags):
         device["name"] = host["name"]
         device["commands"] = _create_commands(host)
         if host["name"] in windows_hosts:
-            windows_provisioning_commands.extend(_call_provisioner(input_definitions, flags))
+            windows_provisioning_commands.extend(_call_provisioner(device["name"], input_definitions, flags))
         else:
-            device["commands"].extend(_call_provisioner(input_definitions, flags))
+            device["commands"].extend(_call_provisioner(device["name"], input_definitions, flags))
         if host["name"] == CONTROLLER_NAME:
             device["commands"].extend(windows_provisioning_commands)
         vagrant_definitions.append(device)
