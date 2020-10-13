@@ -45,7 +45,7 @@ def _add_extra_arguments(definitions, flags):
     if "border_router" in flags and flags["ansible_local"]:
         for device in itertools.chain(definitions["hosts"],
                                       definitions["routers"]):
-            if "synced_folder" not in device:
+            if "synced_folder" not in device and "communicator" not in device:
                 device["synced_folder"] = "\".\", \"/vagrant\", type: \"rsync"\
                                           "\", rsync__exclude: \".git/\""
 
@@ -81,6 +81,12 @@ def _find_windows_boxes(definitions):
     return windows_hosts
 
 
+def _add_windows_attributes(host):
+    """Add vagrant attributes to windows hosts"""
+    host["communicator"] = "winrm"
+    host["winrm_username"] = "vagrant"
+
+
 def preprocess(definitions, flags):
     """Run preprocessing.
 
@@ -107,9 +113,18 @@ def preprocess(definitions, flags):
         cleanup_and_exit("Preprocessing not successful: "
                          "Could not create border router (" + error + ")")
 
+    windows_hosts = _find_windows_boxes(definitions)
     try:
-        if _find_windows_boxes(definitions):
+        if windows_hosts:
             create_controller(definitions)
+    except (ValueError, IndexError) as error:
+        cleanup_and_exit("Preprocessing not successful: "
+                         "Could not create controller (" + error + ")")
+
+    try:
+        for host in definitions["hosts"]:
+            if host["name"] in windows_hosts:
+                _add_windows_attributes(host)
     except (ValueError, IndexError) as error:
         cleanup_and_exit("Preprocessing not successful: "
                          "Could not create controller (" + error + ")")
