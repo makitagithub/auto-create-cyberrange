@@ -1,4 +1,8 @@
 ---
+- name: Install net-tools
+  apt:
+    name: "net-tools"
+
 - name: Adding aliases
   loop: "{{ aliases | dict2items }}"
   lineinfile:

@@ -10,12 +10,6 @@
       file: config.yml
       name: config
 
-- name: Configuring hosts
-  hosts: hosts
-  become: yes
-  roles:
-    - hosts
-
 - name: Configuring routers
   hosts: routers
   become: yes
