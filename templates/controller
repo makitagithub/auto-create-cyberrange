@@ -19,18 +19,9 @@
   loop_control:
     loop_var: interface
 
-- name: Prepare controller
-  hosts: controller
-  become: yes
-  tasks:
 
-    - name: Install pywinrm
-      pip:
-        name: pywinrm
-        executable: "/usr/bin/pip3"
-
-    - name: Add aliases
-      lineinfile:
-        path: /etc/hosts
-        line: '192.168.20.6 win'
+- name: Install pywinrm
+  pip:
+    name: pywinrm
+    executable: "/usr/bin/pip3"
 ...

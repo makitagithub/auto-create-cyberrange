@@ -99,6 +99,7 @@ def _create_commands(device_attributes):
 def _create_ansible_commands(device_name, playbook_location, input_definitions, flags):
     """Create commands for running a playbook from the Vagrantfile."""
     commands = []
+    windows_hosts = _find_windows_boxes(input_definitions);
 
     playbook = dict()
     playbook["type"] = "string"
@@ -130,6 +131,8 @@ def _create_ansible_commands(device_name, playbook_location, input_definitions, 
     for router in input_definitions["routers"]:
         router_names.append(router["name"])
     groups["groups"]["routers"] = router_names
+    windows_hosts = _find_windows_boxes(input_definitions)
+    groups["groups"]["windows"] = windows_hosts
     if "groups" in input_definitions:
         for group in input_definitions["groups"]:
             groups["groups"][group["name"]] = group["nodes"]
@@ -157,8 +160,14 @@ def _create_ansible_commands(device_name, playbook_location, input_definitions, 
     extravars["type"] = "dictionary"
     extravars["command"] = "extra_vars"
     extravars["dictionary"] = dict()
-    extravars["dictionary"]["ansible_python_interpreter"] = \
-        "\"/usr/bin/python3\""
+    if device_name in windows_hosts:
+        extravars["dictionary"]["ansible_connection"] = "\"winrm\""
+        extravars["dictionary"]["ansible_user"] = "\"vagrant\""
+        extravars["dictionary"]["ansible_password"] = "\"vagrant\""
+        extravars["dictionary"]["ansible_winrm_transport"] = "\"basic\""
+        extravars["dictionary"]["ansible_winrm_server_cert_validation"] = "\"ignore\""
+    else:
+        extravars["dictionary"]["ansible_python_interpreter"] = "\"/usr/bin/python3\""
     commands.append(extravars)
 
     return commands
