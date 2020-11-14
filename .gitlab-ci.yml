@@ -29,7 +29,6 @@ original:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
 
 debian-stretch:
@@ -40,7 +39,6 @@ debian-stretch:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
 
 debian9:
@@ -51,7 +49,6 @@ debian9:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
 
 ubuntu:
@@ -62,7 +59,6 @@ ubuntu:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
 
 kali:
@@ -79,7 +75,6 @@ kali:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
 
 1-router-1-network-1-host:
@@ -90,7 +85,6 @@ kali:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
 
 1-router-2-networks-2-hosts:
@@ -101,7 +95,6 @@ kali:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
 
 1-router-2-networks-2-hosts-ubuntu:
@@ -112,7 +105,6 @@ kali:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
 
 1-router-2-networks-2-hosts-kali:
@@ -129,7 +121,6 @@ kali:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
 
 2-routers-2-networks-2-hosts:
@@ -140,7 +131,6 @@ kali:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
 
 2-routers-4-networks-4-hosts:
@@ -151,7 +141,6 @@ kali:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
 
 3-routers-5-networks-5-hosts-br:
@@ -162,7 +151,6 @@ kali:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
 
 3-routers-5-networks-5-hosts-br-ansloc:
@@ -173,5 +161,4 @@ kali:
   when: always
   # only run for commits to master branch and merge requests
   only: 
-    - master
     - merge_requests
