@@ -1,5 +1,5 @@
 # Image with everything needed to run Cyber Sandbox Creator.
-image: ilyavarne/virtualbox-vagrant-ansible-python:debian
+image: registry.gitlab.ics.muni.cz:443/muni-kypo-csc/cyber-sandbox-creator:debian
 
 # Make sure that VirtualBox kernel modules are loaded and install Python dependencies.
 before_script:
