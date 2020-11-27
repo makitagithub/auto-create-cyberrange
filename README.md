@@ -1,12 +1,16 @@
 # Cyber Sandbox Creator
 
-Cyber Sandbox Creator is a tool, which can generate portable input files for building lightweight virtual environments using Vagrant and Ansible from a simple YAML definition of topology. The combination of these three tools makes possible to build virtual machines connected with virtual networks even on a desktop computer.
+Cyber Sandbox Creator is a tool that can generate portable input files for building lightweight virtual environments using Vagrant and Ansible from a simple YAML definition of topology. The combination of these three tools makes it possible to build virtual machines connected with virtual networks even on a desktop computer.
 
 ![usage](doc/sandbox_creator_general.svg "Usage")
 
-## Installation
+---
 
-**Note:** This is just a quick guide how to install and generate files with this tool. For full description of how to prepare the host device to be able run the generated environments and how to build the virtual machines check our [wiki page](https://gitlab.ics.muni.cz/muni-kypo-csc/cyber-sandbox-creator/-/wikis/Installation-and-Usage).
+**Note: This is just a quick guide how to install and generate files with Cyber Sandbox Creator. For full description of how to prepare the host device to run the generated environments and how to build the virtual machines, check our [wiki page](https://gitlab.ics.muni.cz/muni-kypo-csc/cyber-sandbox-creator/-/wikis/Installation-and-Usage).**
+
+**The latest stable release is available in [Releases](https://gitlab.ics.muni.cz/muni-kypo-csc/cyber-sandbox-creator/-/releases).**
+
+## Installation
 
 ### Linux (Ubuntu/Debian)
 
@@ -23,43 +27,62 @@ Cyber Sandbox Creator is a tool, which can generate portable input files for bui
 2. Install [git](https://git-scm.com/downloads).
 3. Clone the project with `git clone https://gitlab.ics.muni.cz/cs4eu/sandbox-creator.git` to an arbitrary folder.
 4. Navigate to the project folder (`cd sandbox-creator`).
-5. Install Python dependencies using the command `python -m pip install -r .\requirements.txt`.
+5. Install Python dependencies using the command `python -m pip install -r requirements.txt`.
 
 ## Usage
 
 ### Linux (Ubuntu/Debian)
 
-1. After the installation simply run the command `$ python3 create.py topology.yml` to generate files.
+1. After the installation, simply run the command `$ python3 create.py topology.yml` to generate intermediate definition files.
 2. Navigate to the newly created directory `sandbox` and run `$ vagrant up` to build the virtual environment.
 3. The built environment can be deleted using the command `$ vagrant destroy -f`.
 
 ### Windows 10
 
 1. Generate files using the command `python create.py --ansible_local topology.yml`.
-2. Navigate to the newly created folder `sandbox` and run the command `vagrant up` to build the virtual environment.
+2. Navigate to the newly created directory `sandbox` and run `vagrant up` to build the virtual environment.
 3. The built environment can be deleted using the command `vagrant destroy -f`.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
 
 ## Credits
 
-**Cybersecurity Laboratory**\
+**[Cybersecurity Laboratory](https://kypo.fi.muni.cz)**\
 **Faculty of Informatics**\
 **Masaryk University**
+
+**Project lead**: Jan Vykopal
 
 **Lead developer**: Attila Farkas
 
 **Developer**: Jana Ziková
 
-**Technology lead**: Daniel Tovarňák (KYPO cyber range platform)
-
-**Supervisor**: Jan Vykopal
-
 **Contributors**:
 
-- Valdemar Švábenský
-- Kamil Andoniadis (KYPO cyber range platform)
+- Valdemar Švábenský - user testing
+- Daniel Tovarňák (KYPO Cyber Range Platform) - technical advisor
+- Kamil Andoniadis (KYPO Cyber Range Platform)
 
-**Student contributors:** Michal Staník, Zdeněk Vydra,  Adam Skrášek
+**Student contributors:**  all students who use the tool for their thesis projects or training
 
-## License
+### Acknowledgements
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+<table>
+  <tr>
+    <td>![EU](doc/EU.jpg "EU emblem")</td>
+    <td>
+This software and accompanying documentation is part of a [project](https://cybersec4europe.eu) that has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No. 830929.
+</td>
+  </tr>
+  <tr>
+      <td>![TACR](doc/TACR.png "TACR logo")</td>
+      <td>This software was developed with the support of the Technology Agency of the Czech Republic (TA ČR) from the National Centres of Competence programme (project identification TN01000077 – [National Centre of Competence in Cybersecurity](https://nc3.cz/)). 
+      </td>
+  </tr>
+ </table>
+
+
+
+
