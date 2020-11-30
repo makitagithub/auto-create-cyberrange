@@ -85,6 +85,7 @@ def _add_windows_attributes(host):
     """Add vagrant attributes to windows hosts"""
     host["communicator"] = "winrm"
     host["winrm_username"] = "vagrant"
+    host["winrm_password"] = "vagrant"
 
 
 def preprocess(definitions, flags):
