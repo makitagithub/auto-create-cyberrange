@@ -84,7 +84,7 @@ def _find_windows_boxes(definitions):
 def _add_windows_attributes(host):
     """Add vagrant attributes to windows hosts"""
     host["communicator"] = "winrm"
-    host["winrm_username"] = "vagrant"
+    host["winrm_username"] = "windows"
     host["winrm_password"] = "vagrant"
 
 

@@ -162,7 +162,7 @@ def _create_ansible_commands(device_name, playbook_location, input_definitions, 
     extravars["dictionary"] = dict()
     if device_name in windows_hosts:
         extravars["dictionary"]["ansible_connection"] = "\"winrm\""
-        extravars["dictionary"]["ansible_user"] = "\"vagrant\""
+        extravars["dictionary"]["ansible_user"] = "\"windows\""
         extravars["dictionary"]["ansible_password"] = "\"vagrant\""
         extravars["dictionary"]["ansible_winrm_transport"] = "\"basic\""
         extravars["dictionary"]["ansible_winrm_server_cert_validation"] = "\"ignore\""
