@@ -133,6 +133,14 @@ def _create_ansible_commands(device_name, playbook_location, input_definitions, 
     groups["groups"]["routers"] = router_names
     windows_hosts = _find_windows_boxes(input_definitions)
     groups["groups"]["windows"] = windows_hosts
+    if device_name in windows_hosts:
+        windows_vars = dict()
+        windows_vars["ansible_connection"] = "\"winrm\""
+        windows_vars["ansible_user"] = "\"windows\""
+        windows_vars["ansible_password"] = "\"vagrant\""
+        windows_vars["ansible_winrm_transport"] = "\"basic\""
+        windows_vars["ansible_winrm_server_cert_validation"] = "\"ignore\""
+        groups["groups"]["windows:vars"] = windows_vars
     if "groups" in input_definitions:
         for group in input_definitions["groups"]:
             groups["groups"][group["name"]] = group["nodes"]
@@ -160,13 +168,7 @@ def _create_ansible_commands(device_name, playbook_location, input_definitions, 
     extravars["type"] = "dictionary"
     extravars["command"] = "extra_vars"
     extravars["dictionary"] = dict()
-    if device_name in windows_hosts:
-        extravars["dictionary"]["ansible_connection"] = "\"winrm\""
-        extravars["dictionary"]["ansible_user"] = "\"windows\""
-        extravars["dictionary"]["ansible_password"] = "\"vagrant\""
-        extravars["dictionary"]["ansible_winrm_transport"] = "\"basic\""
-        extravars["dictionary"]["ansible_winrm_server_cert_validation"] = "\"ignore\""
-    else:
+    if device_name not in windows_hosts:
         extravars["dictionary"]["ansible_python_interpreter"] = "\"/usr/bin/python3\""
     commands.append(extravars)
 

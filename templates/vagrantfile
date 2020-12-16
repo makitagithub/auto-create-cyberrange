@@ -71,14 +71,29 @@
       }
 {% endmacro -%}
 
+{# Macro for group dictionaries #}
+{% macro group_dict(item, namespace) %}{
+  {% for key, value in item.items() %}
+      {% if loop.last %}
+          "{{ key }}" => {{ value }}
+      {% else %}
+          "{{ key }}" => {{ value }},
+    {% endif %}
+  {% endfor %}
+        }{% endmacro -%}
+
 {# Macro for dictionaries #}
 {% macro groups(item, namespace) %}
   {{ namespace }}.groups = {
   {% for key, value in item.groups.items() %}
-    {% if loop.last %}
-        "{{ key }}" => {{ value }}
+    {% if value is mapping %}
+        "{{ key }}" => {{ group_dict(value, namespace) }}
     {% else %}
+      {% if loop.last %}
+        "{{ key }}" => {{ value }}
+      {% else %}
         "{{ key }}" => {{ value }},
+      {% endif %}
     {% endif %}
   {% endfor %}
       }
