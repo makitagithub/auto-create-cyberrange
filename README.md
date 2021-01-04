@@ -16,7 +16,7 @@ Cyber Sandbox Creator is a tool that can generate portable input files for build
 
 1. Install git using the command `$ sudo apt-get install git`.
 2. Clone the project with `$ git clone https://gitlab.ics.muni.cz/cs4eu/sandbox-creator.git` to an arbitrary directory.
-3. Navigate to the project directory (`$ cd sandbox-creator`).
+3. Navigate to the project directory (`$ cd cyber-sandbox-creator`).
 4. Install pip using `$ sudo apt-get install python3-pip`.
 5. Install setuptools with `$ pip3 install setuptools`.
 6. Install dependencies with the command `$ pip3 install -r requirements.txt`.
@@ -26,7 +26,7 @@ Cyber Sandbox Creator is a tool that can generate portable input files for build
 1. Install [Python 3](https://www.python.org/downloads/windows/). At the beginning of the installation mark the "Add Python to PATH" option.
 2. Install [git](https://git-scm.com/downloads).
 3. Clone the project with `git clone https://gitlab.ics.muni.cz/cs4eu/sandbox-creator.git` to an arbitrary folder.
-4. Navigate to the project folder (`cd sandbox-creator`).
+4. Navigate to the project folder (`cd cyber-sandbox-creator`).
 5. Install Python dependencies using the command `python -m pip install -r requirements.txt`.
 
 ## Usage
