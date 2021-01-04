@@ -7,6 +7,7 @@ creation.
 import itertools
 
 from modules.border_router import create_border_router
+from modules.controller import create_controller
 from modules.file_manager import open_yaml, cleanup_and_exit
 
 FLAVORS = open_yaml("conf/flavors.yml")
@@ -44,7 +45,7 @@ def _add_extra_arguments(definitions, flags):
     if "border_router" in flags and flags["ansible_local"]:
         for device in itertools.chain(definitions["hosts"],
                                       definitions["routers"]):
-            if "synced_folder" not in device:
+            if "synced_folder" not in device and "communicator" not in device:
                 device["synced_folder"] = "\".\", \"/vagrant\", type: \"rsync"\
                                           "\", rsync__exclude: \".git/\""
 
@@ -69,6 +70,22 @@ def _delete_dummy_router(definitions):
         if router["name"] == DUMMY_ROUTER_NAME:
             definitions["routers"].remove(router)
             return
+
+
+def _find_windows_boxes(definitions):
+    """Find and return list of host names with windows boxes."""
+    windows_hosts = []
+    for host in definitions["hosts"]:
+        if "windows" in host["base_box"]["image"].lower():
+            windows_hosts.append(host["name"])
+    return windows_hosts
+
+
+def _add_windows_attributes(host):
+    """Add vagrant attributes to windows hosts"""
+    host["communicator"] = "winrm"
+    host["winrm_username"] = "windows"
+    host["winrm_password"] = "vagrant"
 
 
 def preprocess(definitions, flags):
@@ -96,6 +113,22 @@ def preprocess(definitions, flags):
     except (ValueError, IndexError) as error:
         cleanup_and_exit("Preprocessing not successful: "
                          "Could not create border router (" + error + ")")
+
+    windows_hosts = _find_windows_boxes(definitions)
+    try:
+        if windows_hosts:
+            create_controller(definitions)
+    except (ValueError, IndexError) as error:
+        cleanup_and_exit("Preprocessing not successful: "
+                         "Could not create controller (" + error + ")")
+
+    try:
+        for host in definitions["hosts"]:
+            if host["name"] in windows_hosts:
+                _add_windows_attributes(host)
+    except (ValueError, IndexError) as error:
+        cleanup_and_exit("Preprocessing not successful: "
+                         "Could not create controller (" + error + ")")
 
     try:
         _configure_routers(definitions)

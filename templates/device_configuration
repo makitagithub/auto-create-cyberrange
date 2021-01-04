@@ -10,12 +10,6 @@
       file: config.yml
       name: config
 
-- name: Configuring hosts
-  hosts: hosts
-  become: yes
-  roles:
-    - hosts
-
 - name: Configuring routers
   hosts: routers
   become: yes
@@ -25,9 +19,21 @@
       name: routers
     when: config.routers
 
-- name: Configuring devices separately
-  hosts: all
+- name: Configuring Linux devices separately
+  hosts: all:!windows
   become: yes
+  tasks:
+  - name: include role
+    include_role:
+      name: "{{ inventory_hostname }}"
+
+- name: Configuring Windows devices separately
+  hosts: windows
+  become: yes
+  become_method: runas
+  become_user: windows
+  vars:
+    ansible_become_pass: vagrant
   tasks:
   - name: include role
     include_role:

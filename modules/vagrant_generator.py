@@ -1,6 +1,9 @@
 """Contains functions for generating a Vagrantfile from input definitions."""
 
+import netaddr
+
 from modules.file_manager import generate_file, open_yaml
+from modules.controller import CONTROLLER_NAME
 
 VAGRANT_MAPPING = open_yaml("conf/vagrant_mapping.yml")
 VIRTUALBOX_MAPPING = open_yaml("conf/virtualbox_mapping.yml")
@@ -93,15 +96,22 @@ def _create_commands(device_attributes):
     return commands
 
 
-def _create_ansible_commands(playbook_location, input_definitions, flags):
+def _create_ansible_commands(device_name, playbook_location, input_definitions, flags):
     """Create commands for running a playbook from the Vagrantfile."""
     commands = []
+    windows_hosts = _find_windows_boxes(input_definitions);
 
     playbook = dict()
     playbook["type"] = "string"
     playbook["command"] = "playbook"
     playbook["value"] = playbook_location
     commands.append(playbook)
+
+    limit = dict()
+    limit["type"] = "string"
+    limit["command"] = "limit"
+    limit["value"] = device_name
+    commands.append(limit)
 
     if "verbose_ansible" in flags and flags["verbose_ansible"]:
         verbosity = dict()
@@ -121,6 +131,16 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
     for router in input_definitions["routers"]:
         router_names.append(router["name"])
     groups["groups"]["routers"] = router_names
+    windows_hosts = _find_windows_boxes(input_definitions)
+    groups["groups"]["windows"] = windows_hosts
+    if device_name in windows_hosts:
+        windows_vars = dict()
+        windows_vars["ansible_connection"] = "\"winrm\""
+        windows_vars["ansible_user"] = "\"windows\""
+        windows_vars["ansible_password"] = "\"vagrant\""
+        windows_vars["ansible_winrm_transport"] = "\"basic\""
+        windows_vars["ansible_winrm_server_cert_validation"] = "\"ignore\""
+        groups["groups"]["windows:vars"] = windows_vars
     if "groups" in input_definitions:
         for group in input_definitions["groups"]:
             groups["groups"][group["name"]] = group["nodes"]
@@ -148,8 +168,8 @@ def _create_ansible_commands(playbook_location, input_definitions, flags):
     extravars["type"] = "dictionary"
     extravars["command"] = "extra_vars"
     extravars["dictionary"] = dict()
-    extravars["dictionary"]["ansible_python_interpreter"] = \
-        "\"/usr/bin/python3\""
+    if device_name not in windows_hosts:
+        extravars["dictionary"]["ansible_python_interpreter"] = "\"/usr/bin/python3\""
     commands.append(extravars)
 
     return commands
@@ -173,8 +193,10 @@ def _add_networks_to_device(definition, mappings, input_definitions):
             network["network_type"] = "private_network"
             network["name"] = mapping["network"]
             network["ip"] = mapping["ip"]
-            network["netmask"] = _find_netmask(mapping["network"],
-                                               input_definitions["networks"])
+            netmask = netaddr.IPNetwork("0.0.0.0/" +
+                                        _find_netmask(mapping["network"],
+                                                      input_definitions["networks"])).netmask
+            network["netmask"] = str(netmask)
             definition["commands"].append(network)
 
 
@@ -191,9 +213,22 @@ def _add_all_networks(vagrant_definitions, input_definitions, flags):
                                     input_definitions)
 
 
-def _call_provisioner(input_definitions, flags):
+def _call_provisioner(device_name, input_definitions, flags):
     """Create entry to vagrant definitions for calling the provisioner."""
     provisioner_calls = []
+
+    if device_name == CONTROLLER_NAME:
+        shell_provisioning = dict()
+        shell_provisioning["type"] = "provision"
+        shell_provisioning["provisioner"] = "shell"
+        shell_provisioning["note"] = "install pip3 and ansible"
+
+        install_ansible = dict()
+        install_ansible["type"] = "string"
+        install_ansible["command"] = "inline"
+        install_ansible["value"] = "sudo apt-get install -y python3-pip && pip3 install --upgrade ansible"
+        shell_provisioning["commands"] = [install_ansible]
+        provisioner_calls.append(shell_provisioning)
 
     config_playbook = dict()
     config_playbook["type"] = "provision"
@@ -202,7 +237,8 @@ def _call_provisioner(input_definitions, flags):
     else:
         config_playbook["provisioner"] = "ansible"
     config_playbook["note"] = "basic configuration of devices and networks"
-    config_playbook["commands"] = _create_ansible_commands(BASE_PLAYBOOK,
+    config_playbook["commands"] = _create_ansible_commands(device_name,
+                                                           BASE_PLAYBOOK,
                                                            input_definitions,
                                                            flags)
 
@@ -215,13 +251,23 @@ def _call_provisioner(input_definitions, flags):
     else:
         user_playbook["provisioner"] = "ansible"
     user_playbook["note"] = "user configuration of devices"
-    user_playbook["commands"] = _create_ansible_commands(USER_PLAYBOOK,
+    user_playbook["commands"] = _create_ansible_commands(device_name,
+                                                         USER_PLAYBOOK,
                                                          input_definitions,
                                                          flags)
 
     provisioner_calls.append(user_playbook)
 
     return provisioner_calls
+
+
+def _find_windows_boxes(definitions):
+    """Find and return list of host names with windows boxes."""
+    windows_hosts = []
+    for host in definitions["hosts"]:
+        if "windows" in host["base_box"]["image"].lower():
+            windows_hosts.append(host["name"])
+    return windows_hosts
 
 
 def _build_vagrant_definitions(input_definitions, flags):
@@ -236,18 +282,25 @@ def _build_vagrant_definitions(input_definitions, flags):
         device["type"] = "router"
         device["name"] = router["name"]
         device["commands"] = _create_commands(router)
+        device["commands"].extend(_call_provisioner(device["name"], input_definitions, flags))
         vagrant_definitions.append(device)
 
+    windows_hosts = _find_windows_boxes(input_definitions)
+    windows_provisioning_commands = []
     for host in input_definitions["hosts"]:
         device = dict()
         device["type"] = "host"
         device["name"] = host["name"]
         device["commands"] = _create_commands(host)
+        if host["name"] in windows_hosts:
+            windows_provisioning_commands.extend(_call_provisioner(device["name"], input_definitions, flags))
+        else:
+            device["commands"].extend(_call_provisioner(device["name"], input_definitions, flags))
+        if host["name"] == CONTROLLER_NAME:
+            device["commands"].extend(windows_provisioning_commands)
         vagrant_definitions.append(device)
 
     _add_all_networks(vagrant_definitions, input_definitions, flags)
-
-    vagrant_definitions.extend(_call_provisioner(input_definitions, flags))
 
     return vagrant_definitions
 

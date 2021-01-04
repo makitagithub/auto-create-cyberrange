@@ -4,6 +4,15 @@ from modules.file_manager import generate_file, copy_template_file,\
     copy_user_provisioning_dir
 from modules.ansible_vars_generator import generate_ansible_vars
 from conf.border_router import BORDER_ROUTER_NAME
+from modules.controller import CONTROLLER_NAME
+
+def _find_windows_boxes(definitions):
+    """Find and return list of host names with windows boxes."""
+    windows_hosts = []
+    for host in definitions["hosts"]:
+        if "windows" in host["base_box"]["image"].lower():
+            windows_hosts.append(host["name"])
+    return windows_hosts
 
 
 def _create_config_playbooks(input_definitions, flags):
@@ -18,14 +27,23 @@ def _create_config_playbooks(input_definitions, flags):
         copy_template_file("routers",
                            "base_provisioning/roles/routers/tasks/main.yml")
 
+    windows_hosts = _find_windows_boxes(input_definitions)
+
     for device in input_definitions["hosts"] + input_definitions["routers"]:
         if "border_router" in flags and flags["border_router"] and\
            device["name"] == BORDER_ROUTER_NAME:
             copy_template_file("br", "base_provisioning/roles/" +
                                device["name"] + "/tasks/main.yml")
         else:
-            copy_template_file("separate_devices", "base_provisioning/roles/" +
-                               device["name"] + "/tasks/main.yml")
+            if device["name"] == CONTROLLER_NAME:
+                copy_template_file("controller", "base_provisioning/roles/" +
+                                   device["name"] + "/tasks/main.yml")
+            elif device["name"] in windows_hosts:
+                copy_template_file("windows_devices", "base_provisioning/roles/" +
+                                   device["name"] + "/tasks/main.yml")
+            else:
+                copy_template_file("separate_devices", "base_provisioning/roles/" +
+                                   device["name"] + "/tasks/main.yml")
 
 
 def _generate_user_playbooks(input_definitions):
