@@ -1,0 +1,14 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[packages]
+jinja2 = ">=2.10.1"
+PyYAML = ">=5.3.1"
+netaddr = ">=0.8"
+kypo-topology-definition = {editable = true, git = "https://gitlab.ics.muni.cz/muni-kypo-crp/backend-python/kypo-topology-definition.git"}
+
+[dev-packages]
+
+[requires]
