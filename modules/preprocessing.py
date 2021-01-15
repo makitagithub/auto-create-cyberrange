@@ -53,7 +53,7 @@ def _add_extra_arguments(definitions, flags):
 def _add_flavors(definitions):
     """Change flavor attribute to cpus and memory."""
     for host in definitions["hosts"]:
-        if "flavor" in host:
+        if "flavor" in host and host["flavor"]:
             if host["flavor"] not in FLAVORS:
                 print("Error: Not supported flavor: " + host["flavor"])
                 raise AttributeError
