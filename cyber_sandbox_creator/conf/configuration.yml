@@ -1,0 +1,14 @@
+#This is a configuration file for default values and constants of CSC.
+#Change values only if you know what you are doing.
+
+#Default values for routers
+default_router_box_name: debian/stretch64
+default_router_memory: 256
+default_router_cpus: 1
+
+#Default values for border router
+default_border_router_name: br
+default_border_router_ip: 172.18.0.1
+default_border_router_network_name: BR
+default_border_router_network_ip: 172.18.0.0/24
+default_border_router_pubilc_ip: 172.18.10.1
