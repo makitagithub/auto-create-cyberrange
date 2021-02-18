@@ -2,7 +2,7 @@
 #Change values only if you know what you are doing.
 
 #Default values for routers
-default_router_box: debian/stretch64
+default_router_box: munikypo/debian-10
 default_router_memory: 256
 default_router_cpus: 1
 
@@ -12,12 +12,12 @@ border_router_ip: 172.18.0.1
 border_router_network_name: BR
 border_router_network_ip: 172.18.0.0/24
 border_router_pubilc_ip: 172.18.10.1
-border_router_box: debian/stretch64
+border_router_box: munikypo/debian-10
 border_router_memory: 256
 border_router_cpus: 1
 
 #Default values for controller
 controller_name: controller
-controller_box: debian/stretch64
+controller_box: munikypo/debian-10
 controller_memory: 512
 controller_cpus: 2
