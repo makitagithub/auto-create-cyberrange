@@ -30,8 +30,8 @@ class Writer:
             template_loader = jinja2.FileSystemLoader(searchpath=
                                                       Writer.TEMPLATE_DIR)
             template_env = jinja2.Environment(loader=template_loader,
-                                          trim_blocks=True,
-                                          lstrip_blocks=True)
+                                              trim_blocks=True,
+                                              lstrip_blocks=True)
             template = template_env.get_template(template_name)
         except jinja2.TemplateNotFound:
             raise RuntimeError(f"Could not find template {template_name}")
