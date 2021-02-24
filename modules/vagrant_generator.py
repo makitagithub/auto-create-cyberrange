@@ -162,7 +162,7 @@ def _create_ansible_commands(device_name, playbook_location, input_definitions, 
     extravars["command"] = "extra_vars"
     extravars["dictionary"] = dict()
     if device_name not in windows_hosts:
-        extravars["dictionary"]["ansible_python_interpreter"] = "\"/usr/bin/python3\""
+        extravars["dictionary"]["ansible_python_interpreter"] = "\"python3\""
     commands.append(extravars)
 
     return commands
