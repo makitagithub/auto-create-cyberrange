@@ -146,13 +146,6 @@ def _create_ansible_commands(device_name, playbook_location, input_definitions, 
             groups["groups"][group["name"]] = group["nodes"]
     commands.append(groups)
 
-    if "ansible_local" in flags and flags["ansible_local"]:
-        install_mode = dict()
-        install_mode["type"] = "string"
-        install_mode["command"] = "install_mode"
-        install_mode["value"] = "pip"
-        commands.append(install_mode)
-
     if "extra_vars" in flags and flags["extra_vars"]:
         if "ansible_local" in flags and flags["ansible_local"]:
             extra_vars_location = "/vagrant/user_files/extra_vars.yml"
