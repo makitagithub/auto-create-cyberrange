@@ -5,7 +5,7 @@ from netaddr import *
 from itertools import chain
 
 CONTROLLER_NAME = "controller"
-CONTROLLER_BOX_NAME = "debian/contrib-stretch64"
+CONTROLLER_BOX_NAME = "munikypo/debian-10"
 CONTROLLER_MEMORY = 512
 
 
