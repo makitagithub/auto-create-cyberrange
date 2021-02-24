@@ -146,13 +146,6 @@ def _create_ansible_commands(device_name, playbook_location, input_definitions, 
             groups["groups"][group["name"]] = group["nodes"]
     commands.append(groups)
 
-    if "ansible_local" in flags and flags["ansible_local"]:
-        install_mode = dict()
-        install_mode["type"] = "string"
-        install_mode["command"] = "install_mode"
-        install_mode["value"] = "pip"
-        commands.append(install_mode)
-
     if "extra_vars" in flags and flags["extra_vars"]:
         if "ansible_local" in flags and flags["ansible_local"]:
             extra_vars_location = "/vagrant/user_files/extra_vars.yml"
@@ -216,19 +209,6 @@ def _add_all_networks(vagrant_definitions, input_definitions, flags):
 def _call_provisioner(device_name, input_definitions, flags):
     """Create entry to vagrant definitions for calling the provisioner."""
     provisioner_calls = []
-
-    if device_name == CONTROLLER_NAME:
-        shell_provisioning = dict()
-        shell_provisioning["type"] = "provision"
-        shell_provisioning["provisioner"] = "shell"
-        shell_provisioning["note"] = "install pip3 and ansible"
-
-        install_ansible = dict()
-        install_ansible["type"] = "string"
-        install_ansible["command"] = "inline"
-        install_ansible["value"] = "sudo apt-get install -y python3-pip && pip3 install --upgrade ansible"
-        shell_provisioning["commands"] = [install_ansible]
-        provisioner_calls.append(shell_provisioning)
 
     config_playbook = dict()
     config_playbook["type"] = "provision"

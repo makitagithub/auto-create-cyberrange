@@ -1,4 +1,4 @@
 base_box:
-  image: debian/stretch64
+  image: munikypo/debian-10
 memory: 256
 cpus: 1
