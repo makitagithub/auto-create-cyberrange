@@ -23,5 +23,5 @@
 - name: Install pywinrm
   pip:
     name: pywinrm
-    executable: "/usr/bin/pip3"
+    executable: "pip3"
 ...
