@@ -3,3 +3,41 @@
 #
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+
+{# Macro for indentation #}
+{% macro indent(level) %}
+{% for i in range(level) %}  {% endfor %}
+{% endmacro -%}
+
+{# Macro for Block #}
+{% macro block(namespace, block_obj, indentation) %}
+{% if indentation == 1 %}
+
+{% endif %}
+{% if block_obj.note %}
+{{ indent(indentation) }}# {{ block_obj.note }}
+{% endif %}
+{{ indent(indentation) }}{{ namespace }}.{{ block_obj.variable }}{% if block_obj.name %} "{{ block_obj.name }}"{% endif %} do |{{ block_obj.internal_variable }}|
+{% for item in block_obj.content %}
+{% if "Block" in item.__class__.__name__ %}
+{{ block(block_obj.internal_variable, item, indentation+1) -}}
+{% elif "String" in item.__class__.__name__ %}
+{{ string(block_obj.internal_variable, item, indentation+1) -}}
+{% elif "Integer" in item.__class__.__name__ %}
+{{ integer(block_obj.internal_variable, item, indentation+1) -}}
+{% endif %}
+{% endfor %}
+{{ indent(indentation) }}end
+{% endmacro -%}
+
+{# Macro for String #}
+{% macro string(namespace, string_obj, indentation) %}
+{{ indent(indentation) }}{{ namespace }}.{{ string_obj.variable }} = "{{ string_obj.value }}"
+{% endmacro -%}
+
+{# Macro for Integer #}
+{% macro integer(namespace, integer_obj, indentation) %}
+{{ indent(indentation) }}{{ namespace }}.{{ integer_obj.variable }} = {{ integer_obj.value }}
+{% endmacro -%}
+
+{{ block("Vagrant", data, 0) }}

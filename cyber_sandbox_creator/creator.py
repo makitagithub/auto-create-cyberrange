@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Union, Optional
 
 from cyber_sandbox_creator.input_parser.sandbox import Sandbox
+from cyber_sandbox_creator.vagrant_generator.vagrantfile import Vagrantfile
 
 CSC_PATH: Path = Path(__file__).parent.resolve()
 CONFIGURATION_PATH: Path = CSC_PATH / "conf/configuration.yml"
@@ -91,3 +92,10 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
                                               extra_vars_path)
     except (IOError, ValueError) as e:
         raise RuntimeError(f"Definition parsing has failed:\n{e}")
+
+    try:
+        vagrant_definition: Vagrantfile = Vagrantfile(sandbox_definition)
+        vagrant_definition.generate(sandbox_definition.sandbox_dir /
+                                    "Vagrantfile", "vagrantfile.j2")
+    except IOError as e:
+        raise RuntimeError(f"Vagrantfile could not be generated:\n{e}")
