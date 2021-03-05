@@ -1,5 +1,13 @@
 import jinja2
+import os
+import yaml
 from pathlib import Path
+from typing import Union, List, Dict
+
+from yaml.emitter import Emitter
+from yaml.representer import Representer
+from yaml.resolver import Resolver
+from yaml.serializer import Serializer
 
 
 class Writer:
@@ -11,10 +19,22 @@ class Writer:
     def _write_to_file(filepath: Path, content: str) -> None:
         """Generate a file from output string."""
         try:
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
             with open(filepath, "w") as new_file:
                 new_file.write(content)
         except IOError:
             raise IOError(f"Could not create file {filepath}")
+
+    @staticmethod
+    def generate_yaml(output_file: Path, data: Union[List, Dict]) -> None:
+        """Generate YAML file from a List or Dict
+
+        :param output_file: path to the output file
+        :param data: List or a Dict with data for the YAML file
+        """
+
+        Writer._write_to_file(output_file, yaml.dump(data, explicit_start=True,
+                                                     explicit_end=True))
 
     @staticmethod
     def generate_file_from_template(output_file: Path, template_name: str,
@@ -25,7 +45,7 @@ class Writer:
         :param template_name: name of a Jinja2 template file in templates dir
         :param data: arbitrary number of named args for the template
         """
-        print(Writer.TEMPLATE_DIR)
+
         try:
             template_loader = jinja2.FileSystemLoader(searchpath=
                                                       Writer.TEMPLATE_DIR)
@@ -38,3 +58,15 @@ class Writer:
 
         output = template.render(data=data)
         Writer._write_to_file(output_file, output)
+
+    @staticmethod
+    def clone_git_repository(repository: str, location: Path) -> None:
+        """Clone a git repository to the provided location
+
+        :param repository: repository location
+        :param location: target directory
+        """
+
+        os.makedirs(location, exist_ok=True)
+        os.chdir(location)
+        os.system(f"git clone -q {repository}")

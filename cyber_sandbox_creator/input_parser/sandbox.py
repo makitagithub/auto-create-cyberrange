@@ -2,7 +2,7 @@ from enum import Enum
 from pathlib import Path
 from netaddr import IPNetwork, IPAddress
 
-from kypo.topology_definition.models import Host, Router
+import kypo.topology_definition.models as kypo
 
 from cyber_sandbox_creator.input_parser.topology_parser import Topology
 from typing import List, Dict, Optional, Tuple
@@ -194,7 +194,7 @@ class Sandbox:
         raise AttributeError(f"Invalid flavor: {flavor_name}")
 
     @staticmethod
-    def _create_host_device(host: Host, topology: Topology,
+    def _create_host_device(host: kypo.Host, topology: Topology,
                             flavors: List[Flavor], config: Dict,
                             networks: List[Network]) -> Device:
 
@@ -211,12 +211,16 @@ class Sandbox:
                                                 networks)
                 device_networks.append(Interface(network, net_mapping.ip))
 
+        if host.base_box.mgmt_protocol == kypo.Protocol.SSH:
+            protocol: Protocol = Protocol.SSH
+        elif host.base_box.mgmt_protocol == kypo.Protocol.WINRM:
+            protocol: Protocol = Protocol.WINRM
+
         return Device(host.name, DevicePurpose.HOST, host.base_box.image,
-                      memory, cpus, host.base_box.mgmt_protocol,
-                      device_networks)
+                      memory, cpus, protocol, device_networks)
 
     @staticmethod
-    def _create_router_device(router: Router, topology: Topology,
+    def _create_router_device(router: kypo.Router, topology: Topology,
                               flavors: List[Flavor], config: Dict,
                               networks: List[Network]) -> Device:
 
@@ -234,9 +238,13 @@ class Sandbox:
                                                 networks)
                 device_networks.append(Interface(network, router_mapping.ip))
 
+        if router.base_box.mgmt_protocol == kypo.Protocol.SSH:
+            protocol: Protocol = Protocol.SSH
+        elif router.base_box.mgmt_protocol == kypo.Protocol.WINRM:
+            protocol: Protocol = Protocol.WINRM
+
         return Device(router.name, DevicePurpose.ROUTER, router.base_box.image,
-                      memory, cpus, router.base_box.mgmt_protocol,
-                      device_networks)
+                      memory, cpus, protocol, device_networks)
 
     @staticmethod
     def _find_network(network_name: str, networks: List[Network]) -> Optional[Network]:

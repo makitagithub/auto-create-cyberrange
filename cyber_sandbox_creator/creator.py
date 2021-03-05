@@ -3,6 +3,7 @@ from typing import Union, Optional
 
 from cyber_sandbox_creator.input_parser.sandbox import Sandbox
 from cyber_sandbox_creator.vagrant_generator.vagrantfile import Vagrantfile
+from cyber_sandbox_creator.ansible_generator.preconfig import Preconfig
 
 CSC_PATH: Path = Path(__file__).parent.resolve()
 CONFIGURATION_PATH: Path = CSC_PATH / "conf/configuration.yml"
@@ -99,3 +100,8 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
                                     "Vagrantfile", "vagrantfile.j2")
     except IOError as e:
         raise RuntimeError(f"Vagrantfile could not be generated:\n{e}")
+
+    try:
+        Preconfig.generate_preconfig(sandbox_definition)
+    except IOError as e:
+        raise RuntimeError(f"Provisioning files could not be generated:\n{e}")

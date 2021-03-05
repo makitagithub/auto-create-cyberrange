@@ -1,39 +1,7 @@
 from cyber_sandbox_creator.input_parser.sandbox import Sandbox, Device, Protocol, NetworkType
 from cyber_sandbox_creator.io.writer import Writer
-from typing import List, Optional
+from typing import List, Optional, Union
 from pathlib import Path
-
-
-class Block:
-    """Ruby block"""
-
-    def __init__(self, variable: str, name: Optional[str],
-                 internal_variable: str, content: List,
-                 note: Optional[str] = None):
-        self.variable: str = variable
-        self.name: Optional[str] = name
-        self.internal_variable: str = internal_variable
-        self.content: List = content
-        self.note: Optional[str] = note
-
-    def __iter__(self):
-        return iter(self.content)
-
-
-class Hash:
-    """Ruby hash attribute"""
-
-    def __init__(self, variable: str, content: List):
-        self.variable: str = variable
-        self.content: List = content
-
-
-class Array:
-    """Ruby array"""
-
-    def __init__(self, variable: str, content: List):
-        self.variable: str = variable
-        self.content: List = content
 
 
 class String:
@@ -52,6 +20,48 @@ class Integer:
         self.value: str = value
 
 
+class Block:
+    """Ruby block"""
+
+    def __init__(self, variable: str, name: Optional[str],
+                 internal_variable: str, content: List,
+                 note: Optional[str] = None):
+        self.variable: str = variable
+        self.name: Optional[str] = name
+        self.internal_variable: str = internal_variable
+        self.content: List = content
+        self.note: Optional[str] = note
+
+    def __iter__(self):
+        return iter(self.content)
+
+
+class Method:
+    """Ruby method"""
+
+    def __init__(self, variable: str, arguments: List[Union[Integer, String]],
+                 single_line: bool = False):
+        self.variable: str = variable
+        self.arguments: List[Union[Integer, String]] = arguments
+        self.single_line: bool = single_line
+
+
+class Hash:
+    """Ruby hash attribute"""
+
+    def __init__(self, variable: str, content: List):
+        self.variable: str = variable
+        self.content: List = content
+
+
+class Array:
+    """Ruby array"""
+
+    def __init__(self, variable: str, content: List):
+        self.variable: str = variable
+        self.content: List = content
+
+
 class Vagrantfile:
     """Object with all data for Vagrantfile generation"""
 
@@ -62,7 +72,45 @@ class Vagrantfile:
     def _create_root(sandbox: Sandbox) -> Block:
         """Create root of the vagrantfile with all its content"""
         content: List = Vagrantfile._add_devices(sandbox)
+        content.extend(Vagrantfile._add_preconfig(sandbox))
+        content.extend(Vagrantfile._add_provisioning(sandbox))
         return Block("configure(\"2\")", None, "config", content)
+
+    @staticmethod
+    def _add_preconfig(sandbox: Sandbox) -> List[Block]:
+        """Add pre-configuration block to Vagrantfile definition"""
+        provisioner = "ansible" if sandbox.ansible_installed else "ansible_local"
+        content: List = Vagrantfile._add_preconfig_attributes(sandbox)
+        return [Block("vm.provision", provisioner, "ansible", content,
+                      "Ansible pre-configuration")]
+
+    @staticmethod
+    def _add_preconfig_attributes(sandbox: Sandbox) -> List:
+        """Add attributes to pre-configuration"""
+        attributes: List = []
+        attributes.append(String("playbook",
+                                 sandbox.config["preconfig_playbook"]))
+        attributes.append(String("inventory_path",
+                                 sandbox.config["preconfig_inventory"]))
+        return attributes
+
+    @staticmethod
+    def _add_provisioning(sandbox: Sandbox) -> List[Block]:
+        """Add provisioning block to Vagrantfile definition"""
+        provisioner = "ansible" if sandbox.ansible_installed else "ansible_local"
+        content: List = Vagrantfile._add_provisioning_attributes(sandbox)
+        return [Block("vm.provision", provisioner, "ansible", content,
+                      "User Ansible provisioning")]
+
+    @staticmethod
+    def _add_provisioning_attributes(sandbox: Sandbox) -> List:
+        """Add attributes to provisioning"""
+        attributes: List = []
+        attributes.append(String("playbook",
+                                 sandbox.config["provisioning_playbook"]))
+        attributes.append(String("inventory_path",
+                                 sandbox.config["provisioning_inventory"]))
+        return attributes
 
     @staticmethod
     def _add_devices(sandbox: Sandbox) -> List[Block]:
@@ -100,13 +148,13 @@ class Vagrantfile:
 
         for interface in device.interfaces:
             net_attributes: List = []
+            net_attributes.append(String("", interface.network.type))
             net_attributes.append(String("virtualbox__intnet",
-                                             interface.network.name))
+                                         interface.network.name))
             net_attributes.append(String("ip", interface.ip))
             net_attributes.append(String("netmask",
-                                             interface.network.cidr.netmask))
-            attributes.append(Block("vm.network", interface.network.type,
-                                    "net", net_attributes))
+                                         interface.network.cidr.netmask))
+            attributes.append(Method("vm.network", net_attributes, False))
         # TODO add attributes
 
         return attributes

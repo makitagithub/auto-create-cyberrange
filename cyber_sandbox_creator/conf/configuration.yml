@@ -21,3 +21,17 @@ controller_name: controller
 controller_box: munikypo/debian-10
 controller_memory: 512
 controller_cpus: 2
+
+#Ansible file paths
+preconfig_playbook: preconfig/playbook.yml
+preconfig_inventory: preconfig/hosts.yml
+preconfig_roles: preconfig/roles/
+preconfig_host_vars: preconfig/host_vars/
+preconfig_group_vars: preconfig/group_vars/
+provisioning_playbook: provisioning/playbook.yml
+provisioning_inventory: provisioning/hosts.yml
+user_extra_vars: provisioning/extra_vars.yml
+
+#Git repositories
+common_repo: https://gitlab.ics.muni.cz/CSIRT-MU-PUBLIC/ansible-roles/common.git
+interface_repo: https://gitlab.ics.muni.cz/CSIRT-MU-PUBLIC/ansible-roles/interface.git
