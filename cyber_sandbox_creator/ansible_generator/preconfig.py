@@ -4,6 +4,7 @@ from typing import List, Dict
 from cyber_sandbox_creator.ansible_generator.objects import Playbook, Play,\
     Task, Module
 from cyber_sandbox_creator.io.writer import Writer
+from cyber_sandbox_creator.io.reader import Reader
 from cyber_sandbox_creator.input_parser.sandbox import Sandbox, DeviceType,\
     Protocol
 
@@ -106,8 +107,18 @@ class Preconfig:
                               True)])
 
     @staticmethod
+    def _preconfig_exists(sandbox) -> bool:
+        """Check whether the provisioning directory already exists"""
+        return Reader.dir_exists(sandbox.sandbox_dir /
+                                 sandbox.config["preconfig_dir"])
+
+    @staticmethod
     def generate_preconfig(sandbox: Sandbox) -> None:
         """Generate all files for pre-configuration"""
+
+        if Preconfig._preconfig_exists(sandbox):
+            Writer.remove_directory(sandbox.sandbox_dir /
+                                    sandbox.config["preconfig_dir"])
 
         Writer.clone_git_repository(sandbox.config["common_repo"],
                                     sandbox.sandbox_dir / sandbox.config["preconfig_roles"])

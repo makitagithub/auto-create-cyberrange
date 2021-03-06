@@ -119,10 +119,11 @@ class Sandbox:
     def __init__(self, topology_path: Path, configuration_path: Path,
                  flavors_path: Path, sandbox_dir: Path, border_router: bool,
                  ansible_installed: bool, user_provisioning_dir: Optional[Path],
-                 extra_vars_file: Optional[Path]):
+                 extra_vars_file: Optional[Path], generate_provisioning: bool):
         topology: Topology = Topology.from_file(topology_path)
         networklist: List[Network] = []
         self.border_router_present: bool = border_router
+        self.generate_provisioning: bool = generate_provisioning
         self.sandbox_dir: Path = sandbox_dir
         self.ansible_installed: bool = ansible_installed
         self.user_provisioning_dir: Optional[Path] = user_provisioning_dir

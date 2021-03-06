@@ -4,6 +4,7 @@ from typing import Union, Optional
 from cyber_sandbox_creator.input_parser.sandbox import Sandbox
 from cyber_sandbox_creator.vagrant_generator.vagrantfile import Vagrantfile
 from cyber_sandbox_creator.ansible_generator.preconfig import Preconfig
+from cyber_sandbox_creator.ansible_generator.provisioning import Provision
 
 CSC_PATH: Path = Path(__file__).parent.resolve()
 CONFIGURATION_PATH: Path = CSC_PATH / "conf/configuration.yml"
@@ -13,7 +14,8 @@ FLAVORS_PATH: Path = CSC_PATH / "conf/flavors.yml"
 def create(topology: Union[str, Path], output_dir: Union[str, Path],
            ansible_installed: bool = False, border_router: bool = False,
            provisioning_dir: Optional[Union[str, Path]] = None,
-           extra_vars: Optional[Union[str, Path]] = None) -> None:
+           extra_vars: Optional[Union[str, Path]] = None,
+           generate_provisioning: bool = False) -> None:
     """Generates intermediate definition from a topology definition.
 
     :param topology: path to the topology definition file
@@ -22,6 +24,7 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
     :param border_router: whether border router should be created
     :param provisioning_dir: path to directory with user provisioning files
     :param extra_vars: path to YAML file with additional values for Ansible
+    :param generate_provisioning: whether provisioning should be regenerated
     """
 
     try:
@@ -90,7 +93,8 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
                                               FLAVORS_PATH, sandbox_path,
                                               border_router, ansible_installed,
                                               user_provisioning_path,
-                                              extra_vars_path)
+                                              extra_vars_path,
+                                              generate_provisioning)
     except (IOError, ValueError) as e:
         raise RuntimeError(f"Definition parsing has failed:\n{e}")
 
@@ -105,3 +109,9 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
         Preconfig.generate_preconfig(sandbox_definition)
     except IOError as e:
         raise RuntimeError(f"Provisioning files could not be generated:\n{e}")
+
+    try:
+        Provision.generate_user_provisioning(sandbox_definition)
+    except IOError as e:
+        raise RuntimeError("User provisioning files could not be generated:"
+                           f"\n{e}")

@@ -1,3 +1,4 @@
+import shutil
 import jinja2
 import os
 import yaml
@@ -67,6 +68,49 @@ class Writer:
         :param location: target directory
         """
 
-        os.makedirs(location, exist_ok=True)
-        os.chdir(location)
-        os.system(f"git clone -q {repository}")
+        try:
+            os.makedirs(location, exist_ok=True)
+            os.chdir(location)
+            os.system(f"git clone -q {repository}")
+        except RuntimeError:
+            raise RuntimeError(f"Could not clone repository: {repository}")
+
+    @staticmethod
+    def copy_file(source: Path, destination: Path):
+        """Copies a file from the source path to the destination
+
+        :param source: path to the source file
+        :param destination: path to the destination file
+        """
+
+        try:
+            os.makedirs(destination.parent, exist_ok=True)
+            shutil.copyfile(source, destination)
+        except OSError:
+            raise RuntimeError(f"Could not copy file {source}")
+
+    @staticmethod
+    def copy_directory(source: Path, destination: Path):
+        """Copy directory recursively form the source dir to the destination.
+
+        :param source: path to source directory
+        :param destination: path to the destination directory
+        """
+
+        try:
+            os.makedirs(destination.parent, exist_ok=True)
+            shutil.copytree(source, destination)
+        except OSError:
+            raise RuntimeError(f"Could not copy directory {source}")
+
+    @staticmethod
+    def remove_directory(directory: Path):
+        """Remove the directory recursively
+
+        :param directory: path to directory to remove
+        """
+
+        try:
+            shutil.rmtree(directory)
+        except OSError:
+            raise RuntimeError(f"Could not remove directory {directory}")
