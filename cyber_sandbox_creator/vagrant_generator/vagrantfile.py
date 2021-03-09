@@ -108,8 +108,6 @@ class Vagrantfile:
         attributes: List = []
         attributes.append(String("playbook",
                                  sandbox.config["provisioning_playbook"]))
-        attributes.append(String("inventory_path",
-                                 sandbox.config["provisioning_inventory"]))
         return attributes
 
     @staticmethod

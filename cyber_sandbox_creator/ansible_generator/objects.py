@@ -11,11 +11,11 @@ class Module:
 class Task:
 
     def __init__(self, name: Optional[str], module: Module,
-                 attributes: Dict = {}):
+                 attributes: Dict = {}, variables: Dict = {}):
         self.name: Optional[str] = name
         self.module: Module = module
         self.attributes: Dict = attributes
-        self.dictionary: Dict = {}
+        self.variables: Dict = variables
 
     def make_dict(self) -> Dict:
         """Make a dictionary for playbook generation"""
@@ -24,6 +24,7 @@ class Task:
             task["name"] = self.name
         if self.attributes:
             task.update(self.attributes)
+        task["vars"] = self.variables
         task[self.module.name] = self.module.attributes
         return task
 

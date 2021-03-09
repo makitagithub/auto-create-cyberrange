@@ -121,7 +121,6 @@ class Sandbox:
                  ansible_installed: bool, user_provisioning_dir: Optional[Path],
                  extra_vars_file: Optional[Path], generate_provisioning: bool):
         topology: Topology = Topology.from_file(topology_path)
-        networklist: List[Network] = []
         self.border_router_present: bool = border_router
         self.generate_provisioning: bool = generate_provisioning
         self.sandbox_dir: Path = sandbox_dir
@@ -223,7 +222,8 @@ class Sandbox:
     @staticmethod
     def _create_router_device(router: kypo.Router, topology: Topology,
                               flavors: List[Flavor], config: Dict,
-                              networks: List[Network]) -> Device:
+                              networks: List[Network],
+                              border_router: bool, router_n: int) -> Device:
 
         if router.flavor:
             memory, cpus = Sandbox._resolve_flavor(router.flavor, flavors)
@@ -238,6 +238,12 @@ class Sandbox:
                 network = Sandbox._find_network(router_mapping.network,
                                                 networks)
                 device_networks.append(Interface(network, router_mapping.ip))
+        if border_router:
+            for net in networks:
+                if net.name == config["border_router_network_name"]:
+                    br_network: Network = net
+            br_ip: IPAddress = IPAddress(config["border_router_ip"])
+            device_networks.append(Interface(br_network, br_ip+router_n))
 
         if router.base_box.mgmt_protocol == kypo.Protocol.SSH:
             protocol: Protocol = Protocol.SSH
@@ -280,10 +286,13 @@ class Sandbox:
         for host in topology.hosts:
             devices.append(Sandbox._create_host_device(host, topology, flavors,
                                                        config, networks))
+        router_n: int = 0
         for router in topology.routers:
+            router_n += 1
             devices.append(Sandbox._create_router_device(router, topology,
                                                          flavors, config,
-                                                         networks))
+                                                         networks,
+                                                         border_router, router_n))
 
         if Sandbox._controller_needed(devices):  # needs to be at the end
             devices.append(Device(config["controller_name"],

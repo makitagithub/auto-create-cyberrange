@@ -1,8 +1,8 @@
-
 from typing import List, Dict
 
-from cyber_sandbox_creator.ansible_generator.objects import Playbook, Play,\
+from cyber_sandbox_creator.ansible_generator.objects import Playbook, Play, \
     Task, Module
+from cyber_sandbox_creator.ansible_generator.routes import Routes
 from cyber_sandbox_creator.io.writer import Writer
 from cyber_sandbox_creator.io.reader import Reader
 from cyber_sandbox_creator.input_parser.sandbox import Sandbox, DeviceType,\
@@ -36,7 +36,9 @@ class Preconfig:
         host_vars: Dict[str, Dict] = {}
         for device in sandbox.devices:
             variables: Dict = {"ansible_ssh_private_key_file":
-                               f".vagrant/machines/{device.name}/virtualbox/private_key"}
+                               f".vagrant/machines/{device.name}/virtualbox/private_key",
+                               "routes":
+                                   Routes.create_routes(device, sandbox)}
             host_vars[device.name] = variables
 
         return host_vars
@@ -71,7 +73,7 @@ class Preconfig:
         return group_vars
 
     @staticmethod
-    def _configure_routers(sandbox: Sandbox) -> List[Task]:
+    def _configure_routers() -> List[Task]:
         """List of tasks for all routers"""
         return [Task("Enable IP forwarding",
                      Module("sysctl", {"name": "net.ipv4.ip_forward",
@@ -80,31 +82,55 @@ class Preconfig:
                                        "reload": "yes"}))]
 
     @staticmethod
-    def _configure_hosts(sandbox: Sandbox) -> List[Task]:
+    def _configure_hosts() -> List[Task]:
         """List of tasks for all hosts"""
-        return [Task("Install net-tools", Module("apt", {"name": "net-tools"}))]
+        return []
 
     @staticmethod
-    def _configure_linuxes(sandbox: Sandbox) -> List[Task]:
+    def _configure_linuxes() -> List[Task]:
         """List of tasks for all Linux devices"""
-        return [Task("Add aliases of all devices",
+        return [Task("Install net-tools", Module("apt", {"name": "net-tools"})),
+                Task("Add aliases of all devices",
                      Module("lineinfile", {"path": "/etc/hosts", "line":
-                                           "{{ item.key }} {{ item.value }}"}),
-                     {"loop": "{{ all.device_aliases | dict2items }}"})]
+                            "{{ item.key }} {{ item.value }}"}),
+                     {"loop": "{{ device_aliases | dict2items }}"}),
+                Task("Configure routes",
+                     Module("include_role", {"name": "interface"}),
+                     {"loop": "{{ routes }}", "loop_control":
+                         {"loop_var": "interface"}},
+                     {"interface_configuration_type": "static",
+                      "interface_identification": "{{ interface.interface_ip }}",
+                      "interface_static_ip": "{{ interface.interface_ip }}",
+                      "interface_static_netmask": "{{ interface.interface_netmask }}",
+                      "interface_default_gateway": "{{ interface.interface_default_gateway | default('') }}",
+                      "interface_routes": "{{ interface.interface_routes | default([]) }}"})]
+
+    @staticmethod
+    def _configure_br() -> List[Task]:
+        """List of tasks for border router"""
+        return [Task("Set up postrouting",
+                     Module("iptables", {
+                         "table": "nat", "chain": "POSTROUTING", "jump": "SNAT",
+                         "out_interface": "{{ ansible_default_ipv4.interface }}",
+                         "to_source": "{{ ansible_default_ipv4.address }}"}))]
 
     @staticmethod
     def _create_playbook(sandbox: Sandbox) -> Playbook:
         """Generate the main playbook"""
 
-        return Playbook([Play("Router configuration",
-                              Preconfig._configure_routers(sandbox), "routers",
-                              True),
-                         Play("Linux configuration",
-                              Preconfig._configure_linuxes(sandbox), "ssh",
-                              True),
-                         Play("Linux Host configuration",
-                              Preconfig._configure_hosts(sandbox), "hosts:&ssh",
-                              True)])
+        plays: List[Play] = []
+        plays.extend([Play("Router configuration",
+                           Preconfig._configure_routers(), "routers", True, {}),
+                      Play("Linux configuration",
+                           Preconfig._configure_linuxes(), "ssh", True, {}),
+                      Play("Linux Host configuration",
+                           Preconfig._configure_hosts(), "hosts:&ssh", True,
+                           {})])
+        if sandbox.border_router_present:
+            plays.append(Play("Border router configuration",
+                              Preconfig._configure_br(),
+                              sandbox.config["border_router_name"], True, {}))
+        return Playbook(plays)
 
     @staticmethod
     def _preconfig_exists(sandbox) -> bool:
