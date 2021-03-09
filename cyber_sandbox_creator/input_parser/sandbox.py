@@ -128,7 +128,7 @@ class Sandbox:
         self.ansible_installed: bool = ansible_installed
         self.verbose_ansible: bool = verbose_ansible
         self.user_provisioning_dir: Optional[Path] = user_provisioning_dir
-        self.extra_vars: Optional[Dict] = self._load_extra_vars(extra_vars_file)
+        self.extra_vars: Optional[Path] = extra_vars_file
         self.config: Dict = Reader.open_yaml(configuration_path)
         self.flavors: List[Flavor] = self._load_flavors(flavors_path)
         self.networks: List[Network] = self._create_network_list(topology,
@@ -154,18 +154,6 @@ class Sandbox:
                                     config["border_router_network_ip"]))
 
         return networks
-
-    @classmethod
-    def _load_extra_vars(cls, extra_vars_path: Optional[Path]) -> Optional[Dict]:
-        """Load extra vars for ansible from YAML file to a Dict"""
-
-        extra_vars: Optional[Dict] = None
-        if extra_vars_path:
-            extra_vars = Reader.open_yaml(extra_vars_path)
-            if not isinstance(extra_vars, Dict):
-                raise TypeError("The content of extra_vars file is invalid")
-
-        return extra_vars
 
     @classmethod
     def _load_flavors(cls, flavors_path: Path) -> List[Flavor]:

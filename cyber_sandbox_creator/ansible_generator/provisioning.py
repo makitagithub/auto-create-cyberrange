@@ -41,3 +41,7 @@ class Provision:
         elif sandbox.generate_provisioning or \
                 not Provision._provisioning_exists(sandbox):
             Provision._generate_template_provisioning(sandbox)
+        if sandbox.extra_vars is not None:
+            Writer.copy_file(sandbox.extra_vars,
+                             sandbox.sandbox_dir /
+                             sandbox.config["user_extra_vars"])

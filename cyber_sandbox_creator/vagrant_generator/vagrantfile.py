@@ -110,6 +110,9 @@ class Vagrantfile:
                                    sandbox.config["provisioning_playbook"])]
         if sandbox.verbose_ansible:
             attributes.append(String("verbose", "vv"))
+        if sandbox.extra_vars is not None:
+            attributes.append(String("extra_vars",
+                                     sandbox.config["user_extra_vars"]))
         return attributes
 
     @staticmethod
