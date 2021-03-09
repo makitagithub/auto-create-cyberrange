@@ -130,9 +130,8 @@ class Vagrantfile:
     def _add_device_attributes(device: Device, sandbox: Sandbox):
         """Add attributes to devices"""
 
-        attributes: List = []
-        attributes.append(String("vm.hostname", device.name))
-        attributes.append(String("vm.box", device.box))
+        attributes: List = [String("vm.hostname", device.name),
+                            String("vm.box", device.box)]
 
         if device.protocol == Protocol.WINRM:
             attributes.append(String("vm.communicator", "winrm"))
@@ -140,20 +139,18 @@ class Vagrantfile:
             attributes.append(String("winrm.username", "windows"))
             attributes.append(String("winrm.password", "vagrant"))
 
-        vm_attributes: List = []
-        vm_attributes.append(Integer("memory", device.memory))
-        vm_attributes.append(Integer("cpus", device.cpus))
+        vm_attributes: List = [Integer("memory", device.memory),
+                               Integer("cpus", device.cpus)]
         attributes.append(Block("vm.provider", "virtualbox", "vb",
                                 vm_attributes))
 
         for interface in device.interfaces:
-            net_attributes: List = []
-            net_attributes.append(String("", interface.network.type))
-            net_attributes.append(String("virtualbox__intnet",
-                                         interface.network.name))
-            net_attributes.append(String("ip", interface.ip))
-            net_attributes.append(String("netmask",
-                                         interface.network.cidr.netmask))
+            net_attributes: List = [String("", interface.network.type),
+                                    String("virtualbox__intnet",
+                                           interface.network.name),
+                                    String("ip", interface.ip),
+                                    String("netmask",
+                                           interface.network.cidr.netmask)]
             attributes.append(Method("vm.network", net_attributes, False))
         # TODO add attributes
 
