@@ -15,7 +15,8 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
            ansible_installed: bool = False, border_router: bool = False,
            provisioning_dir: Optional[Union[str, Path]] = None,
            extra_vars: Optional[Union[str, Path]] = None,
-           generate_provisioning: bool = False) -> None:
+           generate_provisioning: bool = False,
+           verbose_ansible: bool = False) -> None:
     """Generates intermediate definition from a topology definition.
 
     :param topology: path to the topology definition file
@@ -25,6 +26,7 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
     :param provisioning_dir: path to directory with user provisioning files
     :param extra_vars: path to YAML file with additional values for Ansible
     :param generate_provisioning: whether provisioning should be regenerated
+    :param verbose_ansible: whether Ansible output should be set to verbose
     """
 
     try:
@@ -94,7 +96,8 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
                                               border_router, ansible_installed,
                                               user_provisioning_path,
                                               extra_vars_path,
-                                              generate_provisioning)
+                                              generate_provisioning,
+                                              verbose_ansible)
     except (IOError, ValueError) as e:
         raise RuntimeError(f"Definition parsing has failed:\n{e}")
 

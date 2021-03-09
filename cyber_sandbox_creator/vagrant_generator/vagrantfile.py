@@ -87,11 +87,12 @@ class Vagrantfile:
     @staticmethod
     def _add_preconfig_attributes(sandbox: Sandbox) -> List:
         """Add attributes to pre-configuration"""
-        attributes: List = []
-        attributes.append(String("playbook",
-                                 sandbox.config["preconfig_playbook"]))
-        attributes.append(String("inventory_path",
-                                 sandbox.config["preconfig_inventory"]))
+        attributes: List = [String("playbook",
+                                   sandbox.config["preconfig_playbook"]),
+                            String("inventory_path",
+                                   sandbox.config["preconfig_inventory"])]
+        if sandbox.verbose_ansible:
+            attributes.append(String("verbose", "vv"))
         return attributes
 
     @staticmethod
@@ -105,9 +106,10 @@ class Vagrantfile:
     @staticmethod
     def _add_provisioning_attributes(sandbox: Sandbox) -> List:
         """Add attributes to provisioning"""
-        attributes: List = []
-        attributes.append(String("playbook",
-                                 sandbox.config["provisioning_playbook"]))
+        attributes: List = [String("playbook",
+                                   sandbox.config["provisioning_playbook"])]
+        if sandbox.verbose_ansible:
+            attributes.append(String("verbose", "vv"))
         return attributes
 
     @staticmethod

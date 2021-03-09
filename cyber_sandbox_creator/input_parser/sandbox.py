@@ -119,12 +119,14 @@ class Sandbox:
     def __init__(self, topology_path: Path, configuration_path: Path,
                  flavors_path: Path, sandbox_dir: Path, border_router: bool,
                  ansible_installed: bool, user_provisioning_dir: Optional[Path],
-                 extra_vars_file: Optional[Path], generate_provisioning: bool):
+                 extra_vars_file: Optional[Path], generate_provisioning: bool,
+                 verbose_ansible: bool):
         topology: Topology = Topology.from_file(topology_path)
         self.border_router_present: bool = border_router
         self.generate_provisioning: bool = generate_provisioning
         self.sandbox_dir: Path = sandbox_dir
         self.ansible_installed: bool = ansible_installed
+        self.verbose_ansible: bool = verbose_ansible
         self.user_provisioning_dir: Optional[Path] = user_provisioning_dir
         self.extra_vars: Optional[Dict] = self._load_extra_vars(extra_vars_file)
         self.config: Dict = Reader.open_yaml(configuration_path)
