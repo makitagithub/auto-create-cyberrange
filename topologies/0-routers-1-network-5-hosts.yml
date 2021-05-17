@@ -3,7 +3,7 @@ name: 1-network-various-boxes
 hosts:
   - name: debian10
     base_box:
-      image: generic/debian10
+      image: munikypo/debian-10
     memory: 512
 
   - name: debian9
@@ -23,7 +23,7 @@ hosts:
 
   - name: mu-kali
     base_box:
-      image: kali-2019.4
+      image: munikypo/kali-2019.4
     memory: 2048
 
 networks:

@@ -4,12 +4,12 @@ name: 2-networks-connected-by-br
 hosts:
   - name: server
     base_box:
-      image: generic/debian10
+      image: munikypo/debian-10
     memory: 512
 
   - name: home
     base_box:
-      image: generic/debian10
+      image: munikypo/debian-10
     memory: 512
 
 routers:
