@@ -1,48 +1,49 @@
 # A simple topology with various boxes in 1 network
 name: 1-network-various-boxes
 hosts:
-  - name: debian10
+  - name: debian-10
     base_box:
-      image: generic/debian10
+      image: munikypo/debian-10
     memory: 512
 
-  - name: debian9
+  - name: debian2
     base_box:
-      image: generic/debian9
+      image: munikypo/debian-10
     memory: 512
 
-  - name: debian-stretch
+  - name: kali-2019
     base_box:
-      image: debian/contrib-stretch64
-    memory: 512
-
-  - name: ubuntu-xenial
-    base_box:
-      image: ubuntu/xenial64
+      image: munikypo/kali-2019.4
     memory: 1024
 
-  - name: mu-kali
+  - name: kali-2020
     base_box:
-      image: kali-2019.4
-    memory: 2048
+      image: munikypo/kali-2020.4
+    memory: 1024
+
+  - name: windows-server
+    base_box:
+      image: munikypo/windows-server-2019
+    box_version: 0.0.1
+    memory: 4096
 
 networks:
   - name: network
     cidr: 10.10.30.0/24
 
 net_mappings:
-    - host: debian10
+    - host: debian-10
       network: network
       ip: 10.10.30.5
-    - host: debian9
+    - host: debian2
       network: network
       ip: 10.10.30.6
-    - host: debian-stretch
+    - host: kali-2019
       network: network
       ip: 10.10.30.7
-    - host: ubuntu-xenial
+    - host: kali-2020
       network: network
       ip: 10.10.30.8
-    - host: mu-kali
+    - host: windows-server
       network: network
       ip: 10.10.30.9
