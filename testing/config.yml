@@ -3,46 +3,31 @@ topologies:
     arguments:
       - no-arguments
       - ansible_local
-    boxes:
-      - ubuntu/xenial64
-      - kali-2019.4
-      - debian/contrib-stretch64
-      - generic/debian9
-
-  - file: ./topologies/0-routers-1-network-5-hosts.yml
-    arguments:
-      - no-arguments
-      - ansible_local
-  
   - file: ./topologies/1-router-1-network-1-host.yml
     arguments:
       - no-arguments
       - ansible_local
       - border_router
       - [ansible_local, border_router]
-  
   - file: ./topologies/1-router-2-networks-2-hosts.yml
     arguments:
       - no-arguments
       - ansible_local
       - border_router
-      - [ansible_local, border_router]
-    boxes:
-      - ubuntu/xenial64
-      - kali-2019.4
-  
+      - [ansible_local, border_router]  
   - file: ./topologies/2-routers-2-networks-2-hosts.yml
     arguments:
       - border_router
       - [ansible_local, border_router]
-  
   - file: ./topologies/2-routers-4-networks-4-hosts.yml
     arguments:
       - border_router
       - [ansible_local, border_router]
-  
   - file: ./topologies/3-routers-5-networks-5-hosts.yml
     arguments:
       - border_router
       - [ansible_local, border_router]
-
+  - file: ./topologies/0-routers-1-network-5-hosts.yml
+    arguments:
+      - no-arguments
+      - ansible_local

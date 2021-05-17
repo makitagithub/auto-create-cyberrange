@@ -1,7 +1,6 @@
 # Mapping from original Vagrant box's names to simplified names that can be used while naming newly generated files.
 
-generic/debian10: debian10
-generic/debian9: debian9
-debian/contrib-stretch64: debian-stretch
-ubuntu/xenial64: ubuntu-xenial
-kali-2019.4: mu-kali
+munikypo/debian-10: debian10
+munikypo/kali-2019.4: kali2019
+munikypo/kali-2020.4: kali2020
+munikypo/windows-server-2019: windows-server
