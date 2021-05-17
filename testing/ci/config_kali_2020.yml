@@ -1,0 +1,33 @@
+topologies:
+  - file: ./topologies/0-routers-1-network-1-host.yml
+    arguments:
+      - no-arguments
+      - ansible_local
+    boxes:
+      - munikypo/kali-2020.4
+    original_boxes: false
+  - file: ./topologies/1-router-1-network-1-host.yml
+    arguments:
+      - no-arguments
+      - ansible_local
+      - border_router
+      - [ansible_local, border_router]
+    boxes:
+      - munikypo/kali-2020.4
+    original_boxes: false
+  - file: ./topologies/1-router-2-networks-2-hosts.yml
+    arguments:
+      - no-arguments
+      - ansible_local
+      - border_router
+      - [ansible_local, border_router]
+    boxes:
+      - munikypo/kali-2020.4
+    original_boxes: false
+  - file: ./topologies/2-routers-2-networks-2-hosts.ym
+    arguments:
+      - border_router
+      - [ansible_local, border_router]
+    boxes:
+      - munikypo/kali-2020.4
+    original_boxes: false

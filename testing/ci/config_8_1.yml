@@ -1,7 +1,0 @@
-# Configuration file for integration testing.
-# Tests example topology 7 (see wiki) with the border_router optional argument.
-
-topologies:
-  - file: ./topologies/3-routers-5-networks-5-hosts.yml
-    arguments:
-      - border_router

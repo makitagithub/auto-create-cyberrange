@@ -1,7 +1,0 @@
-# Configuration file for integration testing.
-# Tests example topology 7 (see wiki) with the border_router and ansible_local optional arguments.
-
-topologies:
-  - file: ./topologies/3-routers-5-networks-5-hosts.yml
-    arguments:
-      - [ansible_local, border_router]

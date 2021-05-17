@@ -1,164 +1,55 @@
 # Image with everything needed to run Cyber Sandbox Creator.
-image: registry.gitlab.ics.muni.cz:443/muni-kypo-csc/cyber-sandbox-creator:debian
+image: registry.gitlab.ics.muni.cz:443/muni-kypo-csc/cyber-sandbox-creator/csc-debian
 
 # Make sure that VirtualBox kernel modules are loaded and install Python dependencies.
 before_script:
+  - apt-get install -y linux-headers-$(uname -r)
   - lsmod | grep "vbox" || /usr/lib/virtualbox/vboxdrv.sh setup
   - pip3 install -r requirements.txt
-  - chmod +x test_topologies.sh
+  - chmod +x run_tests.sh
 
 # Separating integration tests into several stages to ensure only one job creating virtual environment will run at one time.
 # Running several jobs at once will make them fail while testing virtual network. 
 # Integration tests need to be separated into several jobs to fit under timeout treshold.
 stages:
-  - 0-routers-1-network-1-host
-  - 1-router-1-network-1-host
-  - 1-router-2-networks-2-hosts
-  - 1-router-2-networks-2-hosts-ubuntu
-  - 1-router-2-networks-2-hosts-kali
-  - 2-routers-2-networks-2-hosts
-  - 2-routers-4-networks-4-hosts
-  - 3-routers-5-networks-5-hosts-br
-  - 3-routers-5-networks-5-hosts-br-ansloc
+  - debian
+  - kali-2020
+  - windows-server
 
-original:
-  stage: 0-routers-1-network-1-host
+debian:
+  stage: debian
   script:
-    - ./test_topologies.sh ./testing/ci/config_1_1.yml
+    - testing/run_tests.sh -c testing/ci/config_debian.yml -p
   # run even when other stages fail
   when: always
-  # only run for commits to master branch and merge requests
+  # only run for merge requests
   only: 
     - merge_requests
 
-debian-stretch:
-  stage: 0-routers-1-network-1-host
-  script:
-    - ./test_topologies.sh ./testing/ci/config_1_2.yml
-  # run even when other stages fail
-  when: always
-  # only run for commits to master branch and merge requests
-  only: 
-    - merge_requests
-
-debian9:
-  stage: 0-routers-1-network-1-host
-  script:
-    - ./test_topologies.sh ./testing/ci/config_1_3.yml
-  # run even when other stages fail
-  when: always
-  # only run for commits to master branch and merge requests
-  only: 
-    - merge_requests
-
-ubuntu:
-  stage: 0-routers-1-network-1-host
-  script:
-    - ./test_topologies.sh ./testing/ci/config_1_4.yml
-  # run even when other stages fail
-  when: always
-  # only run for commits to master branch and merge requests
-  only: 
-    - merge_requests
-
-kali:
-  stage: 0-routers-1-network-1-host
+kali-2020:
+  stage: kali-2020
   # overwritting global before_script to create a virtual display before running test requiring a display
   before_script:
+    - apt-get install -y linux-headers-$(uname -r)
     - lsmod | grep "vbox" || /usr/lib/virtualbox/vboxdrv.sh setup
     - pip3 install -r requirements.txt
-    - chmod +x test_topologies.sh
+    - chmod +x run_tests.sh
     - Xvfb :1 -screen 0 800x600x16 &
+
   script:
-    - DISPLAY=:1 ./test_topologies.sh ./testing/ci/config_1_5.yml
+    - DISPLAY=:1 testing/run_tests.sh -c testing/ci/config_kali_2020.yml -p
   # run even when other stages fail
   when: always
-  # only run for commits to master branch and merge requests
+  # only run for and merge requests
   only: 
     - merge_requests
 
-1-router-1-network-1-host:
-  stage: 1-router-1-network-1-host
+windows-server:
+  stage: windows-server
   script:
-    - ./test_topologies.sh ./testing/ci/config_2_1.yml
+    - testing/run_tests.sh -c /testing/ci/config_windows_server.yml -p
   # run even when other stages fail
   when: always
-  # only run for commits to master branch and merge requests
-  only: 
-    - merge_requests
-
-1-router-2-networks-2-hosts:
-  stage: 1-router-2-networks-2-hosts
-  script:
-    - ./test_topologies.sh ./testing/ci/config_3_1.yml
-  # run even when other stages fail
-  when: always
-  # only run for commits to master branch and merge requests
-  only: 
-    - merge_requests
-
-1-router-2-networks-2-hosts-ubuntu:
-  stage: 1-router-2-networks-2-hosts-ubuntu
-  script:
-    - ./test_topologies.sh ./testing/ci/config_4_1.yml
-  # run even when other stages fail
-  when: always
-  # only run for commits to master branch and merge requests
-  only: 
-    - merge_requests
-
-1-router-2-networks-2-hosts-kali:
-  stage: 1-router-2-networks-2-hosts-kali
-  # overwritting global before_script to create a virtual display before running test requiring a display
-  before_script:
-    - lsmod | grep "vbox" || /usr/lib/virtualbox/vboxdrv.sh setup
-    - pip3 install -r requirements.txt
-    - chmod +x test_topologies.sh
-    - Xvfb :1 -screen 0 800x600x16 &
-  script:
-    - DISPLAY=:1 ./test_topologies.sh ./testing/ci/config_5_1.yml
-  # run even when other stages fail
-  when: always
-  # only run for commits to master branch and merge requests
-  only: 
-    - merge_requests
-
-2-routers-2-networks-2-hosts:
-  stage: 2-routers-2-networks-2-hosts
-  script:
-    - ./test_topologies.sh ./testing/ci/config_6_1.yml
-  # run even when other stages fail
-  when: always
-  # only run for commits to master branch and merge requests
-  only: 
-    - merge_requests
-
-2-routers-4-networks-4-hosts:
-  stage: 2-routers-4-networks-4-hosts
-  script:
-    - ./test_topologies.sh ./testing/ci/config_7_1.yml
-  # run even when other stages fail
-  when: always
-  # only run for commits to master branch and merge requests
-  only: 
-    - merge_requests
-
-3-routers-5-networks-5-hosts-br:
-  stage: 3-routers-5-networks-5-hosts-br
-  script:
-    - ./test_topologies.sh ./testing/ci/config_8_1.yml
-  # run even when other stages fail
-  when: always
-  # only run for commits to master branch and merge requests
-  only: 
-    - merge_requests
-
-3-routers-5-networks-5-hosts-br-ansloc:
-  stage: 3-routers-5-networks-5-hosts-br-ansloc
-  script:
-    - ./test_topologies.sh ./testing/ci/config_9_1.yml
-  # run even when other stages fail
-  when: always
-  # only run for commits to master branch and merge requests
+  # only run for merge requests
   only: 
     - merge_requests
