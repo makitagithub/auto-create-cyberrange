@@ -6,7 +6,7 @@ before_script:
   - apt-get install -y linux-headers-$(uname -r)
   - lsmod | grep "vbox" || /usr/lib/virtualbox/vboxdrv.sh setup
   - pip3 install -r requirements.txt
-  - chmod +x run_tests.sh
+  - chmod +x testing/run_tests.sh
 
 # Separating integration tests into several stages to ensure only one job creating virtual environment will run at one time.
 # Running several jobs at once will make them fail while testing virtual network. 
