@@ -19,7 +19,7 @@ topologies:
     boxes:
       - munikypo/windows-server-2019
     original_boxes: false
-  - file: ./topologies/2-routers-2-networks-2-hosts.ym
+  - file: ./topologies/2-routers-2-networks-2-hosts.yml
     arguments:
       - [ansible_local, border_router]
     boxes:
