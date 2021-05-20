@@ -24,7 +24,8 @@ def _create_simple_attribute(key, value, attribute_type):
 
 def _create_complex_attribute(key, value):
     """Create complex vagrant attributes that are not string, int or bool."""
-    separators = {VAGRANT_MAPPING["other"]["synced_folder"]: ""}
+    separators = {VAGRANT_MAPPING["other"]["synced_folder"]: "",
+                  VIRTUALBOX_MAPPING["other"]["vb_customize"]: ""}
 
     attribute = dict()
     attribute["type"] = "other"
@@ -85,6 +86,10 @@ def _create_commands(device_attributes):
             vagrant_attribute = VIRTUALBOX_MAPPING["integer"][attribute]
             vb_commands.append(_create_simple_attribute(vagrant_attribute,
                                                         value, "integer"))
+        elif attribute in VIRTUALBOX_MAPPING["other"]:
+            vagrant_attribute = VIRTUALBOX_MAPPING["other"][attribute]
+            vb_commands.append(_create_complex_attribute(vagrant_attribute,
+                                                         value))
 
     if vb_commands:
         virtual_box_command = dict()

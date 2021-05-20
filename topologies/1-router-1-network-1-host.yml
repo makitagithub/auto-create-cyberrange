@@ -4,7 +4,7 @@ name: 1-router-1-host
 hosts:
   - name: debian10
     base_box:
-      image: generic/debian10
+      image: munikypo/debian-10
     memory: 512
 
 routers:

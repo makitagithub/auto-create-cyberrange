@@ -1,3 +1,5 @@
 integer:
     memory: memory
     cpus: cpus
+other:
+    vb_customize: customize
