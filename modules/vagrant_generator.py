@@ -24,7 +24,8 @@ def _create_simple_attribute(key, value, attribute_type):
 
 def _create_complex_attribute(key, value):
     """Create complex vagrant attributes that are not string, int or bool."""
-    separators = {VAGRANT_MAPPING["other"]["synced_folder"]: ""}
+    separators = {VAGRANT_MAPPING["other"]["synced_folder"]: "",
+                  VIRTUALBOX_MAPPING["other"]["vb_customize"]: ""}
 
     attribute = dict()
     attribute["type"] = "other"
@@ -85,6 +86,10 @@ def _create_commands(device_attributes):
             vagrant_attribute = VIRTUALBOX_MAPPING["integer"][attribute]
             vb_commands.append(_create_simple_attribute(vagrant_attribute,
                                                         value, "integer"))
+        elif attribute in VIRTUALBOX_MAPPING["other"]:
+            vagrant_attribute = VIRTUALBOX_MAPPING["other"][attribute]
+            vb_commands.append(_create_complex_attribute(vagrant_attribute,
+                                                         value))
 
     if vb_commands:
         virtual_box_command = dict()
@@ -146,13 +151,6 @@ def _create_ansible_commands(device_name, playbook_location, input_definitions, 
             groups["groups"][group["name"]] = group["nodes"]
     commands.append(groups)
 
-    if "ansible_local" in flags and flags["ansible_local"]:
-        install_mode = dict()
-        install_mode["type"] = "string"
-        install_mode["command"] = "install_mode"
-        install_mode["value"] = "pip"
-        commands.append(install_mode)
-
     if "extra_vars" in flags and flags["extra_vars"]:
         if "ansible_local" in flags and flags["ansible_local"]:
             extra_vars_location = "/vagrant/user_files/extra_vars.yml"
@@ -169,7 +167,7 @@ def _create_ansible_commands(device_name, playbook_location, input_definitions, 
     extravars["command"] = "extra_vars"
     extravars["dictionary"] = dict()
     if device_name not in windows_hosts:
-        extravars["dictionary"]["ansible_python_interpreter"] = "\"/usr/bin/python3\""
+        extravars["dictionary"]["ansible_python_interpreter"] = "\"python3\""
     commands.append(extravars)
 
     return commands
@@ -216,19 +214,6 @@ def _add_all_networks(vagrant_definitions, input_definitions, flags):
 def _call_provisioner(device_name, input_definitions, flags):
     """Create entry to vagrant definitions for calling the provisioner."""
     provisioner_calls = []
-
-    if device_name == CONTROLLER_NAME:
-        shell_provisioning = dict()
-        shell_provisioning["type"] = "provision"
-        shell_provisioning["provisioner"] = "shell"
-        shell_provisioning["note"] = "install pip3 and ansible"
-
-        install_ansible = dict()
-        install_ansible["type"] = "string"
-        install_ansible["command"] = "inline"
-        install_ansible["value"] = "sudo apt-get install -y python3-pip && pip3 install --upgrade ansible"
-        shell_provisioning["commands"] = [install_ansible]
-        provisioner_calls.append(shell_provisioning)
 
     config_playbook = dict()
     config_playbook["type"] = "provision"

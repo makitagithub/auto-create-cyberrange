@@ -2,15 +2,13 @@ name: small-sandbox
 hosts:
   - name: server
     base_box:
-      image: ubuntu/xenial64
+      image: munikypo/debian-10
     flavor: csirtmu.tiny1x4
     cpus: 2
 
   - name: home
     base_box:
-      image: ubuntu/xenial64
-    boot_timeout: 1000
-    box_check_update: false
+      image: munikypo/debian-10
 
 routers:
   - name: router

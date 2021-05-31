@@ -162,6 +162,8 @@ end
     {{ dictionary(item, namespace) -}}
 {% elif item.type == "groups" %}
     {{ groups(item, namespace) -}}
+{% elif item.type == "other" %}
+    {{ other(item, namespace) -}}
 {% endif %}
 {% endfor %}
     end
