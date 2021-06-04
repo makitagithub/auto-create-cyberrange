@@ -30,12 +30,12 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
     """
 
     try:
-        if type(topology) == str:
+        if isinstance(topology, str):
             topology_path: Path = Path(topology).resolve()
-        elif type(topology) == Path:
+        elif isinstance(topology, Path):
             topology_path: Path = topology.resolve()
         else:
-            raise TypeError("Topology definition file path has invalid type"
+            raise TypeError("Topology definition file path has invalid type "
                             f"\"{type(topology)}\"")
         if not topology_path.is_file():
             raise IOError(f"File \"{topology_path}\" does not exist")
@@ -43,9 +43,9 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
         raise ValueError(f"Invalid path to topology file \"{topology}\"")
 
     try:
-        if type(output_dir) == str:
+        if isinstance(output_dir, str):
             sandbox_path: Path = Path(output_dir).resolve()
-        elif type(output_dir) == Path:
+        elif isinstance(output_dir, Path):
             sandbox_path: Path = output_dir.resolve()
         else:
             raise TypeError("Output directory path has invalid type "
@@ -56,9 +56,9 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
     try:
         user_provisioning_path: Optional[Path] = None
         if provisioning_dir:
-            if type(provisioning_dir) == str:
+            if isinstance(provisioning_dir, str):
                 user_provisioning_path = Path(provisioning_dir).resolve()
-            elif type(provisioning_dir) == Path:
+            elif isinstance(provisioning_dir, Path):
                 user_provisioning_path = provisioning_dir.resolve()
             else:
                 raise TypeError("Provisioning directory path has invalid type "
@@ -77,9 +77,9 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
     try:
         extra_vars_path: Optional[Path] = None
         if extra_vars:
-            if type(extra_vars) == str:
+            if isinstance(extra_vars, str):
                 extra_vars_path = Path(extra_vars).resolve()
-            elif type(extra_vars) == Path:
+            elif isinstance(extra_vars, Path):
                 extra_vars_path = extra_vars.resolve()
             else:
                 raise TypeError("Extra vars file path has invalid type "
