@@ -11,7 +11,8 @@ CONFIGURATION_PATH: Path = CSC_PATH / "conf/configuration.yml"
 FLAVORS_PATH: Path = CSC_PATH / "conf/flavors.yml"
 
 
-def create(topology: Union[str, Path], output_dir: Union[str, Path],
+def create(topology: Union[str, Path],
+           output_dir: Optional[Union[str, Path]] = None,
            ansible_installed: bool = False, border_router: bool = False,
            provisioning_dir: Optional[Union[str, Path]] = None,
            extra_vars: Optional[Union[str, Path]] = None,
@@ -43,7 +44,9 @@ def create(topology: Union[str, Path], output_dir: Union[str, Path],
         raise ValueError(f"Invalid path to topology file \"{topology}\"")
 
     try:
-        if isinstance(output_dir, str):
+        if output_dir is None or not output_dir:
+            sandbox_path: Path = topology_path.parent / "sandbox"
+        elif isinstance(output_dir, str):
             sandbox_path: Path = Path(output_dir).resolve()
         elif isinstance(output_dir, Path):
             sandbox_path: Path = output_dir.resolve()

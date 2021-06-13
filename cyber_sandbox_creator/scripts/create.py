@@ -34,7 +34,7 @@ args = parser.parse_args()
 if args.output_dir:
     output_dir: str = args.output_dir
 else:
-    output_dir: str = "sandbox"
+    output_dir: str = ""
 
 try:
     creator.create(args.topology_file, output_dir, args.ansible_installed,
