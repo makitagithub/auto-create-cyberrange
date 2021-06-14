@@ -113,6 +113,15 @@ class Vagrantfile:
         if sandbox.extra_vars is not None:
             attributes.append(String("extra_vars",
                                      sandbox.config["user_extra_vars"]))
+        if sandbox.include_requirements:
+            attributes.append(String("galaxy_role_file",
+                                     "provisioning/requirements.yml"))
+            attributes.append(String("galaxy_roles_path", "provisioning/roles"))
+            attributes.append(String("galaxy_command",
+                                     "sudo ansible-galaxy install --role-file="
+                                     "%{role_file} --roles-path=%{roles_path} "
+                                     "--force"))
+
         return attributes
 
     @staticmethod

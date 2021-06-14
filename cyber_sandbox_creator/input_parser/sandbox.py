@@ -128,6 +128,11 @@ class Sandbox:
         self.ansible_installed: bool = ansible_installed
         self.verbose_ansible: bool = verbose_ansible
         self.user_provisioning_dir: Optional[Path] = user_provisioning_dir
+        if self.user_provisioning_dir is not None:
+            self.include_requirements: bool = (self.user_provisioning_dir /
+                                               "requirements.yml").is_file()
+        else:
+            self.include_requirements: bool = False
         self.extra_vars: Optional[Path] = extra_vars_file
         self.config: Dict = Reader.open_yaml(configuration_path)
         self.flavors: List[Flavor] = self._load_flavors(flavors_path)
