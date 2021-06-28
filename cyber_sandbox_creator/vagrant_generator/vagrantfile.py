@@ -1,7 +1,8 @@
-from cyber_sandbox_creator.input_parser.sandbox import Sandbox, Device, Protocol, NetworkType
-from cyber_sandbox_creator.io.writer import Writer
 from typing import List, Optional, Union
 from pathlib import Path
+
+from cyber_sandbox_creator.input_parser.sandbox import Sandbox, Device, Protocol
+from cyber_sandbox_creator.io.writer import Writer
 
 
 class String:
@@ -156,6 +157,14 @@ class Vagrantfile:
         attributes.append(Block("vm.provider", "virtualbox", "vb",
                                 vm_attributes))
 
+        if not sandbox.ansible_installed:
+            synced_folder_attributes: List = [String("", "."),
+                                              String("", "/vagrant"),
+                                              String("type", "rsync"),
+                                              String("rsync__exclude", ".git/")]
+            attributes.append(Method("vm.synced_folder",
+                                     synced_folder_attributes, False))
+
         for interface in device.interfaces:
             net_attributes: List = [String("", interface.network.type),
                                     String("virtualbox__intnet",
@@ -164,7 +173,6 @@ class Vagrantfile:
                                     String("netmask",
                                            interface.network.cidr.netmask)]
             attributes.append(Method("vm.network", net_attributes, False))
-        # TODO add attributes
 
         return attributes
 
