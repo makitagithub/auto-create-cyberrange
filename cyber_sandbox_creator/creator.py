@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Union, Optional
 
@@ -13,6 +14,7 @@ FLAVORS_PATH: Path = CSC_PATH / "conf/flavors.yml"
 
 def _process_topology_path(topology: Union[str, Path]) -> Path:
     """Validate and resolve topology path"""
+    print(Path("test").resolve())
     try:
         if isinstance(topology, str):
             topology_path: Path = Path(topology).resolve()
