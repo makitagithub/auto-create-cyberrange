@@ -1,7 +1,6 @@
-from typing import List, Dict
+from typing import Dict
+from pathlib import Path
 
-from cyber_sandbox_creator.ansible_generator.objects import Playbook, Play, \
-    Task, Module
 from cyber_sandbox_creator.ansible_generator.routes import Routes
 from cyber_sandbox_creator.io.writer import Writer
 from cyber_sandbox_creator.io.reader import Reader
@@ -52,6 +51,8 @@ class Preconfig:
                 aliases[str(interface.ip)] = device.name
 
         all_vars: Dict = {"device_aliases": aliases}
+        if sandbox.border_router_present:
+            all_vars["border_router_name"] = sandbox.config["border_router_name"]
         hosts_vars: Dict = {}
         router_vars: Dict = {}
         ssh_vars: Dict = {"ansible_python_interpreter": "python3"}
@@ -71,66 +72,6 @@ class Preconfig:
                                        "routers": router_vars, "ssh": ssh_vars,
                                        "winrm": winrm_vars}
         return group_vars
-
-    @staticmethod
-    def _configure_routers() -> List[Task]:
-        """List of tasks for all routers"""
-        return [Task("Enable IP forwarding",
-                     Module("sysctl", {"name": "net.ipv4.ip_forward",
-                                       "value": "1",
-                                       "sysctl_set": "yes",
-                                       "reload": "yes"}))]
-
-    @staticmethod
-    def _configure_hosts() -> List[Task]:
-        """List of tasks for all hosts"""
-        return []
-
-    @staticmethod
-    def _configure_linuxes() -> List[Task]:
-        """List of tasks for all Linux devices"""
-        return [Task("Install net-tools", Module("apt", {"name": "net-tools"})),
-                Task("Add aliases of all devices",
-                     Module("lineinfile", {"path": "/etc/hosts", "line":
-                            "{{ item.key }} {{ item.value }}"}),
-                     {"loop": "{{ device_aliases | dict2items }}"}),
-                Task("Configure routes",
-                     Module("include_role", {"name": "interface"}),
-                     {"loop": "{{ routes }}", "loop_control":
-                         {"loop_var": "interface"}},
-                     {"interface_configuration_type": "static",
-                      "interface_identification": "{{ interface.interface_ip }}",
-                      "interface_static_ip": "{{ interface.interface_ip }}",
-                      "interface_static_netmask": "{{ interface.interface_netmask }}",
-                      "interface_default_gateway": "{{ interface.interface_default_gateway | default('') }}",
-                      "interface_routes": "{{ interface.interface_routes | default([]) }}"})]
-
-    @staticmethod
-    def _configure_br() -> List[Task]:
-        """List of tasks for border router"""
-        return [Task("Set up postrouting",
-                     Module("iptables", {
-                         "table": "nat", "chain": "POSTROUTING", "jump": "SNAT",
-                         "out_interface": "{{ ansible_default_ipv4.interface }}",
-                         "to_source": "{{ ansible_default_ipv4.address }}"}))]
-
-    @staticmethod
-    def _create_playbook(sandbox: Sandbox) -> Playbook:
-        """Generate the main playbook"""
-
-        plays: List[Play] = []
-        plays.extend([Play("Router configuration",
-                           Preconfig._configure_routers(), "routers", True, {}),
-                      Play("Linux configuration",
-                           Preconfig._configure_linuxes(), "ssh", True, {}),
-                      Play("Linux Host configuration",
-                           Preconfig._configure_hosts(), "hosts:&ssh", True,
-                           {})])
-        if sandbox.border_router_present:
-            plays.append(Play("Border router configuration",
-                              Preconfig._configure_br(),
-                              sandbox.config["border_router_name"], True, {}))
-        return Playbook(plays)
 
     @staticmethod
     def _preconfig_exists(sandbox) -> bool:
@@ -169,7 +110,6 @@ class Preconfig:
                                      / sandbox.config["preconfig_group_vars"]
                                      / f"{group}.yml", variables)
 
-        playbook: Playbook = Preconfig._create_playbook(sandbox)
-        Writer.generate_yaml(sandbox.sandbox_dir
-                             / sandbox.config["preconfig_playbook"],
-                             playbook.make_dict())
+        Writer.copy_file(Path(__file__).parent.parent /
+                         "resources/files/playbook.yml", sandbox.sandbox_dir /
+                         sandbox.config["preconfig_playbook"])
