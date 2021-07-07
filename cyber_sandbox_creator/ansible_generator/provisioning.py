@@ -21,7 +21,7 @@ class Provision:
         if Provision._provisioning_exists(sandbox):
             Writer.remove_directory(provisioning_path)
         Writer.copy_file(Path(__file__).parent.parent /
-                         "resources/files/playbook.yml", sandbox.sandbox_dir /
+                         "resources/files/user_playbook.yml", sandbox.sandbox_dir /
                          sandbox.config["provisioning_playbook"])
 
     @staticmethod
