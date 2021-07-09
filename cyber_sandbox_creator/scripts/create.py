@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
-from typing import List
 import argparse
 import sys
-from cyber_sandbox_creator import creator
+from typing import List
+
+from cyber_sandbox_creator.creator import create
 
 
 def _parse_cli_args(cli_args: List[str]) -> argparse.ArgumentParser:
@@ -45,10 +46,9 @@ if __name__ == '__main__':
     args: argparse.ArgumentParser = _parse_cli_args(sys.argv[1:])
 
     try:
-        creator.create(args.topology_file, args.output_dir,
-                       args.ansible_installed, args.border_router,
-                       args.provisioning_dir, args.extra_vars,
-                       args.rewrite_provisioning, args.verbose_ansible)
+        create(args.topology_file, args.output_dir, args.ansible_installed,
+               args.border_router, args.provisioning_dir, args.extra_vars,
+               args.rewrite_provisioning, args.verbose_ansible)
     except (ValueError, IOError) as e:
         print(f"Could not create intermediate sandbox definition:\n{e}")
         sys.exit(1)
