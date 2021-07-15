@@ -1,4 +1,0 @@
-base_box:
-  image: munikypo/debian-10
-memory: 256
-cpus: 1
