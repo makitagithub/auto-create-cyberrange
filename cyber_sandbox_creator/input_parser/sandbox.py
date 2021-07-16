@@ -276,6 +276,26 @@ class Sandbox:
                       [br_network])
 
     @staticmethod
+    def _find_available_ip(network: Network, devices: List[Device])\
+            -> Interface:
+        """Find an available IP address in a network and return the Interface"""
+
+        all_addresses: List[IPAddress] = list(network.cidr)
+        if len(all_addresses) > 5:  # avoid low addresses
+            all_addresses = all_addresses[5:]
+        new_ip: str = None
+        for address in all_addresses:
+            conflict = False
+            for device in devices:
+                for interface in device.interfaces:
+                    if interface.network is network and interface.ip is address:
+                        conflict = True
+            if not conflict:
+                new_ip = str(address)
+                break
+        return Interface(network, new_ip)
+
+    @staticmethod
     def _create_device_list(topology: Topology, flavors: List[Flavor],
                             config: Dict, border_router: bool,
                             ansible_installed: bool,
@@ -302,7 +322,7 @@ class Sandbox:
                                   DevicePurpose.CONTROLLER,
                                   config["controller_box"],
                                   int(config["controller_memory"]),
-                                  int(config["controller_cpus"]),
-                                  [networks[0]]))
-
+                                  int(config["controller_cpus"]), Protocol.SSH,
+                                  [Sandbox._find_available_ip(networks[0], devices)]))
+        print(devices[-1].interfaces)
         return sorted(devices)  # sorted by priority based on device purpose
