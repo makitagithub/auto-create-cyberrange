@@ -12,6 +12,7 @@
       value: '1'
     vars: {}
 
+
 - name: Linux configuration
   hosts: ssh
   become: yes
@@ -41,10 +42,12 @@
       interface_static_ip: '{{ interface.interface_ip }}'
       interface_static_netmask: '{{ interface.interface_netmask }}'
 
+
 - name: Linux Host configuration
   hosts: hosts:&ssh
   become: yes
   tasks: []
+
 
 - name: Border router configuration
   hosts: '{{ "border_router_name" | default("!all") }}'
@@ -58,4 +61,15 @@
         jump: SNAT
         out_interface: '{{ ansible_default_ipv4.interface }}'
         to_source: '{{ ansible_default_ipv4.address }}'
+
+
+- name: Controller configuration
+  hosts: '{{ "controller_name" | default("!all") }}'
+  become: yes
+  tasks:
+
+    - name: Install pywinrm
+      pip:
+        name: pywinrm
+        executable: "pip3"
 ...

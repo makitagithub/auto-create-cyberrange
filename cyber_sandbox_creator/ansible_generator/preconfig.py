@@ -53,6 +53,8 @@ class Preconfig:
         all_vars: Dict = {"device_aliases": aliases}
         if sandbox.border_router_present:
             all_vars["border_router_name"] = sandbox.config["border_router_name"]
+        if sandbox.controller_present:
+            all_vars["controller_name"] = sandbox.config["controller_name"]
         hosts_vars: Dict = {}
         router_vars: Dict = {}
         ssh_vars: Dict = {"ansible_python_interpreter": "python3"}
