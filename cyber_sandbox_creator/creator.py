@@ -7,8 +7,8 @@ from cyber_sandbox_creator.ansible_generator.preconfig import Preconfig
 from cyber_sandbox_creator.ansible_generator.provisioning import Provision
 
 CSC_PATH: Path = Path(__file__).parent.resolve()
-CONFIGURATION_PATH: Path = CSC_PATH.joinpath("conf/configuration.yml")
-FLAVORS_PATH: Path = CSC_PATH.joinpath("conf/flavors.yml")
+CONFIGURATION_PATH: Path = CSC_PATH.joinpath("resources/conf/configuration.yml")
+FLAVORS_PATH: Path = CSC_PATH.joinpath("resources/conf/flavors.yml")
 
 
 def _process_topology_path(topology: Union[str, Path]) -> Path:
