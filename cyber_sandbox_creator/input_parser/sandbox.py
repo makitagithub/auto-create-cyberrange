@@ -204,8 +204,11 @@ class Sandbox:
         if host.flavor:
             memory, cpus = Sandbox._resolve_flavor(host.flavor, flavors)
         # TODO add explicit memory and cpus definition
-        else:
-            memory, cpus = 512, 2
+        if host.extra is not None:
+            if host.extra.memory is 0:
+                memory = host.extra.memory
+            if host.extra.cpus is 0:
+                cpus = host.extra.cpus
 
         device_networks: List[Interface] = []
         for net_mapping in topology.net_mappings:
