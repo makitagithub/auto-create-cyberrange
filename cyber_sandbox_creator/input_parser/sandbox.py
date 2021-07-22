@@ -1,11 +1,11 @@
 from enum import Enum
 from pathlib import Path
-from netaddr import IPNetwork, IPAddress
+from typing import List, Dict, Optional, Tuple
 
+from netaddr import IPNetwork, IPAddress
 import kypo.topology_definition.models as kypo
 
 from cyber_sandbox_creator.input_parser.topology_parser import Topology
-from typing import List, Dict, Optional, Tuple
 from cyber_sandbox_creator.io.reader import Reader
 
 
@@ -173,8 +173,16 @@ class Sandbox:
         flavors_file_content: Dict = Reader.open_yaml(flavors_path)
 
         for flavor_name, attributes in flavors_file_content.items():
-            memory: int = int(attributes["memory"])
-            cpus: int = int(attributes["cores"])
+            try:
+                memory: int = int(attributes["memory"])
+            except ValueError:
+                raise ValueError(f'Memory value "{attributes["memory"]}"'
+                                 ' is not an integer')
+            try:
+                cpus: int = int(attributes["cores"])
+            except ValueError:
+                raise ValueError(f'Cpus value "{attributes["cores"]}"'
+                                 ' is not an integer')
             flavors.append(Flavor(flavor_name, memory, cpus))
 
         return flavors
@@ -182,6 +190,7 @@ class Sandbox:
     @staticmethod
     def _controller_needed(devices: List[Device], ansible_installed: bool) \
             -> bool:
+        """Check if a controller device should be created"""
         if ansible_installed:
             return False
         for device in devices:
@@ -197,18 +206,31 @@ class Sandbox:
         raise AttributeError(f"Invalid flavor: {flavor_name}")
 
     @staticmethod
+    def _parse_memory_and_cpus(host: kypo.Host, flavors: List[Flavor])\
+            -> Tuple[int, int]:
+        if host.flavor:
+            memory, cpus = Sandbox._resolve_flavor(host.flavor, flavors)
+        if host.extra is not None:
+            if "memory" in host.extra:
+                try:
+                    memory = int(host.extra["memory"])
+                except ValueError:
+                    raise ValueError(f'Memory value "{host.extra["memory"]}"'
+                                     ' is not an integer')
+            if "cpus" in host.extra:
+                try:
+                    cpus = int(host.extra["cpus"])
+                except ValueError:
+                    raise (f'Cpus value "{host.extra["cpus"]}" is not an'
+                           'integer')
+        return memory, cpus
+
+    @staticmethod
     def _create_host_device(host: kypo.Host, topology: Topology,
                             flavors: List[Flavor], config: Dict,
                             networks: List[Network]) -> Device:
 
-        if host.flavor:
-            memory, cpus = Sandbox._resolve_flavor(host.flavor, flavors)
-        # TODO add explicit memory and cpus definition
-        if host.extra is not None:
-            if host.extra.memory is 0:
-                memory = host.extra.memory
-            if host.extra.cpus is 0:
-                cpus = host.extra.cpus
+        memory, cpus = Sandbox._parse_memory_and_cpus(host, flavors)
 
         device_networks: List[Interface] = []
         for net_mapping in topology.net_mappings:
@@ -260,7 +282,8 @@ class Sandbox:
                       memory, cpus, protocol, device_networks)
 
     @staticmethod
-    def _find_network(network_name: str, networks: List[Network]) -> Optional[Network]:
+    def _find_network(network_name: str, networks: List[Network])\
+            -> Optional[Network]:
         """Return a Network by its name"""
         for network in networks:
             if network.name == network_name:
@@ -269,8 +292,10 @@ class Sandbox:
     @staticmethod
     def _create_border_router(config: Dict, networks: List[Network]) -> Device:
         """Creates a border router device"""
-        br_network: Interface = Interface(Sandbox._find_network(config["border_router_network_name"], networks),
-                                          config["border_router_ip"])
+        br_network: Interface =\
+            Interface(Sandbox._find_network(
+                config["border_router_network_name"], networks),
+                config["border_router_ip"])
 
         return Device(config["border_router_name"], DevicePurpose.BORDER_ROUTER,
                       config["border_router_box"],
@@ -303,7 +328,7 @@ class Sandbox:
                             config: Dict, border_router: bool,
                             ansible_installed: bool,
                             networks: List[Network]) -> List[Device]:
-        """Creates list of devices with all attributes"""
+        """Creates priority sorted list of devices with all attributes"""
 
         devices: List[Device] = []
 
@@ -327,5 +352,5 @@ class Sandbox:
                                   int(config["controller_memory"]),
                                   int(config["controller_cpus"]), Protocol.SSH,
                                   [Sandbox._find_available_ip(networks[0], devices)]))
-        print(devices[-1].interfaces)
-        return sorted(devices)  # sorted by priority based on device purpose
+
+        return sorted(devices)
