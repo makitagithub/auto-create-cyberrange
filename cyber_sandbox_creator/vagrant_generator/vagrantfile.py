@@ -157,7 +157,7 @@ class Vagrantfile:
         attributes.append(Block("vm.provider", "virtualbox", "vb",
                                 vm_attributes))
 
-        if not sandbox.ansible_installed:
+        if not sandbox.ansible_installed and device.protocol is Protocol.SSH:
             synced_folder_attributes: List = [String("", "."),
                                               String("", "/vagrant"),
                                               String("type", "rsync"),
