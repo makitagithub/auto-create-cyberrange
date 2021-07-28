@@ -58,6 +58,10 @@ def _run_create(parsed_cli_args: argparse.ArgumentParser) -> None:
     print("Intermediate sandbox definition was successfully created")
 
 
-if __name__ == '__main__':
+def main():
     parsed_args: argparse.ArgumentParser = _parse_cli_args(sys.argv[1:])
     _run_create(parsed_args)
+
+
+if __name__ == '__main__':
+    main()

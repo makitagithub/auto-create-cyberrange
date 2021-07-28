@@ -85,6 +85,10 @@ def _run_manager(cli_args: argparse.ArgumentParser) -> None:
     _print_message(command)
 
 
-if __name__ == '__main__':
+def main():
     parsed_args: argparse.ArgumentParser = _parse_cli_args(sys.argv[1:])
     _run_manager(parsed_args)
+
+
+if __name__ == '__main__':
+    main()
