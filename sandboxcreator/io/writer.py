@@ -49,7 +49,7 @@ class Writer:
 
         try:
             template_loader = jinja2.FileSystemLoader(searchpath=
-                                                      Writer.TEMPLATE_DIR)
+                                                      str(Writer.TEMPLATE_DIR))
             template_env = jinja2.Environment(loader=template_loader,
                                               trim_blocks=True,
                                               lstrip_blocks=True)
