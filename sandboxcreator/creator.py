@@ -1,10 +1,10 @@
 from pathlib import Path
 from typing import Union, Optional
 
-from cyber_sandbox_creator.input_parser.sandbox import Sandbox
-from cyber_sandbox_creator.vagrant_generator.vagrantfile import Vagrantfile
-from cyber_sandbox_creator.ansible_generator.preconfig import Preconfig
-from cyber_sandbox_creator.ansible_generator.provisioning import Provision
+from sandboxcreator.input_parser.sandbox import Sandbox
+from sandboxcreator.vagrant_generator.vagrantfile import Vagrantfile
+from sandboxcreator.ansible_generator.preconfig import Preconfig
+from sandboxcreator.ansible_generator.provisioning import Provision
 
 CSC_PATH: Path = Path(__file__).parent.resolve()
 CONFIGURATION_PATH: Path = CSC_PATH.joinpath("resources/conf/configuration.yml")

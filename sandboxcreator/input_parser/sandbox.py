@@ -5,8 +5,8 @@ from typing import List, Dict, Optional, Tuple
 from netaddr import IPNetwork, IPAddress
 import kypo.topology_definition.models as kypo
 
-from cyber_sandbox_creator.input_parser.topology_parser import Topology
-from cyber_sandbox_creator.io.reader import Reader
+from sandboxcreator.input_parser.topology_parser import Topology
+from sandboxcreator.io.reader import Reader
 
 
 class Protocol(Enum):

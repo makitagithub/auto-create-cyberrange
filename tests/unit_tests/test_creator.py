@@ -1,7 +1,7 @@
 from unittest import TestCase
 from pathlib import Path
 
-from cyber_sandbox_creator import creator
+from sandboxcreator import creator
 
 
 class TestInputValidation(TestCase):

@@ -1,10 +1,10 @@
 from typing import Dict
 from pathlib import Path
 
-from cyber_sandbox_creator.ansible_generator.routes import Routes
-from cyber_sandbox_creator.io.writer import Writer
-from cyber_sandbox_creator.io.reader import Reader
-from cyber_sandbox_creator.input_parser.sandbox import Sandbox, DeviceType,\
+from sandboxcreator.ansible_generator.routes import Routes
+from sandboxcreator.io.writer import Writer
+from sandboxcreator.io.reader import Reader
+from sandboxcreator.input_parser.sandbox import Sandbox, DeviceType,\
     Protocol
 
 

@@ -1,8 +1,8 @@
 from typing import List, Optional, Union
 from pathlib import Path
 
-from cyber_sandbox_creator.input_parser.sandbox import Sandbox, Device, Protocol
-from cyber_sandbox_creator.io.writer import Writer
+from sandboxcreator.input_parser.sandbox import Sandbox, Device, Protocol
+from sandboxcreator.io.writer import Writer
 
 
 class String:

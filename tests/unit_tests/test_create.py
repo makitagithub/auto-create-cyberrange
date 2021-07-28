@@ -1,5 +1,5 @@
 import unittest
-from cyber_sandbox_creator.scripts import create
+from sandboxcreator.scripts import create
 
 
 class DefaultCLIArgsTests(unittest.TestCase):

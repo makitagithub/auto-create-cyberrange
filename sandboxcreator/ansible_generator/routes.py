@@ -1,6 +1,6 @@
 from typing import Optional, List, Dict
 
-from cyber_sandbox_creator.input_parser.sandbox import Network, Sandbox,\
+from sandboxcreator.input_parser.sandbox import Network, Sandbox,\
     Interface, DevicePurpose, Device, DeviceType
 
 

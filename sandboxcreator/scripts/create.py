@@ -4,7 +4,7 @@ import argparse
 import sys
 from typing import List
 
-from cyber_sandbox_creator.creator import create
+from sandboxcreator.creator import create
 
 
 def _parse_cli_args(cli_args: List[str]) -> argparse.ArgumentParser:
