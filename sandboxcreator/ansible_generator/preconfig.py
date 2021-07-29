@@ -15,9 +15,7 @@ class Preconfig:
     def _create_inventory(sandbox: Sandbox) -> Dict:
         groups: Dict = {"hosts": {"hosts": {}}, "routers": {"hosts": {}},
                         "ssh": {"hosts": {}}, "winrm": {"hosts": {}}}
-        all_devices: Dict = {}
         for device in sandbox.devices:
-            all_devices[device.name] = {}
             if device.device_type == DeviceType.HOST:
                 groups["hosts"]["hosts"][device.name] = {}
             elif device.device_type == DeviceType.ROUTER:
@@ -27,7 +25,7 @@ class Preconfig:
             elif device.protocol == Protocol.WINRM:
                 groups["winrm"]["hosts"][device.name] = {}
 
-        return {"all": {"hosts": all_devices, "children": groups}}
+        return {"all": {"children": groups}}
 
     @staticmethod
     def _create_host_vars(sandbox: Sandbox) -> Dict[str, Dict]:
@@ -61,6 +59,7 @@ class Preconfig:
         winrm_vars: Dict = {"ansible_connection": "winrm",
                             "ansible_user": "windows",
                             "ansible_password": "vagrant",
+                            "ansible_become_pass": "vagrant",
                             "ansible_winrm_transport": "basic",
                             "ansible_winrm_server_cert_validation": "ignore"}
 

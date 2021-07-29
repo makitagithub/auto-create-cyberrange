@@ -1,7 +1,7 @@
 from typing import List, Optional, Union
 from pathlib import Path
 
-from sandboxcreator.input_parser.sandbox import Sandbox, Device, Protocol
+from sandboxcreator.input_parser.sandbox import Sandbox, Device, Protocol, DevicePurpose
 from sandboxcreator.io.writer import Writer
 
 
@@ -73,39 +73,47 @@ class Vagrantfile:
     def _create_root(sandbox: Sandbox) -> Block:
         """Create root of the vagrantfile with all its content"""
         content: List = Vagrantfile._add_devices(sandbox)
-        content.extend(Vagrantfile._add_preconfig(sandbox))
-        content.extend(Vagrantfile._add_provisioning(sandbox))
         return Block("configure(\"2\")", None, "config", content)
 
     @staticmethod
-    def _add_preconfig(sandbox: Sandbox) -> List[Block]:
+    def _add_preconfig(device: Device, sandbox: Sandbox,
+                       group: Optional[str] = None) -> Block:
         """Add pre-configuration block to Vagrantfile definition"""
         provisioner = "ansible" if sandbox.ansible_installed else "ansible_local"
-        content: List = Vagrantfile._add_preconfig_attributes(sandbox)
-        return [Block("vm.provision", provisioner, "ansible", content,
-                      "Ansible pre-configuration")]
+        content: List = Vagrantfile._add_preconfig_attributes(device, sandbox,
+                                                              group)
+        return Block("vm.provision", provisioner, "ansible", content,
+                     "Ansible pre-configuration")
 
     @staticmethod
-    def _add_preconfig_attributes(sandbox: Sandbox) -> List:
+    def _add_preconfig_attributes(device: Device, sandbox: Sandbox,
+                                  group: Optional[str] = None) -> List:
         """Add attributes to pre-configuration"""
         attributes: List = [String("playbook",
                                    sandbox.config["preconfig_playbook"]),
                             String("inventory_path",
                                    sandbox.config["preconfig_inventory"])]
+        if group is None:
+            attributes.append(String("limit", device.name))
+        else:
+            attributes.append(String("limit", group))
         if sandbox.verbose_ansible:
             attributes.append(String("verbose", "vv"))
         return attributes
 
     @staticmethod
-    def _add_provisioning(sandbox: Sandbox) -> List[Block]:
+    def _add_provisioning(device: Device, sandbox: Sandbox,
+                          group: Optional[str] = None) -> Block:
         """Add provisioning block to Vagrantfile definition"""
         provisioner = "ansible" if sandbox.ansible_installed else "ansible_local"
-        content: List = Vagrantfile._add_provisioning_attributes(sandbox)
-        return [Block("vm.provision", provisioner, "ansible", content,
-                      "User Ansible provisioning")]
+        content: List = Vagrantfile._add_provisioning_attributes(device,
+                                                                 sandbox, group)
+        return Block("vm.provision", provisioner, "ansible", content,
+                     "User Ansible provisioning")
 
     @staticmethod
-    def _add_provisioning_attributes(sandbox: Sandbox) -> List:
+    def _add_provisioning_attributes(device: Device, sandbox: Sandbox,
+                                     group: Optional[str] = None) -> List:
         """Add attributes to provisioning"""
         attributes: List = [String("playbook",
                                    sandbox.config["provisioning_playbook"])]
@@ -118,6 +126,11 @@ class Vagrantfile:
             attributes.append(String("galaxy_role_file",
                                      "provisioning/requirements.yml"))
             attributes.append(String("galaxy_roles_path", "provisioning/roles"))
+        if group is None:
+            attributes.append(String("limit", device.name))
+        else:
+            attributes.append(String("limit", group))
+
             attributes.append(String("galaxy_command",
                                      "sudo ansible-galaxy install --role-file="
                                      "%{role_file} --roles-path=%{roles_path} "
@@ -138,6 +151,18 @@ class Vagrantfile:
                                  f"Device({device.device_type}): {device.name}"))
 
         return devices
+
+    @staticmethod
+    def _list_winrm_hosts(sandbox: Sandbox) -> str:
+        """Return a string with names of all winrm hosts"""
+        winrm_hosts: List[str] = []
+        for device in sandbox.devices:
+            if device.device_purpose is DevicePurpose.HOST and \
+                    device.protocol is Protocol.WINRM:
+                winrm_hosts.append(device.name)
+
+        joined_winrm_hosts: str = ",".join(winrm_hosts)
+        return joined_winrm_hosts
 
     @staticmethod
     def _add_device_attributes(device: Device, sandbox: Sandbox):
@@ -173,6 +198,29 @@ class Vagrantfile:
                                     String("netmask",
                                            interface.network.cidr.netmask)]
             attributes.append(Method("vm.network", net_attributes, False))
+
+        if sandbox.ansible_installed:
+            attributes.append(Vagrantfile._add_preconfig(device, sandbox))
+            attributes.append(Vagrantfile._add_provisioning(device, sandbox))
+        else:
+            if sandbox.controller_present:
+                if device.protocol is Protocol.SSH:
+                    if device.device_purpose is DevicePurpose.CONTROLLER:
+                        attributes.append(Vagrantfile._add_preconfig(device,
+                                                                     sandbox))
+                        attributes.append(
+                            Vagrantfile._add_preconfig(device, sandbox, "winrm"))
+                        attributes.append(
+                            Vagrantfile._add_provisioning(device, sandbox,
+                                                          Vagrantfile._list_winrm_hosts(sandbox)))
+                    else:
+                        attributes.append(
+                            Vagrantfile._add_preconfig(device, sandbox))
+                        attributes.append(
+                            Vagrantfile._add_provisioning(device, sandbox))
+            else:
+                attributes.append(Vagrantfile._add_preconfig(device, sandbox))
+                attributes.append(Vagrantfile._add_provisioning(device, sandbox))
 
         return attributes
 

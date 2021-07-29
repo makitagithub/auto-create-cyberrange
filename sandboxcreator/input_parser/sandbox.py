@@ -255,7 +255,6 @@ class Sandbox:
 
         if router.flavor:
             memory, cpus = Sandbox._resolve_flavor(router.flavor, flavors)
-        # TODO add explicit memory and cpus definition
         else:
             memory, cpus = config["default_router_memory"], \
                            config["default_router_cpus"]
