@@ -52,12 +52,6 @@
     ansible_become_pass: vagrant
   tasks:
 
-  - name: Add aliases of all devices
-    lineinfile:
-      line: '{{ item.key }} {{ item.value }}'
-      path: /etc/hosts
-    loop: '{{ device_aliases | dict2items }}'
-
   - name: Configure routes
     include_role:
       name: interface
