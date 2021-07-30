@@ -110,6 +110,11 @@ class Vagrantfile:
                         "ssh": Array("ssh", ssh_group),
                         "winrm": Array("winrm", winrm_group)}
 
+        for name, devices in sandbox.groups.items():
+            if name != "hosts" and name != "routers" and\
+                 name != "ssh" and name != "winrm":
+                groups[name] = Array(name, devices)
+
         return Hash("ansible_groups", groups)
 
     @staticmethod
@@ -158,7 +163,8 @@ class Vagrantfile:
                                      group: Optional[str] = None) -> List:
         """Add attributes to provisioning"""
         attributes: List = [String("playbook",
-                                   sandbox.config["provisioning_playbook"])]
+                                   sandbox.config["provisioning_playbook"]),
+                            Variable("groups", "ansible_groups")]
         if sandbox.verbose_ansible:
             attributes.append(String("verbose", "vv"))
         if sandbox.extra_vars is not None:

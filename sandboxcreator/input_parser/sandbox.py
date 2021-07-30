@@ -149,6 +149,17 @@ class Sandbox:
                                                               self.networks)
         self.controller_present: bool =\
             Sandbox._controller_needed(self.devices, ansible_installed)
+        self.groups: Dict = Sandbox._load_groups(topology)
+
+    @classmethod
+    def _load_groups(cls, topology: Topology) -> Dict:
+        """Load the list of user defined Ansible groups"""
+        groups: Dict = {}
+
+        for group in topology.groups:
+            groups[group.name] = group.nodes
+
+        return groups
 
     @classmethod
     def _create_network_list(cls, topology: Topology, border_router: bool,
