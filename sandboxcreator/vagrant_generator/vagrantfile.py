@@ -25,9 +25,10 @@ class Integer:
 class Variable:
     """Ruby variable attribute"""
 
-    def __init__(self, name: str, value: str):
+    def __init__(self, name: str, value: str, equal: bool = True):
         self.name: str = name
         self.value: str = value
+        self.equal: bool = equal
 
 
 class Block:
@@ -227,6 +228,9 @@ class Vagrantfile:
 
         vm_attributes: List = [Integer("memory", device.memory),
                                Integer("cpus", device.cpus)]
+        if device.usb_passthrough:
+            vm_attributes.append(Variable("customize",
+                                          '["modifyvm", :id, "--usb", "on"]', False))
         attributes.append(Block("vm.provider", "virtualbox", "vb",
                                 vm_attributes))
 

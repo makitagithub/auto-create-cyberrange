@@ -88,7 +88,7 @@
 
 {# Macro for Variables #}
 {% macro variable(namespace, variable_obj, indentation) %}
-{{ indent(indentation) }}{{ namespace }}.{{ variable_obj.name }} = {{ variable_obj.value }}
+{{ indent(indentation) }}{{ namespace }}.{{ variable_obj.name }} {% if variable_obj.equal %}= {% endif %}{{ variable_obj.value }}
 {% endmacro -%}
 
 {{ variables(ruby_variables) }}
