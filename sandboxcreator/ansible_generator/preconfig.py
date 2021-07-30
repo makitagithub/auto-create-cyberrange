@@ -12,22 +12,6 @@ class Preconfig:
     """Pre-configuration generator"""
 
     @staticmethod
-    def _create_inventory(sandbox: Sandbox) -> Dict:
-        groups: Dict = {"hosts": {"hosts": {}}, "routers": {"hosts": {}},
-                        "ssh": {"hosts": {}}, "winrm": {"hosts": {}}}
-        for device in sandbox.devices:
-            if device.device_type == DeviceType.HOST:
-                groups["hosts"]["hosts"][device.name] = {}
-            elif device.device_type == DeviceType.ROUTER:
-                groups["routers"]["hosts"][device.name] = {}
-            if device.protocol == Protocol.SSH:
-                groups["ssh"]["hosts"][device.name] = {}
-            elif device.protocol == Protocol.WINRM:
-                groups["winrm"]["hosts"][device.name] = {}
-
-        return {"all": {"children": groups}}
-
-    @staticmethod
     def _create_host_vars(sandbox: Sandbox) -> Dict[str, Dict]:
         """Create variables for each host"""
         host_vars: Dict[str, Dict] = {}
@@ -62,6 +46,8 @@ class Preconfig:
                             "ansible_become_pass": "vagrant",
                             "ansible_winrm_transport": "basic",
                             "ansible_winrm_server_cert_validation": "ignore"}
+        if sandbox.ansible_installed:
+            winrm_vars["ansible_winrm_scheme"] = "http"
 
         if sandbox.ansible_installed:
             ssh_vars.update({"ansible_host": "127.0.0.1",
@@ -92,10 +78,6 @@ class Preconfig:
                                     sandbox.sandbox_dir / sandbox.config["preconfig_roles"])
         Writer.clone_git_repository(sandbox.config["interface_repo"],
                                     sandbox.sandbox_dir / sandbox.config["preconfig_roles"])
-
-        inventory: Dict = Preconfig._create_inventory(sandbox)
-        Writer.generate_yaml(sandbox.sandbox_dir
-                             / sandbox.config["preconfig_inventory"], inventory)
 
         host_vars: Dict[str, Dict] = Preconfig._create_host_vars(sandbox)
         for host, variables in host_vars.items():
