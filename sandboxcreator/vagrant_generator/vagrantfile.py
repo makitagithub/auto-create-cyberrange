@@ -1,7 +1,8 @@
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
 from pathlib import Path
 
-from sandboxcreator.input_parser.sandbox import Sandbox, Device, Protocol, DevicePurpose
+from sandboxcreator.input_parser.sandbox import Sandbox, Device, Protocol,\
+    DevicePurpose, DeviceType
 from sandboxcreator.io.writer import Writer
 
 
@@ -18,6 +19,14 @@ class Integer:
 
     def __init__(self, variable: str, value: str):
         self.variable: str = variable
+        self.value: str = value
+
+
+class Variable:
+    """Ruby variable attribute"""
+
+    def __init__(self, name: str, value: str):
+        self.name: str = name
         self.value: str = value
 
 
@@ -50,16 +59,16 @@ class Method:
 class Hash:
     """Ruby hash attribute"""
 
-    def __init__(self, variable: str, content: List):
-        self.variable: str = variable
-        self.content: List = content
+    def __init__(self, name: str, content: Dict):
+        self.name: str = name
+        self.content: Dict = content
 
 
 class Array:
     """Ruby array"""
 
-    def __init__(self, variable: str, content: List):
-        self.variable: str = variable
+    def __init__(self, name: str, content: List):
+        self.name: str = name
         self.content: List = content
 
 
@@ -68,6 +77,40 @@ class Vagrantfile:
 
     def __init__(self, sandbox: Sandbox):
         self.root: Block = Vagrantfile._create_root(sandbox)
+        self.variables: List = Vagrantfile._create_variables(sandbox)
+
+    @staticmethod
+    def _create_variables(sandbox) -> List:
+        """Create a list of Ruby variables for the Vagrantfile"""
+        variables: List = [Vagrantfile._generate_groups(sandbox)]
+
+        return variables
+
+    @staticmethod
+    def _generate_groups(sandbox) -> Hash:
+        """Generate a variable with all groups for Vagrantfile"""
+
+        hosts_group: List[str] = []
+        routers_group: List[str] = []
+        ssh_group: List[str] = []
+        winrm_group: List[str] = []
+
+        for device in sandbox.devices:
+            if device.device_type == DeviceType.HOST:
+                hosts_group.append(device.name)
+            elif device.device_type == DeviceType.ROUTER:
+                routers_group.append(device.name)
+            if device.protocol == Protocol.SSH:
+                ssh_group.append(device.name)
+            elif device.protocol == Protocol.WINRM:
+                winrm_group.append(device.name)
+
+        groups: Dict = {"hosts": Array("hosts", hosts_group),
+                        "routers": Array("routers", routers_group),
+                        "ssh": Array("ssh", ssh_group),
+                        "winrm": Array("winrm", winrm_group)}
+
+        return Hash("ansible_groups", groups)
 
     @staticmethod
     def _create_root(sandbox: Sandbox) -> Block:
@@ -91,8 +134,7 @@ class Vagrantfile:
         """Add attributes to pre-configuration"""
         attributes: List = [String("playbook",
                                    sandbox.config["preconfig_playbook"]),
-                            String("inventory_path",
-                                   sandbox.config["preconfig_inventory"])]
+                            Variable("groups", "ansible_groups")]
         if group is None:
             attributes.append(String("limit", device.name))
         else:
@@ -228,4 +270,4 @@ class Vagrantfile:
         """Generate Vagrantfile"""
 
         Writer.generate_file_from_template(output_file, template_name,
-                                           self.root)
+                                           self.root, self.variables)

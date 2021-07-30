@@ -27,9 +27,31 @@
 {{ string(block_obj.internal_variable, item, indentation+1) -}}
 {% elif "Integer" in item.__class__.__name__ %}
 {{ integer(block_obj.internal_variable, item, indentation+1) -}}
+{% elif "Variable" in item.__class__.__name__ %}
+{{ variable(block_obj.internal_variable, item, indentation+1) -}}
 {% endif %}
 {% endfor %}
 {{ indent(indentation) }}end
+{% endmacro -%}
+
+{# Macro for initial Ruby variables #}
+{% macro variables(variables_list) %}
+{% for variable in variables_list %}
+{% if "Hash" in variable.__class__.__name__ %}
+{{ hash(variable, 0) -}}
+{% endif %}
+{% endfor %}
+{% endmacro -%}
+
+{# Macro for Hashes #}
+{% macro hash(variable, indentation) %}
+{{ indent(indentation) }}{{ variable.name }} = {
+{% for key, value in variable.content.items() %}
+{% if "Array" in value.__class__.__name__ %}
+{{ indent(indentation+1) }}"{{ key }}" => [{% if value.content %}"{% endif %}{{ value.content | join('", "') }}{% if value.content %}"{% endif %}]{% if (key, value) != variable.content.items() | last %}, {% endif +%}
+{% endif %}
+{% endfor %}
+}
 {% endmacro -%}
 
 {# Macro for an (integer or string) argument of a Method #}
@@ -64,4 +86,10 @@
 {{ indent(indentation) }}{{ namespace }}.{{ integer_obj.variable }} = {{ integer_obj.value }}
 {% endmacro -%}
 
+{# Macro for Variables #}
+{% macro variable(namespace, variable_obj, indentation) %}
+{{ indent(indentation) }}{{ namespace }}.{{ variable_obj.name }} = {{ variable_obj.value }}
+{% endmacro -%}
+
+{{ variables(ruby_variables) }}
 {{ block("Vagrant", data, 0) }}

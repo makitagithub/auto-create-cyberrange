@@ -39,12 +39,13 @@ class Writer:
 
     @staticmethod
     def generate_file_from_template(output_file: Path, template_name: str,
-                                    data=None) -> None:
+                                    data=None, ruby_variables=None) -> None:
         """Generate file from Jinja2 template
 
         :param output_file: path to the output file
         :param template_name: name of a Jinja2 template file in templates dir
         :param data: arbitrary number of named args for the template
+        :param ruby_variables: additional variables to pass to the template
         """
 
         try:
@@ -57,7 +58,7 @@ class Writer:
         except jinja2.TemplateNotFound:
             raise RuntimeError(f"Could not find template {template_name}")
 
-        output = template.render(data=data)
+        output = template.render(data=data, ruby_variables=ruby_variables)
         Writer._write_to_file(output_file, output)
 
     @staticmethod

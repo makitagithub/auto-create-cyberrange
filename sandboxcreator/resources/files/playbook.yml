@@ -73,24 +73,18 @@
       interface_static_netmask: '{{ interface.interface_netmask }}'
 
 
-- name: Linux Host configuration
-  hosts: hosts:&ssh
-  become: yes
-  tasks: []
-
-
 - name: Border router configuration
   hosts: br
   become: yes
   tasks:
 
-    - name: Set up postrouting
-      iptables:
-        table: nat
-        chain: POSTROUTING
-        jump: SNAT
-        out_interface: '{{ ansible_default_ipv4.interface }}'
-        to_source: '{{ ansible_default_ipv4.address }}'
+  - name: Set up postrouting
+    iptables:
+      table: nat
+      chain: POSTROUTING
+      jump: SNAT
+      out_interface: '{{ ansible_default_ipv4.interface }}'
+      to_source: '{{ ansible_default_ipv4.address }}'
 
 
 - name: Controller configuration
@@ -98,8 +92,8 @@
   become: yes
   tasks:
 
-    - name: Install pywinrm
-      pip:
-        name: pywinrm
-        executable: "pip3"
+  - name: Install pywinrm
+    pip:
+      name: pywinrm
+      executable: "pip3"
 ...
