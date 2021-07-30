@@ -72,6 +72,14 @@ def _delete_dummy_router(definitions):
             return
 
 
+def _add_usb_passthrough(definitions):
+    """Add usb passthrough to devices"""
+    for host in definitions["hosts"]:
+        if "extra" in host and host["extra"]:
+            if "usb_passthrough" in host["extra"]:
+                host["vb_customize"] = '["modifyvm", :id, "--usb", "on"]'
+
+
 def _find_windows_boxes(definitions):
     """Find and return list of host names with windows boxes."""
     windows_hosts = []
@@ -147,3 +155,9 @@ def preprocess(definitions, flags):
     except Exception:
         cleanup_and_exit("Preprocessing not successful: "
                          "Could not add flavors.")
+
+    try:
+        _add_usb_passthrough(definitions)
+    except Exception:
+        cleanup_and_exit("Preprocessing not successful: "
+                         "Could not add USB passthrough.")
