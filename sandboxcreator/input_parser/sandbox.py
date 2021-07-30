@@ -90,7 +90,8 @@ class Device:
 
     def __init__(self, name: str, device_purpose: DevicePurpose, box: str,
                  memory: int, cpus: int, protocol: Protocol = Protocol.SSH,
-                 interfaces: List[Interface] = []):
+                 interfaces: List[Interface] = [],
+                 usb_passthrough: bool = False):
         self.name: str = name
         self.device_purpose: DevicePurpose = device_purpose
         if (device_purpose is DevicePurpose.ROUTER or
@@ -106,6 +107,7 @@ class Device:
         self.memory: int = memory
         self.cpus: int = cpus
         self.interfaces: List[Interface] = interfaces
+        self.usb_passthrough: bool = usb_passthrough
 
     def __lt__(self, other):
         return self.device_purpose.value < other.device_purpose.value
@@ -255,8 +257,12 @@ class Sandbox:
         elif host.base_box.mgmt_protocol == kypo.Protocol.WINRM:
             protocol: Protocol = Protocol.WINRM
 
+        usb_passthrough: bool = False
+        if host.extra is not None and "usb_passthrough" in host.extra:
+            usb_passthrough: bool = host.extra["usb_passthrough"]
+
         return Device(host.name, DevicePurpose.HOST, host.base_box.image,
-                      memory, cpus, protocol, device_networks)
+                      memory, cpus, protocol, device_networks, usb_passthrough)
 
     @staticmethod
     def _create_router_device(router: kypo.Router, topology: Topology,
