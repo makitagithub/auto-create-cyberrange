@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import sys
 from typing import List, Optional
 
@@ -17,7 +18,7 @@ def _parse_cli_args(cli_args: List[str]) -> argparse.ArgumentParser:
                         choices=["build", "destroy"])
     parser.add_argument("-d", "--vagrantfile_directory",
                         help="path to a directory containing a Vagrantfile",
-                        default=None)
+                        default=os.getcwd())
     parser.add_argument("-m", "--machines",
                         help="list of machines involved",
                         nargs='*',
