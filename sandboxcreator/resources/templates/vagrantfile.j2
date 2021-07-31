@@ -48,7 +48,8 @@
 {{ indent(indentation) }}{{ variable.name }} = {
 {% for key, value in variable.content.items() %}
 {% if "Array" in value.__class__.__name__ %}
-{{ indent(indentation+1) }}"{{ key }}" => [{% if value.content %}"{% endif %}{{ value.content | join('", "') }}{% if value.content %}"{% endif %}]{% if (key, value) != variable.content.items() | last %}, {% endif +%}
+{{ indent(indentation+1) }}"{{ key }}" => [{% if value.content %}"{% endif %}{{ value.content | join('", "') }}{% if value.content %}"{% endif %}]{% if (key, value) != variable.content.items() | last %}, {% endif %}
+
 {% endif %}
 {% endfor %}
 }
