@@ -42,9 +42,8 @@ class Preconfig:
                             "ansible_password": "vagrant",
                             "ansible_become_pass": "vagrant",
                             "ansible_winrm_transport": "basic",
-                            "ansible_winrm_server_cert_validation": "ignore"}
-        if sandbox.ansible_installed:
-            winrm_vars["ansible_winrm_scheme"] = "http"
+                            "ansible_winrm_server_cert_validation": "ignore",
+                            "ansible_winrm_scheme": "http"}
 
         if sandbox.ansible_installed:
             ssh_vars.update({"ansible_host": "127.0.0.1",
