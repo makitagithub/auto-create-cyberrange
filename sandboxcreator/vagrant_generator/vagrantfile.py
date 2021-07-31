@@ -131,8 +131,7 @@ class Vagrantfile:
         provisioner = "ansible" if sandbox.ansible_installed else "ansible_local"
         content: List = Vagrantfile._add_preconfig_attributes(device, sandbox,
                                                               group)
-        return Block("vm.provision", provisioner, "ansible", content,
-                     "Ansible pre-configuration")
+        return Block("vm.provision", provisioner, "ansible", content)
 
     @staticmethod
     def _add_preconfig_attributes(device: Device, sandbox: Sandbox,
@@ -156,8 +155,7 @@ class Vagrantfile:
         provisioner = "ansible" if sandbox.ansible_installed else "ansible_local"
         content: List = Vagrantfile._add_provisioning_attributes(device,
                                                                  sandbox, group)
-        return Block("vm.provision", provisioner, "ansible", content,
-                     "User Ansible provisioning")
+        return Block("vm.provision", provisioner, "ansible", content)
 
     @staticmethod
     def _add_provisioning_attributes(device: Device, sandbox: Sandbox,
