@@ -11,7 +11,31 @@ CONFIGURATION_PATH: Path = CSC_PATH.joinpath("resources/conf/configuration.yml")
 FLAVORS_PATH: Path = CSC_PATH.joinpath("resources/conf/flavors.yml")
 
 
-def _process_topology_path(topology: Union[str, Path]) -> Path:
+def _process_working_dir(working_dir: Optional[Union[str, Path]]) \
+        -> Optional[Path]:
+    """Validate and resolve working directory"""
+    if working_dir is None:
+        return None
+
+    try:
+        if isinstance(working_dir, str):
+            working_directory: Path = Path(working_dir)
+        elif isinstance(working_dir, Path):
+            working_directory: Path = working_dir
+        else:
+            raise TypeError("Working directory has unknown type "
+                            f'"{type(working_dir)}"')
+        if not working_directory.is_dir() or \
+                not working_directory.is_absolute():
+            raise ValueError("Working directory should be an absolute path")
+    except OSError:
+        raise ValueError(f'Invalid path to working directory "{working_dir}"')
+
+    return working_directory
+
+
+def _process_topology_path(topology: Union[str, Path],
+                           working_dir: Optional[Path]) -> Path:
     """Validate and resolve topology path"""
     try:
         if isinstance(topology, str):
@@ -21,6 +45,8 @@ def _process_topology_path(topology: Union[str, Path]) -> Path:
         else:
             raise TypeError("Topology definition file path has invalid type "
                             f"\"{type(topology)}\"")
+        if working_dir is not None and not topology_path.is_absolute():
+            working_dir.joinpath(topology_path)
         if not topology_path.is_file():
             raise OSError(f"File \"{topology_path}\" does not exist")
     except OSError:
@@ -30,7 +56,8 @@ def _process_topology_path(topology: Union[str, Path]) -> Path:
 
 
 def _process_output_path(output_dir: Optional[Union[str, Path]],
-                         topology_path: Path) -> Path:
+                         topology_path: Path,
+                         working_dir: Optional[Path]) -> Path:
     """Validate and resolve output directory path"""
     try:
         if output_dir is None or output_dir == "":
@@ -42,6 +69,8 @@ def _process_output_path(output_dir: Optional[Union[str, Path]],
         else:
             raise TypeError("Output directory path has invalid type "
                             f"\"{type(output_dir)}\"")
+        if working_dir is not None and not sandbox_path.is_absolute():
+            working_dir.joinpath(sandbox_path)
         if sandbox_path.is_file():
             raise OSError(f"\"{sandbox_path}\" is a file")
     except OSError:
@@ -50,8 +79,8 @@ def _process_output_path(output_dir: Optional[Union[str, Path]],
     return sandbox_path
 
 
-def _process_provisioning_path(provisioning_dir: Optional[Union[str, Path]]) \
-        -> Optional[Path]:
+def _process_provisioning_path(provisioning_dir: Optional[Union[str, Path]],
+                               working_dir: Optional[Path]) -> Optional[Path]:
     """Validate and resolve user provisioning directory path"""
     try:
         if provisioning_dir is None or provisioning_dir == "":
@@ -63,6 +92,8 @@ def _process_provisioning_path(provisioning_dir: Optional[Union[str, Path]]) \
         else:
             raise TypeError("Provisioning directory path has invalid type "
                             f"\"{type(provisioning_dir)}\"")
+        if working_dir is not None and not provisioning_path.is_absolute():
+            working_dir.joinpath(provisioning_path)
         if not provisioning_path.is_dir():
             raise ValueError(f"Directory \"{provisioning_path}\" does not exist")
         playbook_path: Path = provisioning_path.joinpath("playbook.yml")
@@ -76,8 +107,8 @@ def _process_provisioning_path(provisioning_dir: Optional[Union[str, Path]]) \
     return provisioning_path
 
 
-def _process_extra_vars_path(extra_vars: Optional[Union[str, Path]]) -> \
-        Optional[Path]:
+def _process_extra_vars_path(extra_vars: Optional[Union[str, Path]],
+                             working_dir: Optional[Path]) -> Optional[Path]:
     """Validate and resolve path to Ansible extra vars file"""
     try:
         if extra_vars is None or extra_vars == "":
@@ -89,6 +120,8 @@ def _process_extra_vars_path(extra_vars: Optional[Union[str, Path]]) -> \
         else:
             raise TypeError("Extra vars file path has invalid type "
                             f"\"{type(extra_vars)}\"")
+        if working_dir is not None and not extra_vars_path.is_absolute():
+            working_dir.joinpath(extra_vars_path)
         if extra_vars_path is not None and not extra_vars_path.is_file():
             raise OSError(f"File \"{extra_vars_path}\" does not exist")
     except OSError:
@@ -131,7 +164,8 @@ def create(topology: Union[str, Path],
            provisioning_dir: Optional[Union[str, Path]] = None,
            extra_vars: Optional[Union[str, Path]] = None,
            generate_provisioning: bool = False,
-           verbose_ansible: bool = False) -> None:
+           verbose_ansible: bool = False,
+           working_dir: Optional[Union[str, Path]] = None) -> None:
     """Generates intermediate definition from a topology definition.
 
     :param topology: path to the topology definition file
@@ -142,12 +176,16 @@ def create(topology: Union[str, Path],
     :param extra_vars: path to YAML file with additional values for Ansible
     :param generate_provisioning: whether provisioning should be regenerated
     :param verbose_ansible: whether Ansible output should be set to verbose
+    :param working_dir: an absolute path to resolve possible relative paths
     """
 
-    topology_path: Path = _process_topology_path(topology)
-    output_path: Path = _process_output_path(output_dir, topology_path)
-    provisioning_path: Path = _process_provisioning_path(provisioning_dir)
-    extra_vars_path: Path = _process_extra_vars_path(extra_vars)
+    working_path: Optional[Path] = _process_working_dir(working_dir)
+    topology_path: Path = _process_topology_path(topology, working_path)
+    output_path: Path = _process_output_path(output_dir, topology_path,
+                                             working_path)
+    provisioning_path: Path = _process_provisioning_path(provisioning_dir,
+                                                         working_path)
+    extra_vars_path: Path = _process_extra_vars_path(extra_vars, working_path)
 
     try:
         sandbox_definition: Sandbox = Sandbox(topology_path, CONFIGURATION_PATH,

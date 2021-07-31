@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import sys
 from typing import List
 
@@ -50,7 +51,7 @@ def _run_create(parsed_cli_args: argparse.ArgumentParser) -> None:
                parsed_cli_args.ansible_installed, parsed_cli_args.border_router,
                parsed_cli_args.provisioning_dir, parsed_cli_args.extra_vars,
                parsed_cli_args.rewrite_provisioning,
-               parsed_cli_args.verbose_ansible)
+               parsed_cli_args.verbose_ansible, os.getcwd())
     except (ValueError, IOError) as e:
         print(f"Could not create intermediate sandbox definition:\n{e}")
         sys.exit(1)
