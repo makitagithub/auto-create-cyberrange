@@ -175,15 +175,14 @@ class Vagrantfile:
             attributes.append(String("galaxy_role_file",
                                      "provisioning/requirements.yml"))
             attributes.append(String("galaxy_roles_path", "provisioning/roles"))
-        if group is None:
-            attributes.append(String("limit", device.name))
-        else:
-            attributes.append(String("limit", group))
-
             attributes.append(String("galaxy_command",
                                      "sudo ansible-galaxy install --role-file="
                                      "%{role_file} --roles-path=%{roles_path} "
                                      "--force"))
+        if group is None:
+            attributes.append(String("limit", device.name))
+        else:
+            attributes.append(String("limit", group))
 
         return attributes
 
