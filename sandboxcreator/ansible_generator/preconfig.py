@@ -16,10 +16,7 @@ class Preconfig:
         """Create variables for each host"""
         host_vars: Dict[str, Dict] = {}
         for device in sandbox.devices:
-            variables: Dict = {"ansible_ssh_private_key_file":
-                               f".vagrant/machines/{device.name}/virtualbox/private_key",
-                               "routes":
-                                   Routes.create_routes(device, sandbox)}
+            variables: Dict = {"routes": Routes.create_routes(device, sandbox)}
             host_vars[device.name] = variables
 
         return host_vars
