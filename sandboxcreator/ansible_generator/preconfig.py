@@ -4,8 +4,7 @@ from pathlib import Path
 from sandboxcreator.ansible_generator.routes import Routes
 from sandboxcreator.io.writer import Writer
 from sandboxcreator.io.reader import Reader
-from sandboxcreator.input_parser.sandbox import Sandbox, DeviceType,\
-    Protocol
+from sandboxcreator.input_parser.sandbox import Sandbox
 
 
 class Preconfig:
