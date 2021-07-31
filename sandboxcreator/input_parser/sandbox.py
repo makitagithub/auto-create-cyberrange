@@ -125,7 +125,10 @@ class Sandbox:
                  ansible_installed: bool, user_provisioning_dir: Optional[Path],
                  extra_vars_file: Optional[Path], generate_provisioning: bool,
                  verbose_ansible: bool):
-        topology: Topology = Topology.from_file(topology_path)
+        try:
+            topology: Topology = Topology.from_file(topology_path)
+        except Exception as e:
+            raise ValueError(f"Invalid topology definition:\n{e}")
         self.border_router_present: bool = border_router
         self.generate_provisioning: bool = generate_provisioning
         self.sandbox_dir: Path = sandbox_dir

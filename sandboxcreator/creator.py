@@ -195,7 +195,7 @@ def create(topology: Union[str, Path],
                                               extra_vars_path,
                                               generate_provisioning,
                                               verbose_ansible)
-    except (IOError, ValueError) as e:
+    except Exception as e:
         raise RuntimeError(f"Definition parsing has failed:\n{e}")
 
     _generate_vagrantfile(sandbox_definition)
