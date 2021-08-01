@@ -46,7 +46,7 @@ def _process_topology_path(topology: Union[str, Path],
             raise TypeError("Topology definition file path has invalid type "
                             f"\"{type(topology)}\"")
         if working_dir is not None and not topology_path.is_absolute():
-            working_dir.joinpath(topology_path)
+            topology_path = working_dir.joinpath(topology_path)
         if not topology_path.is_file():
             raise OSError(f"File \"{topology_path}\" does not exist")
     except OSError:
@@ -70,7 +70,7 @@ def _process_output_path(output_dir: Optional[Union[str, Path]],
             raise TypeError("Output directory path has invalid type "
                             f"\"{type(output_dir)}\"")
         if working_dir is not None and not sandbox_path.is_absolute():
-            working_dir.joinpath(sandbox_path)
+            sandbox_path = working_dir.joinpath(sandbox_path)
         if sandbox_path.is_file():
             raise OSError(f"\"{sandbox_path}\" is a file")
     except OSError:
@@ -93,7 +93,7 @@ def _process_provisioning_path(provisioning_dir: Optional[Union[str, Path]],
             raise TypeError("Provisioning directory path has invalid type "
                             f"\"{type(provisioning_dir)}\"")
         if working_dir is not None and not provisioning_path.is_absolute():
-            working_dir.joinpath(provisioning_path)
+            provisioning_path = working_dir.joinpath(provisioning_path)
         if not provisioning_path.is_dir():
             raise ValueError(f"Directory \"{provisioning_path}\" does not exist")
         playbook_path: Path = provisioning_path.joinpath("playbook.yml")
@@ -121,7 +121,7 @@ def _process_extra_vars_path(extra_vars: Optional[Union[str, Path]],
             raise TypeError("Extra vars file path has invalid type "
                             f"\"{type(extra_vars)}\"")
         if working_dir is not None and not extra_vars_path.is_absolute():
-            working_dir.joinpath(extra_vars_path)
+            extra_vars_path = working_dir.joinpath(extra_vars_path)
         if extra_vars_path is not None and not extra_vars_path.is_file():
             raise OSError(f"File \"{extra_vars_path}\" does not exist")
     except OSError:
