@@ -1,0 +1,6 @@
+# Mapping from Vagrant box's names to the amount of memory they need.
+
+munikypo/debian-10: 512
+munikypo/kali-2019.4: 1024
+munikypo/kali-2020.4: 1024
+munikypo/windows-server-2019: 4096
