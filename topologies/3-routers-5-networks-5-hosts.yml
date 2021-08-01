@@ -1,75 +1,118 @@
 # Topology with 3 routers and 5 separate networks
 # Works only with a border router enabled
-name: 2-networks-connected-by-br
+name: topology7
+
 hosts:
   - name: host1
     base_box:
       image: munikypo/debian-10
-    memory: 512
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 512
+
   - name: host2
     base_box:
       image: munikypo/debian-10
-    memory: 512
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 512
+
   - name: host3
     base_box:
       image: munikypo/debian-10
-    memory: 512
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 512
+
   - name: host4
     base_box:
       image: munikypo/debian-10
-    memory: 512
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 512
+
   - name: host5
     base_box:
       image: munikypo/debian-10
-    memory: 512
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 512
 
 routers:
   - name: router1
+    cidr: 100.100.100.0/29
+    base_box:
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
+
   - name: router2
+    cidr: 100.100.200.0/29
+    base_box:
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
+
   - name: router3
+    cidr: 100.200.100.0/29
+    base_box:
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
 
 networks:
   - name: network1
     cidr: 10.10.20.0/24
+
   - name: network2
     cidr: 10.10.30.0/24
+
   - name: network3
     cidr: 10.10.40.0/24
+
   - name: network4
     cidr: 10.10.50.0/24
+
   - name: network5
     cidr: 10.10.60.0/24
 
 net_mappings:
-    - host: host1
-      network: network1
-      ip: 10.10.20.5
-    - host: host2
-      network: network2
-      ip: 10.10.30.5
-    - host: host3
-      network: network3
-      ip: 10.10.40.5
-    - host: host4
-      network: network4
-      ip: 10.10.50.5
-    - host: host5
-      network: network5
-      ip: 10.10.60.5
+  - host: host1
+    network: network1
+    ip: 10.10.20.5
+
+  - host: host2
+    network: network2
+    ip: 10.10.30.5
+
+  - host: host3
+    network: network3
+    ip: 10.10.40.5
+
+  - host: host4
+    network: network4
+    ip: 10.10.50.5
+
+  - host: host5
+    network: network5
+    ip: 10.10.60.5
 
 router_mappings:
-    - router: router1
-      network: network1
-      ip: 10.10.20.1
-    - router: router1
-      network: network2
-      ip: 10.10.30.1
-    - router: router1
-      network: network3
-      ip: 10.10.40.1
-    - router: router2
-      network: network4
-      ip: 10.10.50.1
-    - router: router3
-      network: network5
-      ip: 10.10.60.1
+  - router: router1
+    network: network1
+    ip: 10.10.20.1
+
+  - router: router1
+    network: network2
+    ip: 10.10.30.1
+
+  - router: router1
+    network: network3
+    ip: 10.10.40.1
+
+  - router: router2
+    network: network4
+    ip: 10.10.50.1
+
+  - router: router3
+    network: network5
+    ip: 10.10.60.1
+
+groups: []

@@ -1,35 +1,53 @@
----
-name: big-broker
+name: bigbroker
+
 hosts:
   - name: web
     base_box:
-      image: generic/debian10
-    memory: 2048
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 1024
 
   - name: workstation
     base_box:
-      image: generic/debian10
-    memory: 2048
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 1024
 
   - name: database
     base_box:
-      image: generic/debian10
-    memory: 2048
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 1024
 
   - name: attacker
     base_box:
-      image: kali-2019.4
-    memory: 2048
+      image: munikypo/kali-2019.4
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 2048
 
   - name: client
     base_box:
-      image: generic/debian10
-    memory: 2048
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 1024
 
 routers:
   - name: big-broker-router
+    cidr: 100.100.100.0/29
+    base_box:
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
 
   - name: internet-router
+    cidr: 100.100.200.0/29
+    base_box:
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
 
 networks:
   - name: big-broker
@@ -67,4 +85,5 @@ router_mappings:
   - router: internet-router
     network: internet
     ip: 10.1.0.1
-...
+
+groups: []
