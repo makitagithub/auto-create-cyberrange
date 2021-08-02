@@ -39,13 +39,13 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## How to cite
 
-If you use or build upon Cyber Sandbox Creator, we would appreciate it if you link to this GitLab repository. If you can, please also use the BibTeX entry below to cite the original work.
+If you use or build upon Cyber Sandbox Creator, we would appreciate it if you link to this GitLab repository. If you can, please also use the BibTeX entry below to cite the [original work](https://is.muni.cz/publication/1783808/2021-FIE-scalable-learning-environments-teaching-cybersecurity-hands-on-paper.pdf).
 Jan Vykopal, Pavel Čeleda, Pavel Seda, Valdemar Švábenský, and Daniel Tovarňák.\
 *Scalable Learning Environments for Teaching Cybersecurity Hands-on [in press].*\
 In Proceedings of the 51st IEEE Frontiers in Education Conference (FIE' 2021).
 ```
 @inproceedings{Vykopal2021Scalable,
-    author    = {Vykopal, Jan and Čeleda, Pavel and Seda, Pavel and Švábenský, Valdemar and Tovarňák, Daniel},
+    author    = {Vykopal, Jan and \v{C}eleda, Pavel and Seda, Pavel and \v{S}v\'{a}bensk\'{y}, Valdemar and Tovar\v{n}\'{a}k, Daniel},
     title     = {{Scalable Learning Environments for Teaching Cybersecurity Hands-on [in press]}},
     booktitle = {Proceedings of the 51st IEEE Frontiers in Education Conference},
     series    = {FIE '21},
