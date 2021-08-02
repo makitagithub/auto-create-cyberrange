@@ -1,6 +1,6 @@
 # Cyber Sandbox Creator
 
-Cyber Sandbox Creator is a tool that can generate portable input files for building lightweight virtual environments using Vagrant and Ansible from a simple YAML definition of topology. The combination of these three tools makes it possible to build virtual machines connected with virtual networks even on a desktop computer.
+Cyber Sandbox Creator is a tool that can generate portable definition files and build virtual environments using VirtualBox, Vagrant, and Ansible from a simple YAML definition of topology. The combination of these tools makes it possible to create virtual machines connected with virtual networks with minimal effort, even on a desktop computer.
 
 ![usage](doc/sandbox_creator_general.svg "Usage")
 
@@ -14,38 +14,50 @@ Cyber Sandbox Creator is a tool that can generate portable input files for build
 
 ### Linux (Ubuntu/Debian)
 
-1. Install git using the command `$ sudo apt-get install git`.
-2. Clone the project with `$ git clone https://gitlab.ics.muni.cz/cs4eu/sandbox-creator.git` to an arbitrary directory.
-3. Navigate to the project directory (`$ cd sandbox-creator`).
-4. Install pip using `$ sudo apt-get install python3-pip`.
-5. Install setuptools with `$ pip3 install setuptools`.
-6. Install dependencies with the command `$ pip3 install -r requirements.txt`.
+1. Install pip using `$ sudo apt-get install python3-pip`.
+2. Install setuptools with `$ pip3 install setuptools`.
+3. Install Kypo Topology Definition `$ pip3 install kypo-topology-definition --extra-index-url https://gitlab.ics.muni.cz/api/v4/projects/2358/packages/pypi/simple`.
+4. Install Cyber Sandbox Creator with `$ pip3 install sandboxcreator`.
 
 ### Windows 10
 
 1. Install [Python 3](https://www.python.org/downloads/windows/). At the beginning of the installation mark the "Add Python to PATH" option.
-2. Install [git](https://git-scm.com/downloads).
-3. Clone the project with `git clone https://gitlab.ics.muni.cz/cs4eu/sandbox-creator.git` to an arbitrary folder.
-4. Navigate to the project folder (`cd sandbox-creator`).
-5. Install Python dependencies using the command `python -m pip install -r requirements.txt`.
+3. Install Kypo Topology Definition `$ pip install kypo-topology-definition --extra-index-url https://gitlab.ics.muni.cz/api/v4/projects/2358/packages/pypi/simple`.
+4. Install Cyber Sandbox Creator with `$ pip install sandboxcreator`.
 
 ## Usage
 
-### Linux (Ubuntu/Debian)
+### Linux (Ubuntu/Debian) and Windows 10
 
-1. After the installation, simply run the command `$ python3 create.py topology.yml` to generate intermediate definition files.
-2. Navigate to the newly created directory `sandbox` and run `$ vagrant up` to build the virtual environment.
-3. The built environment can be deleted using the command `$ vagrant destroy -f`.
-
-### Windows 10
-
-1. Generate files using the command `python create.py --ansible_local topology.yml`.
-2. Navigate to the newly created directory `sandbox` and run `vagrant up` to build the virtual environment.
-3. The built environment can be deleted using the command `vagrant destroy -f`.
+1. After the installation, simply run the command `$ create-sandbox <topology_definition>` to generate intermediate definition files.
+2. Navigate to the newly created directory `sandbox` (next to the topology definition) and run `$ manage-sandbox build` to build the virtual environment.
+3. The built environment can be deleted using the command `$ manage-sandbox destroy`.
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+## How to cite
+
+If you use or build upon Cyber Sandbox Creator, we would appreciate it if you link to this GitLab repository. If you can, please also use the BibTeX entry below to cite the [original work](https://is.muni.cz/publication/1783808/2021-FIE-scalable-learning-environments-teaching-cybersecurity-hands-on-paper.pdf).
+Jan Vykopal, Pavel Čeleda, Pavel Seda, Valdemar Švábenský, and Daniel Tovarňák.\
+*Scalable Learning Environments for Teaching Cybersecurity Hands-on [in press].*\
+In Proceedings of the 51st IEEE Frontiers in Education Conference (FIE' 2021).
+```
+@inproceedings{Vykopal2021Scalable,
+    author    = {Vykopal, Jan and \v{C}eleda, Pavel and Seda, Pavel and \v{S}v\'{a}bensk\'{y}, Valdemar and Tovar\v{n}\'{a}k, Daniel},
+    title     = {{Scalable Learning Environments for Teaching Cybersecurity Hands-on [in press]}},
+    booktitle = {Proceedings of the 51st IEEE Frontiers in Education Conference},
+    series    = {FIE '21},
+    location  = {Lincoln, Nebraska, USA},
+    publisher = {IEEE},
+    address   = {New York, NY, USA},
+    month     = {10},
+    year      = {2020},
+    pages     = {1--9},
+    numpages  = {9},
+}
+```
 
 ## Credits
 

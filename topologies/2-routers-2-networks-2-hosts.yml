@@ -1,20 +1,34 @@
 # Topology with 2 routers in two separate networks
 # Works only with a border router enabled
-name: 2-networks-connected-by-br
+name: topology5
+
 hosts:
   - name: server
     base_box:
       image: munikypo/debian-10
-    memory: 512
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 512
 
   - name: home
     base_box:
       image: munikypo/debian-10
-    memory: 512
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 512
 
 routers:
   - name: server-router
+    cidr: 100.100.100.0/29
+    base_box:
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
+
   - name: home-router
+    cidr: 100.100.200.0/29
+    base_box:
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
 
 networks:
   - name: server-switch
@@ -24,17 +38,21 @@ networks:
     cidr: 10.10.30.0/24
 
 net_mappings:
-    - host: server
-      network: server-switch
-      ip: 10.10.20.5
-    - host: home
-      network: home-switch
-      ip: 10.10.30.5
+  - host: server
+    network: server-switch
+    ip: 10.10.20.5
+
+  - host: home
+    network: home-switch
+    ip: 10.10.30.5
 
 router_mappings:
-    - router: server-router
-      network: server-switch
-      ip: 10.10.20.1
-    - router: home-router
-      network: home-switch
-      ip: 10.10.30.1
+  - router: server-router
+    network: server-switch
+    ip: 10.10.20.1
+
+  - router: home-router
+    network: home-switch
+    ip: 10.10.30.1
+
+groups: []

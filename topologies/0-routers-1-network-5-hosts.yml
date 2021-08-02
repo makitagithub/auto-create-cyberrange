@@ -1,49 +1,59 @@
 # A simple topology with various boxes in 1 network
-name: 1-network-various-boxes
+name: topology2
+
 hosts:
-  - name: debian-10
+  - name: debian10
     base_box:
       image: munikypo/debian-10
-    memory: 512
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 512
 
-  - name: debian2
-    base_box:
-      image: munikypo/debian-10
-    memory: 512
-
-  - name: kali-2019
+  - name: kali2019
     base_box:
       image: munikypo/kali-2019.4
-    memory: 1024
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 1024
 
-  - name: kali-2020
+  - name: kali2020
     base_box:
       image: munikypo/kali-2020.4
-    memory: 1024
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 1024
 
-  - name: windows-server
+  - name: windows2019
     base_box:
       image: munikypo/windows-server-2019
-    box_version: 0.0.1
-    memory: 4096
+      mgmt_protocol: winrm
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 4096
+
+routers: []
 
 networks:
   - name: network
     cidr: 10.10.30.0/24
 
 net_mappings:
-    - host: debian-10
-      network: network
-      ip: 10.10.30.5
-    - host: debian2
-      network: network
-      ip: 10.10.30.6
-    - host: kali-2019
-      network: network
-      ip: 10.10.30.7
-    - host: kali-2020
-      network: network
-      ip: 10.10.30.8
-    - host: windows-server
-      network: network
-      ip: 10.10.30.9
+  - host: debian10
+    network: network
+    ip: 10.10.30.5
+
+  - host: kali2019
+    network: network
+    ip: 10.10.30.6
+
+  - host: kali2020
+    network: network
+    ip: 10.10.30.7
+
+  - host: windows2019
+    network: network
+    ip: 10.10.30.8
+
+router_mappings: []
+
+groups: []

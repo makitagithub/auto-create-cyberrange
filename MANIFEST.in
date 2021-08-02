@@ -1,0 +1,3 @@
+recursive-include sandboxcreator/resources/conf *
+recursive-include sandboxcreator/resources/files *
+recursive-include sandboxcreator/resources/templates *

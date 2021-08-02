@@ -1,18 +1,27 @@
 # Topology with one router connecting 2 separate networks, each with 1 host
-name: 2-networks
+name: topology4
+
 hosts:
   - name: server
     base_box:
       image: munikypo/debian-10
-    memory: 512
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 512
 
   - name: home
     base_box:
       image: munikypo/debian-10
-    memory: 512
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 512
 
 routers:
   - name: router
+    cidr: 100.100.100.0/29
+    base_box:
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
 
 networks:
   - name: server-switch
@@ -22,18 +31,21 @@ networks:
     cidr: 10.10.30.0/24
 
 net_mappings:
-    - host: server
-      network: server-switch
-      ip: 10.10.20.5
-    - host: home
-      network: home-switch
-      ip: 10.10.30.5
+  - host: server
+    network: server-switch
+    ip: 10.10.20.5
+
+  - host: home
+    network: home-switch
+    ip: 10.10.30.5
 
 router_mappings:
-    - router: router
-      network: server-switch
-      ip: 10.10.20.1
-    - router: router
-      network: home-switch
-      ip: 10.10.30.1
+  - router: router
+    network: server-switch
+    ip: 10.10.20.1
 
+  - router: router
+    network: home-switch
+    ip: 10.10.30.1
+
+groups: []

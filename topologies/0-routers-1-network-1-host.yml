@@ -1,17 +1,25 @@
 # A simple topology with 1 debian 10 host in a network
-name: 0-routers-1-networks-1-hosts
+name: topology1
+
 hosts:
-  - name: debian10
+  - name: home
     base_box:
       image: munikypo/debian-10
     flavor: csirtmu.tiny1x4
-    cpus: 2
+    extra:
+      cpus: 2
+
+routers: []
 
 networks:
   - name: network
     cidr: 10.10.30.0/24
 
 net_mappings:
-    - host: debian10
-      network: network
-      ip: 10.10.30.5
+  - host: home
+    network: network
+    ip: 10.10.30.5
+
+router_mappings: []
+
+groups: []

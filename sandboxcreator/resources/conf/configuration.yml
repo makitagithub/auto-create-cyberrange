@@ -1,0 +1,39 @@
+#This is a configuration file for default values and constants of CSC.
+#Change values only if you know what you are doing.
+
+#Default values for routers
+default_router_box: munikypo/debian-10
+default_router_memory: 256
+default_router_cpus: 1
+
+#Default values for border router
+border_router_name: br
+border_router_ip: 172.18.0.1
+border_router_network_name: BR
+border_router_network_ip: 172.18.0.0/24
+border_router_pubilc_ip: 172.18.10.1
+border_router_box: munikypo/debian-10
+border_router_memory: 256
+border_router_cpus: 1
+
+#Default values for controller
+controller_name: controller
+controller_box: munikypo/debian-10
+controller_memory: 512
+controller_cpus: 2
+
+#Ansible file paths
+preconfig_dir: preconfig
+preconfig_playbook: preconfig/playbook.yml
+preconfig_inventory: preconfig/hosts.yml
+preconfig_roles: preconfig/roles/
+preconfig_host_vars: preconfig/host_vars/
+preconfig_group_vars: preconfig/group_vars/
+provisioning_dir: provisioning
+provisioning_playbook: provisioning/playbook.yml
+provisioning_inventory: provisioning/hosts.yml
+user_extra_vars: provisioning/extra_vars.yml
+
+#Git repositories
+common_repo: https://gitlab.ics.muni.cz/CSIRT-MU-PUBLIC/ansible-roles/common.git
+interface_repo: https://gitlab.ics.muni.cz/CSIRT-MU-PUBLIC/ansible-roles/interface.git
