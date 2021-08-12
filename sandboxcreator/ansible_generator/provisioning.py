@@ -1,7 +1,8 @@
+from pathlib import Path
+
 from sandboxcreator.input_parser.sandbox import Sandbox
 from sandboxcreator.io.reader import Reader
 from sandboxcreator.io.writer import Writer
-from pathlib import Path
 
 
 class Provision:
