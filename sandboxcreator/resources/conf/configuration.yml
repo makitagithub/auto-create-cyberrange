@@ -35,5 +35,7 @@ provisioning_inventory: provisioning/hosts.yml
 user_extra_vars: provisioning/extra_vars.yml
 
 #Git repositories
+common_role: common
 common_repo: https://gitlab.ics.muni.cz/CSIRT-MU-PUBLIC/ansible-roles/common.git
+interface_role: interface
 interface_repo: https://gitlab.ics.muni.cz/CSIRT-MU-PUBLIC/ansible-roles/interface.git
