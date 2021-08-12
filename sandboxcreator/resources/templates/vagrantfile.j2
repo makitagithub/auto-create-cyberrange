@@ -68,11 +68,11 @@
 {% macro method(namespace, method_obj, indentation) %}
 {% if method_obj.single_line %}
 {{ indent(indentation) }}{{ namespace }}.{{ method_obj.variable }} {% for argument in method_obj.arguments %}
-{{ method_arg(argument) }}{% if argument != method_obj.arguments|last %}, {% endif %}
+{{ method_arg(argument) }}{% if loop.last %}, {% endif %}
 {% endfor %}
 {% else %}
 {{ indent(indentation) }}{{ namespace }}.{{ method_obj.variable }}{% for argument in method_obj.arguments %}
-{% if argument == method_obj.arguments|first %} {% else %}{{ indent(indentation+1) }}{% endif %}{{ method_arg(argument) }}{% if argument != method_obj.arguments|last %},{{ "\n" }}{% endif %}
+{% if argument == method_obj.arguments|first %} {% else %}{{ indent(indentation+1) }}{% endif %}{{ method_arg(argument) }}{% if loop.last %},{{ "\n" }}{% endif %}
 {% endfor %}
 {% endif %}
 {% endmacro -%}
