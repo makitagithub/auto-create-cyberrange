@@ -5,11 +5,13 @@ from typing import List, Union
 
 
 class Command(Enum):
+    """Manager commands"""
     BUILD = 1
     DESTROY = 2
 
 
 class Output(Enum):
+    """Manager output devices"""
     DEVNULL = 1
     STDOUT = 2
 
@@ -90,6 +92,8 @@ def _translate_output(output: Output):
         return subprocess.DEVNULL
     if output is Output.STDOUT:
         return None
+
+    raise AttributeError("Invalid output device")
 
 
 def _execute_cli_command(cli_command: List[str], vagrantfile_dir: Path,
