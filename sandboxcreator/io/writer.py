@@ -5,11 +5,6 @@ import yaml
 from pathlib import Path
 from typing import Union, List, Dict
 
-from yaml.emitter import Emitter
-from yaml.representer import Representer
-from yaml.resolver import Resolver
-from yaml.serializer import Serializer
-
 
 class Writer:
     """Static methods for generating files"""
