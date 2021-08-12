@@ -308,6 +308,8 @@ class Sandbox:
             if network.name == network_name:
                 return network
 
+        return None
+
     @staticmethod
     def _create_border_router(config: Dict, networks: List[Network]) -> Device:
         """Creates a border router device"""
