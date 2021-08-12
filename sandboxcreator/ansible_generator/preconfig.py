@@ -70,9 +70,11 @@ class Preconfig:
                                     sandbox.config["preconfig_dir"])
 
         Writer.clone_git_repository(sandbox.config["common_repo"],
-                                    sandbox.sandbox_dir / sandbox.config["preconfig_roles"])
+                                    sandbox.sandbox_dir / sandbox.config["preconfig_roles"],
+                                    sandbox.config["common_role"])
         Writer.clone_git_repository(sandbox.config["interface_repo"],
-                                    sandbox.sandbox_dir / sandbox.config["preconfig_roles"])
+                                    sandbox.sandbox_dir / sandbox.config["preconfig_roles"],
+                                    sandbox.config["interface_role"])
 
         host_vars: Dict[str, Dict] = Preconfig._create_host_vars(sandbox)
         for host, variables in host_vars.items():
