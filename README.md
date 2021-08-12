@@ -21,7 +21,7 @@ Cyber Sandbox Creator is a tool that can generate portable definition files and 
 
 ### Windows 10
 
-1. Install [Python 3](https://www.python.org/downloads/windows/) (at least v3.8). At the beginning of the installation mark the "Add Python to PATH" option.
+1. Install [Python 3](https://www.python.org/downloads/windows/) (at least v3.7). At the beginning of the installation mark the "Add Python to PATH" option.
 3. Install Kypo Topology Definition `$ pip install kypo-topology-definition --extra-index-url https://gitlab.ics.muni.cz/api/v4/projects/2358/packages/pypi/simple`.
 4. Install Cyber Sandbox Creator with `$ pip install sandboxcreator`.
 
