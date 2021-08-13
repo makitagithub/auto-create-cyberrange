@@ -1,8 +1,8 @@
 import os
-import yaml
-
 from pathlib import Path
 from typing import Union, List, Dict
+
+import yaml
 
 
 class Reader:

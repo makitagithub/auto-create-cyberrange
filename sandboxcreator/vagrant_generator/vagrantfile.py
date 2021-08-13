@@ -112,8 +112,7 @@ class Vagrantfile:
                         "winrm": Array("winrm", winrm_group)}
 
         for name, devices in sandbox.groups.items():
-            if name != "hosts" and name != "routers" and\
-                 name != "ssh" and name != "winrm":
+            if name not in ["hosts", "routers", "ssh", "winrm"]:
                 groups[name] = Array(name, devices)
 
         return Hash("ansible_groups", groups)

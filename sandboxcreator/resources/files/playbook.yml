@@ -4,13 +4,13 @@
   become: yes
   tasks:
 
-  - name: Enable IP forwarding
-    sysctl:
-      name: net.ipv4.ip_forward
-      reload: yes
-      sysctl_set: yes
-      value: '1'
-    vars: {}
+    - name: Enable IP forwarding
+      sysctl:
+        name: net.ipv4.ip_forward
+        reload: yes
+        sysctl_set: yes
+        value: '1'
+      vars: {}
 
 
 - name: Linux configuration
@@ -18,29 +18,29 @@
   become: yes
   tasks:
 
-  - name: Install net-tools
-    apt:
-      name: net-tools
+    - name: Install net-tools
+      apt:
+        name: net-tools
 
-  - name: Add aliases of all devices
-    lineinfile:
-      line: '{{ item.key }} {{ item.value }}'
-      path: /etc/hosts
-    loop: '{{ device_aliases | dict2items }}'
+    - name: Add aliases of all devices
+      lineinfile:
+        line: '{{ item.key }} {{ item.value }}'
+        path: /etc/hosts
+      loop: '{{ device_aliases | dict2items }}'
 
-  - name: Configure routes
-    include_role:
-      name: interface
-    loop: '{{ routes }}'
-    loop_control:
-      loop_var: interface
-    vars:
-      interface_configuration_type: static
-      interface_default_gateway: '{{ interface.interface_default_gateway | default('''') }}'
-      interface_identification: '{{ interface.interface_ip }}'
-      interface_routes: '{{ interface.interface_routes | default([]) }}'
-      interface_static_ip: '{{ interface.interface_ip }}'
-      interface_static_netmask: '{{ interface.interface_netmask }}'
+    - name: Configure routes
+      include_role:
+        name: interface
+      loop: '{{ routes }}'
+      loop_control:
+        loop_var: interface
+      vars:
+        interface_configuration_type: static
+        interface_default_gateway: '{{ interface.interface_default_gateway | default('''') }}'
+        interface_identification: '{{ interface.interface_ip }}'
+        interface_routes: '{{ interface.interface_routes | default([]) }}'
+        interface_static_ip: '{{ interface.interface_ip }}'
+        interface_static_netmask: '{{ interface.interface_netmask }}'
 
 
 - name: Windows configuration
@@ -56,13 +56,13 @@
   become: yes
   tasks:
 
-  - name: Set up postrouting
-    iptables:
-      table: nat
-      chain: POSTROUTING
-      jump: SNAT
-      out_interface: '{{ ansible_default_ipv4.interface }}'
-      to_source: '{{ ansible_default_ipv4.address }}'
+    - name: Set up postrouting
+      iptables:
+        table: nat
+        chain: POSTROUTING
+        jump: SNAT
+        out_interface: '{{ ansible_default_ipv4.interface }}'
+        to_source: '{{ ansible_default_ipv4.address }}'
 
 
 - name: Controller configuration
@@ -70,8 +70,8 @@
   become: yes
   tasks:
 
-  - name: Install pywinrm
-    pip:
-      name: pywinrm
-      executable: "pip3"
+    - name: Install pywinrm
+      pip:
+        name: pywinrm
+        executable: "pip3"
 ...

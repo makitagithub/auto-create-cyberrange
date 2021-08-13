@@ -133,29 +133,22 @@ def _process_extra_vars_path(extra_vars: Optional[Union[str, Path]],
 
 def _generate_vagrantfile(sandbox_definition: Sandbox) -> None:
     """Initiate Vagrantfile generation"""
-    try:
-        vagrant_definition: Vagrantfile = Vagrantfile(sandbox_definition)
-        vagrant_definition.generate(sandbox_definition.sandbox_dir /
-                                    "Vagrantfile", "vagrantfile.j2")
-    except IOError as e:
-        raise RuntimeError(f"Vagrantfile could not be generated:\n{e}")
+
+    vagrant_definition: Vagrantfile = Vagrantfile(sandbox_definition)
+    vagrant_definition.generate(sandbox_definition.sandbox_dir /
+                                "Vagrantfile", "vagrantfile.j2")
 
 
 def _generate_preconfig(sandbox_definition: Sandbox) -> None:
     """Initiate preconfig directory generation"""
-    try:
-        Preconfig.generate_preconfig(sandbox_definition)
-    except IOError as e:
-        raise RuntimeError(f"Provisioning files could not be generated:\n{e}")
+
+    Preconfig.generate_preconfig(sandbox_definition)
 
 
 def _generate_provisioning(sandbox_definition: Sandbox) -> None:
     """Initiate provisioning directory generation"""
-    try:
-        Provision.generate_user_provisioning(sandbox_definition)
-    except IOError as e:
-        raise RuntimeError("User provisioning files could not be generated:"
-                           f"\n{e}")
+
+    Provision.generate_user_provisioning(sandbox_definition)
 
 
 def create(topology: Union[str, Path],
@@ -179,13 +172,17 @@ def create(topology: Union[str, Path],
     :param working_dir: an absolute path to resolve possible relative paths
     """
 
-    working_path: Optional[Path] = _process_working_dir(working_dir)
-    topology_path: Path = _process_topology_path(topology, working_path)
-    output_path: Path = _process_output_path(output_dir, topology_path,
-                                             working_path)
-    provisioning_path: Path = _process_provisioning_path(provisioning_dir,
+    try:
+        working_path: Optional[Path] = _process_working_dir(working_dir)
+        topology_path: Path = _process_topology_path(topology, working_path)
+        output_path: Path = _process_output_path(output_dir, topology_path,
+                                                 working_path)
+        provisioning_path: Path = _process_provisioning_path(provisioning_dir,
+                                                             working_path)
+        extra_vars_path: Path = _process_extra_vars_path(extra_vars,
                                                          working_path)
-    extra_vars_path: Path = _process_extra_vars_path(extra_vars, working_path)
+    except Exception as e:
+        raise RuntimeError(f"Could not process input variables:\n{e}")
 
     try:
         sandbox_definition: Sandbox = Sandbox(topology_path, CONFIGURATION_PATH,
@@ -198,6 +195,13 @@ def create(topology: Union[str, Path],
     except Exception as e:
         raise RuntimeError(f"Definition parsing has failed:\n{e}")
 
-    _generate_vagrantfile(sandbox_definition)
-    _generate_preconfig(sandbox_definition)
-    _generate_provisioning(sandbox_definition)
+    try:
+        _generate_vagrantfile(sandbox_definition)
+    except Exception as e:
+        raise RuntimeError(f"Could not generate Vagrantfile:\n{e}")
+
+    try:
+        _generate_preconfig(sandbox_definition)
+        _generate_provisioning(sandbox_definition)
+    except Exception as e:
+        raise RuntimeError(f"Could not generate provisioning files:\n{e}")

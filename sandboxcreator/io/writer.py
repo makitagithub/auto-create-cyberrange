@@ -1,14 +1,10 @@
-import shutil
-import jinja2
 import os
-import yaml
 from pathlib import Path
+import shutil
 from typing import Union, List, Dict
 
-from yaml.emitter import Emitter
-from yaml.representer import Representer
-from yaml.resolver import Resolver
-from yaml.serializer import Serializer
+import jinja2
+import yaml
 
 
 class Writer:
@@ -62,11 +58,12 @@ class Writer:
         Writer._write_to_file(output_file, output)
 
     @staticmethod
-    def clone_git_repository(repository: str, location: Path) -> None:
-        """Clone a git repository to the provided location
+    def clone_git_repository(repository: str, location: Path, cloned_dir: str) -> None:
+        """Clone a git repository to the provided location and removes .git
 
         :param repository: repository location
         :param location: target directory
+        :param cloned_dir: name of the cloned directory
         """
 
         try:
@@ -75,6 +72,11 @@ class Writer:
             os.system(f"git clone -q {repository}")
         except RuntimeError:
             raise RuntimeError(f"Could not clone repository: {repository}")
+
+        try:
+            shutil.rmtree(location.joinpath(cloned_dir).joinpath(".git"))
+        except OSError:
+            pass
 
     @staticmethod
     def copy_file(source: Path, destination: Path):

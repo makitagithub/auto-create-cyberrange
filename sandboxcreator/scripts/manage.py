@@ -16,7 +16,7 @@ def _parse_cli_args(cli_args: List[str]) -> argparse.ArgumentParser:
     parser.add_argument("command",
                         help="command to be executed",
                         choices=["build", "destroy"])
-    parser.add_argument("-d", "--vagrantfile_directory",
+    parser.add_argument("-d", "--vagrantfile-directory",
                         help="path to a directory containing a Vagrantfile",
                         default=os.getcwd())
     parser.add_argument("-m", "--machines",

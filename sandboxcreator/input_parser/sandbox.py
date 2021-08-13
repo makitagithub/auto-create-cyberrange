@@ -308,6 +308,8 @@ class Sandbox:
             if network.name == network_name:
                 return network
 
+        return None
+
     @staticmethod
     def _create_border_router(config: Dict, networks: List[Network]) -> Device:
         """Creates a border router device"""
@@ -335,12 +337,24 @@ class Sandbox:
             conflict = False
             for device in devices:
                 for interface in device.interfaces:
-                    if interface.network is network and interface.ip is address:
+                    if interface.network is network and interface.ip == address:
                         conflict = True
             if not conflict:
                 new_ip = str(address)
                 break
         return Interface(network, new_ip)
+
+    @staticmethod
+    def _find_network_for_controller(devices: List[Device]) -> Network:
+        """Find appropriate network for controller"""
+
+        for device in devices:
+            if device.device_purpose is DevicePurpose.HOST and\
+               device.protocol is Protocol.WINRM:
+                if device.interfaces:
+                    return device.interfaces[0].network
+                raise RuntimeError(f"Host {device.name} has no network")
+        raise RuntimeError("No appropriate network for controller")
 
     @staticmethod
     def _create_device_list(topology: Topology, flavors: List[Flavor],
@@ -365,11 +379,15 @@ class Sandbox:
                                                          networks,
                                                          border_router, router_n))
         if Sandbox._controller_needed(devices, ansible_installed):  # needs to be at the end
+            controller_network: Network =\
+                Sandbox._find_network_for_controller(devices)
+            controller_ip: Interface =\
+                Sandbox._find_available_ip(controller_network, devices)
             devices.append(Device(config["controller_name"],
                                   DevicePurpose.CONTROLLER,
                                   config["controller_box"],
                                   int(config["controller_memory"]),
                                   int(config["controller_cpus"]), Protocol.SSH,
-                                  [Sandbox._find_available_ip(networks[0], devices)]))
+                                  [controller_ip]))
 
         return sorted(devices)
