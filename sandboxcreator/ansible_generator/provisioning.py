@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from sandboxcreator.ansible_generator.vars import Vars
 from sandboxcreator.input_parser.sandbox import Sandbox
 from sandboxcreator.io.reader import Reader
 from sandboxcreator.io.writer import Writer
@@ -42,6 +43,8 @@ class Provision:
         elif sandbox.generate_provisioning or \
                 not Provision._provisioning_exists(sandbox):
             Provision._generate_template_provisioning(sandbox)
+            Vars.generate_user_group_vars(sandbox.sandbox_dir.joinpath(
+                               sandbox.config["provisioning_group_vars"]))
         if sandbox.extra_vars is not None:
             Writer.copy_file(sandbox.extra_vars,
                              sandbox.sandbox_dir /
