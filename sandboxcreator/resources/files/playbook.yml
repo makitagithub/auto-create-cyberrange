@@ -48,14 +48,7 @@
   become: yes
   become_method: runas
   become_user: windows
-  tasks:
-
-    - name: Add aliases of all devices
-      community.windows.win_hosts:
-        state: present
-        canonical_name: '{{ item.value }}'
-        ip_address: '{{ item.key }}'
-      loop: '{{ device_aliases | dict2items }}'
+  tasks: []
 
 
 - name: Border router configuration
