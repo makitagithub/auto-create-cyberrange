@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import shutil
+import stat
 from typing import Union, List, Dict
 
 import jinja2
@@ -58,6 +59,12 @@ class Writer:
         Writer._write_to_file(output_file, output)
 
     @staticmethod
+    def _on_rmtree_error(func, path, exc_info):
+        """On error during rmtree, try to make the file writable"""
+        os.chmod(path, stat.S_IWRITE)
+        os.unlink(path)
+
+    @staticmethod
     def clone_git_repository(repository: str, location: Path, cloned_dir: str) -> None:
         """Clone a git repository to the provided location and removes .git
 
@@ -74,7 +81,8 @@ class Writer:
             raise RuntimeError(f"Could not clone repository: {repository}")
 
         try:
-            shutil.rmtree(location.joinpath(cloned_dir).joinpath(".git"))
+            shutil.rmtree(location.joinpath(cloned_dir).joinpath(".git"),
+                          onerror=Writer._on_rmtree_error)
         except OSError:
             pass
 

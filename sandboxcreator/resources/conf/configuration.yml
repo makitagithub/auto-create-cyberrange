@@ -32,6 +32,7 @@ preconfig_group_vars: preconfig/group_vars/
 provisioning_dir: provisioning
 provisioning_playbook: provisioning/playbook.yml
 provisioning_inventory: provisioning/hosts.yml
+provisioning_group_vars: provisioning/group_vars/
 user_extra_vars: provisioning/extra_vars.yml
 
 #Git repositories
