@@ -81,8 +81,11 @@ def _run_manager(cli_args: argparse.ArgumentParser) -> None:
         output_dev: manager.Output = _translate_str_output(cli_args.out)
         error_dev: manager.Output = _translate_str_output(cli_args.err)
 
-        manager.manage(command, cli_args.vagrantfile_directory,
-                       cli_args.machines, output_dev, error_dev)
+        manager.manage(command=command,
+                       vagrantfile_location=cli_args.vagrantfile_directory,
+                       machines=cli_args.machines,
+                       output=output_dev,
+                       error=error_dev)
     except Exception as error:
         _print_message(command, error)
         sys.exit(1)
