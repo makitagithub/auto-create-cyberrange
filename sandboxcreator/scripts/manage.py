@@ -23,6 +23,10 @@ def _parse_cli_args(cli_args: List[str]) -> argparse.ArgumentParser:
                         help="list of machines involved",
                         nargs='*',
                         default=[])
+    parser.add_argument("-v", "--verbose",
+                        help="show Vagrant and Ansible output",
+                        action="store_true",
+                        default=False)
     parser.add_argument("-o", "--out",
                         help="command line output",
                         choices=["devnull", "stdout"],
