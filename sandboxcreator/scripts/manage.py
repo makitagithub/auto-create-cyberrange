@@ -99,7 +99,8 @@ def _determine_standard_output(standard_output_str: str,
 def _run_manager(cli_args: argparse.ArgumentParser) -> None:
     try:
         command: manager.Command = _translate_str_command(cli_args.command)
-        output_dev: manager.Output = _determine_standard_output(cli_args.out)
+        output_dev: manager.Output = _determine_standard_output(cli_args.out,
+                                                                cli_args.verbose)
         error_dev: manager.Output = _translate_str_output(cli_args.err)
 
         _print_progress_message(command)
