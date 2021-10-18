@@ -30,7 +30,7 @@ def _parse_cli_args(cli_args: List[str]) -> argparse.ArgumentParser:
     parser.add_argument("-o", "--out",
                         help="command line output",
                         choices=["devnull", "stdout"],
-                        default="stdout")
+                        default="devnull")
     parser.add_argument("-e", "--err",
                         help="command line error output",
                         choices=["devnull", "stdout"],
@@ -75,10 +75,20 @@ def _translate_str_output(output_str: str) -> manager.Output:
     raise ValueError(f"Invalid output device: {output_str}")
 
 
+def _determine_standard_output(standard_output_str: str,
+                               verbose: bool) -> manager.Output:
+    """Determine the standard output location"""
+    if _translate_str_output(standard_output_str) is manager.Output.DEVNULL\
+            and verbose:
+        return manager.Output.STDOUT
+
+    return _translate_str_output(standard_output_str)
+
+
 def _run_manager(cli_args: argparse.ArgumentParser) -> None:
     try:
         command: manager.Command = _translate_str_command(cli_args.command)
-        output_dev: manager.Output = _translate_str_output(cli_args.out)
+        output_dev: manager.Output = _determine_standard_output(cli_args.out)
         error_dev: manager.Output = _translate_str_output(cli_args.err)
 
         manager.manage(command=command,
