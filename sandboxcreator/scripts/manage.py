@@ -39,8 +39,19 @@ def _parse_cli_args(cli_args: List[str]) -> argparse.ArgumentParser:
     return parser.parse_args(cli_args)
 
 
-def _print_message(command: manager.Command,
-                   exception: Optional[Exception] = None) -> None:
+def _print_progress_message(command: manager.Command) -> None:
+    """Print messages about progress"""
+
+    if command == manager.Command.BUILD:
+        print("Building the sandbox...")
+    elif command == manager.Command.DESTROY:
+        print("Destroying the sandbox...")
+    else:
+        raise ValueError(f"Invalid command: {command}")
+
+
+def _print_final_message(command: manager.Command,
+                         exception: Optional[Exception] = None) -> None:
     """Print final message about success or failure"""
 
     if exception is None:
@@ -91,16 +102,18 @@ def _run_manager(cli_args: argparse.ArgumentParser) -> None:
         output_dev: manager.Output = _determine_standard_output(cli_args.out)
         error_dev: manager.Output = _translate_str_output(cli_args.err)
 
+        _print_progress_message(command)
+
         manager.manage(command=command,
                        vagrantfile_location=cli_args.vagrantfile_directory,
                        machines=cli_args.machines,
                        output=output_dev,
                        error=error_dev)
     except Exception as error:
-        _print_message(command, error)
+        _print_final_message(command, error)
         sys.exit(1)
 
-    _print_message(command)
+    _print_final_message(command)
 
 
 def main():
