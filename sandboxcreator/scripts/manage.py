@@ -23,10 +23,14 @@ def _parse_cli_args(cli_args: List[str]) -> argparse.ArgumentParser:
                         help="list of machines involved",
                         nargs='*',
                         default=[])
+    parser.add_argument("-v", "--verbose",
+                        help="show Vagrant and Ansible output",
+                        action="store_true",
+                        default=False)
     parser.add_argument("-o", "--out",
                         help="command line output",
                         choices=["devnull", "stdout"],
-                        default="stdout")
+                        default="devnull")
     parser.add_argument("-e", "--err",
                         help="command line error output",
                         choices=["devnull", "stdout"],
@@ -35,8 +39,19 @@ def _parse_cli_args(cli_args: List[str]) -> argparse.ArgumentParser:
     return parser.parse_args(cli_args)
 
 
-def _print_message(command: manager.Command,
-                   exception: Optional[Exception] = None) -> None:
+def _print_progress_message(command: manager.Command) -> None:
+    """Print messages about progress"""
+
+    if command == manager.Command.BUILD:
+        print("Building the sandbox...")
+    elif command == manager.Command.DESTROY:
+        print("Destroying the sandbox...")
+    else:
+        raise ValueError(f"Invalid command: {command}")
+
+
+def _print_final_message(command: manager.Command,
+                         exception: Optional[Exception] = None) -> None:
     """Print final message about success or failure"""
 
     if exception is None:
@@ -71,19 +86,35 @@ def _translate_str_output(output_str: str) -> manager.Output:
     raise ValueError(f"Invalid output device: {output_str}")
 
 
+def _determine_standard_output(standard_output_str: str,
+                               verbose: bool) -> manager.Output:
+    """Determine the standard output location"""
+    if _translate_str_output(standard_output_str) is manager.Output.DEVNULL\
+            and verbose:
+        return manager.Output.STDOUT
+
+    return _translate_str_output(standard_output_str)
+
+
 def _run_manager(cli_args: argparse.ArgumentParser) -> None:
     try:
         command: manager.Command = _translate_str_command(cli_args.command)
-        output_dev: manager.Output = _translate_str_output(cli_args.out)
+        output_dev: manager.Output = _determine_standard_output(cli_args.out,
+                                                                cli_args.verbose)
         error_dev: manager.Output = _translate_str_output(cli_args.err)
 
-        manager.manage(command, cli_args.vagrantfile_directory,
-                       cli_args.machines, output_dev, error_dev)
+        _print_progress_message(command)
+
+        manager.manage(command=command,
+                       vagrantfile_location=cli_args.vagrantfile_directory,
+                       machines=cli_args.machines,
+                       output=output_dev,
+                       error=error_dev)
     except Exception as error:
-        _print_message(command, error)
+        _print_final_message(command, error)
         sys.exit(1)
 
-    _print_message(command)
+    _print_final_message(command)
 
 
 def main():
