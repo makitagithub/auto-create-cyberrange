@@ -44,7 +44,7 @@ def _process_vagrantfile_location(vagrantfile_location: Union[str, Path]) \
         if not vagrantfile_dir_path.joinpath("Vagrantfile").is_file():
             raise IOError(f"Directory {vagrantfile_dir_path} does not contain Vagrantfile")
     except OSError:
-        raise ValueError("Invalid path to Vagrantfile directory"
+        raise ValueError("Invalid path to Vagrantfile directory "
                          f"\"{vagrantfile_location}\"")
 
     return vagrantfile_dir_path
