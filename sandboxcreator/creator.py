@@ -29,7 +29,8 @@ def _process_working_dir(working_dir: Optional[Union[str, Path]]) \
                 not working_directory.is_absolute():
             raise ValueError("Working directory should be an absolute path")
     except OSError:
-        raise ValueError(f'Invalid path to working directory "{working_dir}"')
+        raise ValueError(f'Invalid path to working directory "{working_dir}"')\
+            from None
 
     return working_directory
 
@@ -50,7 +51,8 @@ def _process_topology_path(topology: Union[str, Path],
         if not topology_path.is_file():
             raise OSError(f"File \"{topology_path}\" does not exist")
     except OSError:
-        raise ValueError(f"Invalid path to topology file \"{topology}\"")
+        raise ValueError(f"Invalid path to topology file \"{topology}\"")\
+            from None
 
     return topology_path
 
@@ -74,7 +76,7 @@ def _process_output_path(output_dir: Optional[Union[str, Path]],
         if sandbox_path.is_file():
             raise OSError(f"\"{sandbox_path}\" is a file")
     except OSError:
-        raise ValueError(f"Invalid output directory \"{output_dir}\"")
+        raise ValueError(f"Invalid output directory \"{output_dir}\"") from None
 
     return sandbox_path
 
@@ -102,7 +104,7 @@ def _process_provisioning_path(provisioning_dir: Optional[Union[str, Path]],
                              "\"playbook.yml\"")
     except OSError:
         raise ValueError("Invalid path to provisioning directory "
-                         f"\"{provisioning_dir}\"")
+                         f"\"{provisioning_dir}\"") from None
 
     return provisioning_path
 
@@ -126,7 +128,7 @@ def _process_extra_vars_path(extra_vars: Optional[Union[str, Path]],
             raise OSError(f"File \"{extra_vars_path}\" does not exist")
     except OSError:
         raise ValueError("Invalid path to extra variables file "
-                         f"\"{extra_vars}\"")
+                         f"\"{extra_vars}\"") from None
 
     return extra_vars_path
 
@@ -181,8 +183,8 @@ def create(topology: Union[str, Path],
                                                              working_path)
         extra_vars_path: Path = _process_extra_vars_path(extra_vars,
                                                          working_path)
-    except Exception as e:
-        raise RuntimeError(f"Could not process input variables:\n{e}")
+    except Exception as exception:
+        raise RuntimeError(f"Could not process input variables:\n{exception}") from None
 
     try:
         sandbox_definition: Sandbox = Sandbox(topology_path, CONFIGURATION_PATH,
@@ -192,16 +194,16 @@ def create(topology: Union[str, Path],
                                               extra_vars_path,
                                               generate_provisioning,
                                               verbose_ansible)
-    except Exception as e:
-        raise RuntimeError(f"Definition parsing has failed:\n{e}")
+    except Exception as exception:
+        raise RuntimeError(f"Definition parsing has failed:\n{exception}") from None
 
     try:
         _generate_vagrantfile(sandbox_definition)
-    except Exception as e:
-        raise RuntimeError(f"Could not generate Vagrantfile:\n{e}")
+    except Exception as exception:
+        raise RuntimeError(f"Could not generate Vagrantfile:\n{exception}") from None
 
     try:
         _generate_preconfig(sandbox_definition)
         _generate_provisioning(sandbox_definition)
-    except Exception as e:
-        raise RuntimeError(f"Could not generate provisioning files:\n{e}")
+    except Exception as exception:
+        raise RuntimeError(f"Could not generate provisioning files:\n{exception}") from None
