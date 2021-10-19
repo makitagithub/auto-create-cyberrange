@@ -20,7 +20,7 @@ def _validate_command_name(command: Command) -> Command:
     """Validate the command name"""
 
     if not isinstance(command, Command):
-        raise TypeError("Invalid command type")
+        raise TypeError('Invalid command type')
 
     return command
 
@@ -31,21 +31,21 @@ def _process_vagrantfile_location(vagrantfile_location: Union[str, Path]) \
 
     try:
         if isinstance(vagrantfile_location, str):
-            if vagrantfile_location == "":
-                raise ValueError("Vagrantfile location cannot be empty")
+            if vagrantfile_location == '':
+                raise ValueError('Vagrantfile location cannot be empty')
             vagrantfile_dir_path: Path = Path(vagrantfile_location).resolve()
         elif isinstance(vagrantfile_location, Path):
             vagrantfile_dir_path: Path = vagrantfile_location.resolve()
         else:
-            raise TypeError("Vagrantfile location has invalid type "
-                            f"\"{type(vagrantfile_location)}\"")
+            raise TypeError('Vagrantfile location has invalid type '
+                            f'"{type(vagrantfile_location)}"')
         if not vagrantfile_dir_path.is_dir():
-            raise IOError(f"Directory {vagrantfile_dir_path} does not exist")
-        if not vagrantfile_dir_path.joinpath("Vagrantfile").is_file():
-            raise IOError(f"Directory {vagrantfile_dir_path} does not contain Vagrantfile")
+            raise IOError(f'Directory {vagrantfile_dir_path} does not exist')
+        if not vagrantfile_dir_path.joinpath('Vagrantfile').is_file():
+            raise IOError(f'Directory {vagrantfile_dir_path} does not contain Vagrantfile')
     except OSError:
-        raise ValueError("Invalid path to Vagrantfile directory "
-                         f"\"{vagrantfile_location}\"") from None
+        raise ValueError('Invalid path to Vagrantfile directory '
+                         f'"{vagrantfile_location}"') from None
 
     return vagrantfile_dir_path
 
@@ -54,10 +54,10 @@ def _process_machines_list(machines: List[str]) -> List[str]:
     """Validate the list of machines"""
 
     if not isinstance(machines, List):
-        raise TypeError("List of machines must be a List")
+        raise TypeError('List of machines must be a List')
     for machine in machines:
         if not isinstance(machine, str):
-            raise TypeError("Machine names must be strings")
+            raise TypeError('Machine names must be strings')
 
     return machines
 
@@ -66,7 +66,7 @@ def _validate_cli_output(output: Output) -> Output:
     """Validate output device"""
 
     if not isinstance(output, Output):
-        raise TypeError("Invalid output type")
+        raise TypeError('Invalid output type')
 
     return output
 
@@ -75,11 +75,11 @@ def _generate_cli_command(command: Command, machines_list: List[str]) \
         -> List[str]:
     """Generate CLI command for Vagrant"""
 
-    cli_command: List[str] = ["vagrant"]
+    cli_command: List[str] = ['vagrant']
     if command is Command.BUILD:
-        cli_command.append("up")
+        cli_command.append('up')
     elif command is Command.DESTROY:
-        cli_command += ["destroy", "-f"]
+        cli_command += ['destroy', '-f']
     cli_command += machines_list
 
     return cli_command
@@ -93,7 +93,7 @@ def _translate_output(output: Output):
     if output is Output.STDOUT:
         return None
 
-    raise AttributeError("Invalid output device")
+    raise AttributeError('Invalid output device')
 
 
 def _execute_cli_command(cli_command: List[str], vagrantfile_dir: Path,
