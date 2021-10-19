@@ -25,11 +25,17 @@ def _process_working_dir(working_dir: Optional[Union[str, Path]]) \
         else:
             raise TypeError('Working directory has unknown type '
                             f'"{type(working_dir)}"')
-        if not working_directory.is_dir() or \
-                not working_directory.is_absolute():
-            raise ValueError("Working directory should be an absolute path")
+        if not working_directory.is_absolute():
+            raise ValueError('Working directory path '
+                             f'"{str(working_directory)}" is not absolute')
+        if not working_directory.exists():
+            raise ValueError(f'Working directory "{str(working_directory)}" '
+                             'does not exist')
+        if not working_directory.is_dir():
+            raise ValueError(f'Working directory "{str(working_directory)}" '
+                             'is not a directory')
     except OSError:
-        raise ValueError(f'Invalid path to working directory "{working_dir}"')\
+        raise ValueError(f'Invalid path to working directory "{working_dir}"') \
             from None
 
     return working_directory
@@ -48,10 +54,12 @@ def _process_topology_path(topology: Union[str, Path],
                             f'"{type(topology)}"')
         if working_dir is not None and not topology_path.is_absolute():
             topology_path = working_dir.joinpath(topology_path)
+        if not topology_path.exists():
+            raise ValueError(f'"{str(topology_path)}" does not exist')
         if not topology_path.is_file():
-            raise OSError(f'File "{topology_path}" does not exist')
+            raise ValueError(f'"{str(topology_path)}" is not a file')
     except OSError:
-        raise ValueError(f'Invalid path to topology file "{topology}"')\
+        raise ValueError(f'Invalid path to topology file "{topology}"') \
             from None
 
     return topology_path
@@ -74,7 +82,8 @@ def _process_output_path(output_dir: Optional[Union[str, Path]],
         if working_dir is not None and not sandbox_path.is_absolute():
             sandbox_path = working_dir.joinpath(sandbox_path)
         if sandbox_path.is_file():
-            raise OSError(f'"{sandbox_path}" is a file')
+            raise ValueError(f'Output directory "{sandbox_path}" is an existing'
+                             ' file')
     except OSError:
         raise ValueError(f'Invalid output directory "{output_dir}"') from None
 
@@ -101,7 +110,7 @@ def _process_provisioning_path(provisioning_dir: Optional[Union[str, Path]],
         playbook_path: Path = provisioning_path.joinpath('playbook.yml')
         if not playbook_path.is_file():
             raise ValueError('Provisioning directory should contain '
-                             '"playbook.yml"')
+                             '"playbook.yml" file')
     except OSError:
         raise ValueError('Invalid path to provisioning directory '
                          f'"{provisioning_dir}"') from None
@@ -124,8 +133,10 @@ def _process_extra_vars_path(extra_vars: Optional[Union[str, Path]],
                             f'"{type(extra_vars)}"')
         if working_dir is not None and not extra_vars_path.is_absolute():
             extra_vars_path = working_dir.joinpath(extra_vars_path)
+        if not extra_vars_path.exists():
+            raise ValueError(f'File "{str(extra_vars_path)}" does not exist')
         if extra_vars_path is not None and not extra_vars_path.is_file():
-            raise OSError(f'File "{extra_vars_path}" does not exist')
+            raise ValueError(f'"{str(extra_vars_path)}" is not a file')
     except OSError:
         raise ValueError('Invalid path to extra variables file '
                          f'"{extra_vars}"') from None
@@ -184,7 +195,7 @@ def create(topology: Union[str, Path],
         extra_vars_path: Path = _process_extra_vars_path(extra_vars,
                                                          working_path)
     except Exception as exception:
-        raise RuntimeError(f'Could not process input variables:\n{exception}')\
+        raise RuntimeError(f'Could not process input variables:\n{exception}') \
             from None
 
     try:
@@ -196,13 +207,13 @@ def create(topology: Union[str, Path],
                                               generate_provisioning,
                                               verbose_ansible)
     except Exception as exception:
-        raise RuntimeError(f'Definition parsing has failed:\n{exception}')\
+        raise RuntimeError(f'Definition parsing has failed:\n{exception}') \
             from None
 
     try:
         _generate_vagrantfile(sandbox_definition)
     except Exception as exception:
-        raise RuntimeError(f'Could not generate Vagrantfile:\n{exception}')\
+        raise RuntimeError(f'Could not generate Vagrantfile:\n{exception}') \
             from None
 
     try:
