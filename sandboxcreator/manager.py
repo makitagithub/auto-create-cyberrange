@@ -20,7 +20,7 @@ def _validate_command_name(command: Command) -> Command:
     """Validate the command name"""
 
     if not isinstance(command, Command):
-        raise TypeError('Invalid command type')
+        raise TypeError(f'Invalid command type "{type(command)}"')
 
     return command
 
@@ -40,9 +40,11 @@ def _process_vagrantfile_location(vagrantfile_location: Union[str, Path]) \
             raise TypeError('Vagrantfile location has invalid type '
                             f'"{type(vagrantfile_location)}"')
         if not vagrantfile_dir_path.is_dir():
-            raise IOError(f'Directory {vagrantfile_dir_path} does not exist')
+            raise ValueError(f'Directory "{str(vagrantfile_dir_path)}" does '
+                             'not exist')
         if not vagrantfile_dir_path.joinpath('Vagrantfile').is_file():
-            raise IOError(f'Directory {vagrantfile_dir_path} does not contain Vagrantfile')
+            raise ValueError(f'Directory "{str(vagrantfile_dir_path)}" does '
+                             'not contain Vagrantfile')
     except OSError:
         raise ValueError('Invalid path to Vagrantfile directory '
                          f'"{vagrantfile_location}"') from None
@@ -80,6 +82,8 @@ def _generate_cli_command(command: Command, machines_list: List[str]) \
         cli_command.append('up')
     elif command is Command.DESTROY:
         cli_command += ['destroy', '-f']
+    else:
+        raise ValueError(f'Unknown command "{command}"')
     cli_command += machines_list
 
     return cli_command
@@ -93,7 +97,7 @@ def _translate_output(output: Output):
     if output is Output.STDOUT:
         return None
 
-    raise AttributeError('Invalid output device')
+    raise ValueError('Invalid output device')
 
 
 def _execute_cli_command(cli_command: List[str], vagrantfile_dir: Path,
