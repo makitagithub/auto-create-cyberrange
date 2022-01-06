@@ -38,13 +38,11 @@ hosts:
 
 routers:
   - name: big-broker-router
-    cidr: 100.100.100.0/29
     base_box:
       image: munikypo/debian-10
     flavor: csirtmu.tiny1x4
 
   - name: internet-router
-    cidr: 100.100.200.0/29
     base_box:
       image: munikypo/debian-10
     flavor: csirtmu.tiny1x4
