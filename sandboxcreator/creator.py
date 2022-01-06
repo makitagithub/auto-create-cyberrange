@@ -166,7 +166,7 @@ def _generate_provisioning(sandbox_definition: Sandbox) -> None:
 
 def create(topology: Union[str, Path],
            output_dir: Optional[Union[str, Path]] = None,
-           ansible_installed: bool = False, border_router: bool = False,
+           ansible_installed: bool = False,
            provisioning_dir: Optional[Union[str, Path]] = None,
            extra_vars: Optional[Union[str, Path]] = None,
            generate_provisioning: bool = False,
@@ -177,7 +177,6 @@ def create(topology: Union[str, Path],
     :param topology: path to the topology definition file
     :param output_dir: path to an output directory
     :param ansible_installed: whether the host machine have ansible installed
-    :param border_router: whether border router should be created
     :param provisioning_dir: path to directory with user provisioning files
     :param extra_vars: path to YAML file with additional values for Ansible
     :param generate_provisioning: whether provisioning should be regenerated
@@ -201,7 +200,7 @@ def create(topology: Union[str, Path],
     try:
         sandbox_definition: Sandbox = Sandbox(topology_path, CONFIGURATION_PATH,
                                               FLAVORS_PATH, output_path,
-                                              border_router, ansible_installed,
+                                              ansible_installed,
                                               provisioning_path,
                                               extra_vars_path,
                                               generate_provisioning,

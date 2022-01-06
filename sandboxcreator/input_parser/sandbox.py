@@ -38,10 +38,9 @@ class NetworkType(Enum):
 
 class DevicePurpose(Enum):
     """Function of a device - also determines building order"""
-    BORDER_ROUTER = 1
-    ROUTER = 2
-    HOST = 3
-    CONTROLLER = 4
+    ROUTER = 1
+    HOST = 2
+    CONTROLLER = 3
 
     def __str__(self):
         return self.name.lower()
@@ -94,8 +93,7 @@ class Device:
                  usb_passthrough: bool = False):
         self.name: str = name
         self.device_purpose: DevicePurpose = device_purpose
-        if (device_purpose is DevicePurpose.ROUTER or
-                device_purpose == DevicePurpose.BORDER_ROUTER):
+        if device_purpose is DevicePurpose.ROUTER:
             self.device_type = DeviceType.ROUTER
         elif (device_purpose is DevicePurpose.HOST or
               device_purpose == DevicePurpose.CONTROLLER):
@@ -121,7 +119,7 @@ class Sandbox:
     """Structure that holds all information about the sandbox"""
 
     def __init__(self, topology_path: Path, configuration_path: Path,
-                 flavors_path: Path, sandbox_dir: Path, border_router: bool,
+                 flavors_path: Path, sandbox_dir: Path,
                  ansible_installed: bool, user_provisioning_dir: Optional[Path],
                  extra_vars_file: Optional[Path], generate_provisioning: bool,
                  verbose_ansible: bool):
@@ -129,7 +127,6 @@ class Sandbox:
             topology: Topology = Topology.from_file(topology_path)
         except Exception as e:
             raise ValueError(f"Invalid topology definition:\n{e}")
-        self.border_router_present: bool = border_router
         self.generate_provisioning: bool = generate_provisioning
         self.sandbox_dir: Path = sandbox_dir
         self.ansible_installed: bool = ansible_installed
@@ -144,14 +141,13 @@ class Sandbox:
         self.config: Dict = Reader.open_yaml(configuration_path)
         self.flavors: List[Flavor] = self._load_flavors(flavors_path)
         self.networks: List[Network] = self._create_network_list(topology,
-                                                                 border_router,
                                                                  self.config)
         self.devices: List[Device] = self._create_device_list(topology,
                                                               self.flavors,
                                                               self.config,
-                                                              border_router,
                                                               ansible_installed,
                                                               self.networks)
+        self.router_present: bool = bool(topology.routers)
         self.controller_present: bool =\
             Sandbox._controller_needed(self.devices, ansible_installed)
         self.groups: Dict = Sandbox._load_groups(topology)
@@ -167,17 +163,16 @@ class Sandbox:
         return groups
 
     @classmethod
-    def _create_network_list(cls, topology: Topology, border_router: bool,
+    def _create_network_list(cls, topology: Topology,
                              config: Dict) -> List[Network]:
         """Create list of networks"""
         networks: List[Network] = []
         for network in topology.networks:
             networks.append(Network(network.name, NetworkType.PRIVATE,
                                     network.cidr))
-        if border_router:
-            networks.append(Network(config["border_router_network_name"],
-                                    NetworkType.PRIVATE,
-                                    config["border_router_network_ip"]))
+        if topology.routers:
+            networks.append(Network(topology.wan.name, NetworkType.PRIVATE,
+                                    topology.wan.cidr))
 
         return networks
 
@@ -270,8 +265,7 @@ class Sandbox:
     @staticmethod
     def _create_router_device(router: kypo.Router, topology: Topology,
                               flavors: List[Flavor], config: Dict,
-                              networks: List[Network],
-                              border_router: bool, router_n: int) -> Device:
+                              networks: List[Network], router_n: int) -> Device:
 
         if router.flavor:
             memory, cpus = Sandbox._resolve_flavor(router.flavor, flavors)
@@ -285,12 +279,12 @@ class Sandbox:
                 network = Sandbox._find_network(router_mapping.network,
                                                 networks)
                 device_networks.append(Interface(network, router_mapping.ip))
-        if border_router:
-            for net in networks:
-                if net.name == config["border_router_network_name"]:
-                    br_network: Network = net
-            br_ip: IPAddress = IPAddress(config["border_router_ip"])
-            device_networks.append(Interface(br_network, br_ip + router_n))
+
+        for net in networks:
+            if net.name == topology.wan.name:
+                wan_network: Network = net
+        wan_ip: IPAddress = IPNetwork(topology.wan.cidr)[router_n]
+        device_networks.append(Interface(wan_network, wan_ip))
 
         if router.base_box.mgmt_protocol == kypo.Protocol.SSH:
             protocol: Protocol = Protocol.SSH
@@ -310,19 +304,6 @@ class Sandbox:
 
         return None
 
-    @staticmethod
-    def _create_border_router(config: Dict, networks: List[Network]) -> Device:
-        """Creates a border router device"""
-        br_network: Interface =\
-            Interface(Sandbox._find_network(
-                config["border_router_network_name"], networks),
-                config["border_router_ip"])
-
-        return Device(config["border_router_name"], DevicePurpose.BORDER_ROUTER,
-                      config["border_router_box"],
-                      int(config["border_router_memory"]),
-                      int(config["border_router_cpus"]), Protocol.SSH,
-                      [br_network])
 
     @staticmethod
     def _find_available_ip(network: Network, devices: List[Device])\
@@ -358,15 +339,11 @@ class Sandbox:
 
     @staticmethod
     def _create_device_list(topology: Topology, flavors: List[Flavor],
-                            config: Dict, border_router: bool,
-                            ansible_installed: bool,
+                            config: Dict, ansible_installed: bool,
                             networks: List[Network]) -> List[Device]:
         """Creates priority sorted list of devices with all attributes"""
 
         devices: List[Device] = []
-
-        if border_router:
-            devices.append(Sandbox._create_border_router(config, networks))
 
         for host in topology.hosts:
             devices.append(Sandbox._create_host_device(host, topology, flavors,
@@ -376,8 +353,7 @@ class Sandbox:
             router_n += 1
             devices.append(Sandbox._create_router_device(router, topology,
                                                          flavors, config,
-                                                         networks,
-                                                         border_router, router_n))
+                                                         networks, router_n))
         if Sandbox._controller_needed(devices, ansible_installed):  # needs to be at the end
             controller_network: Network =\
                 Sandbox._find_network_for_controller(devices)
