@@ -142,6 +142,8 @@ class Sandbox:
         self.flavors: List[Flavor] = self._load_flavors(flavors_path)
         self.networks: List[Network] = self._create_network_list(topology,
                                                                  self.config)
+        self.wan: Network = Network(topology.wan.name, NetworkType.PRIVATE,
+                                    topology.wan.cidr)
         self.devices: List[Device] = self._create_device_list(topology,
                                                               self.flavors,
                                                               self.config,
