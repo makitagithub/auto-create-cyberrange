@@ -33,13 +33,11 @@ hosts:
 
 routers:
   - name: router1
-    cidr: 100.100.100.0/29
     base_box:
       image: munikypo/debian-10
     flavor: csirtmu.tiny1x4
 
   - name: router2
-    cidr: 100.100.200.0/29
     base_box:
       image: munikypo/debian-10
     flavor: csirtmu.tiny1x4

@@ -12,7 +12,7 @@ verify_ssl = true
 Jinja2 = ">=2.10.1"
 PyYAML = ">=5.3.1"
 netaddr = ">=0.8"
-kypo-topology-definition = { index = "kypo", version = ">=0.4.0" }
+kypo-topology-definition = { index = "kypo", version = "~=0.5.0" }
 
 [dev-packages]
 pylint = "==2.8.2"

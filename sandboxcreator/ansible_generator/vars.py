@@ -27,8 +27,6 @@ class Vars:
                 aliases[str(interface.ip)] = device.name
 
         all_vars: Dict = {"device_aliases": aliases}
-        if sandbox.border_router_present:
-            all_vars["border_router_name"] = sandbox.config["border_router_name"]
         if sandbox.controller_present:
             all_vars["controller_name"] = sandbox.config["controller_name"]
         hosts_vars: Dict = {}
