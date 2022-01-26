@@ -95,8 +95,10 @@ class Vagrantfile:
         routers_group: List[str] = []
         ssh_group: List[str] = []
         winrm_group: List[str] = []
+        ansible_group: List[str] = []
 
         for device in sandbox.devices:
+            ansible_group.append(device.name)
             if device.device_type == DeviceType.HOST:
                 hosts_group.append(device.name)
             elif device.device_type == DeviceType.ROUTER:
@@ -109,10 +111,11 @@ class Vagrantfile:
         groups: Dict = {"hosts": Array("hosts", hosts_group),
                         "routers": Array("routers", routers_group),
                         "ssh": Array("ssh", ssh_group),
-                        "winrm": Array("winrm", winrm_group)}
+                        "winrm": Array("winrm", winrm_group),
+                        "ansible": Array("ansible", ansible_group)}
 
         for name, devices in sandbox.groups.items():
-            if name not in ["hosts", "routers", "ssh", "winrm"]:
+            if name not in ["hosts", "routers", "ssh", "winrm", "ansible"]:
                 groups[name] = Array(name, devices)
 
         return Hash("ansible_groups", groups)

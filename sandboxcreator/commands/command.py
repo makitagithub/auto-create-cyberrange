@@ -7,6 +7,7 @@ from typing import List, Optional
 
 from sandboxcreator.commands.command_attributes import CommandAttributes, \
     OutputLocation
+from sandboxcreator.io.writer import Writer
 
 
 class MachineState(Enum):
@@ -15,7 +16,6 @@ class MachineState(Enum):
     RUNNING = 2
     NOT_RUNNING = 3
     SUSPENDED = 4
-    MISSING_FROM_DEFINITION = 5
 
     def __str__(self):
         if self.name == "NOT_BUILT":
@@ -26,6 +26,7 @@ class MachineState(Enum):
             return "turned off"
         if self.name == "SUSPENDED":
             return "suspended"
+        raise ValueError(f"Invalid machine state: {self.name}")
 
 
 class Command(abc.ABC):
@@ -91,7 +92,8 @@ class Command(abc.ABC):
                                             check=True, text=True,
                                             capture_output=True)
         except subprocess.CalledProcessError:
-            raise RuntimeError("Could not determine machine state") from None
+            raise RuntimeError(f"Could not determine machine state - is the "
+                               f'machine "{vm_name}" defined?') from None
         output_lines: List = process_output.stdout.splitlines()
         output_csv: List[List] = list(csv.reader(output_lines))
         if len(output_csv) >= 2 and "error" in output_csv[0]:
@@ -155,12 +157,20 @@ class BuildCommand(Command):
             return ["vagrant", "up"]
         return ["vagrant", "up"] + self.command_attributes.target_vm_names
 
+    def _create_var_file(self) -> None:
+        if not self.command_attributes.is_ansible_vars_set():
+            return
+        file_path: Path = self.command_attributes.\
+            sandbox_path.joinpath("provisioning", "group_vars", "ansible.yml")
+        Writer.generate_yaml(file_path, self.command_attributes.ansible_vars)
+
     def execute(self) -> None:
         self._check_machine_states()
         cli_command: List[str] = self._generate_cli_command()
         sandbox_location: Path = self.command_attributes.sandbox_path
         output_location: OutputLocation = self.command_attributes.cli_output_location
         error_location: OutputLocation = self.command_attributes.cli_error_location
+        self._create_var_file()
         subprocess.run(cli_command,
                        cwd=sandbox_location,
                        check=True,
@@ -183,6 +193,9 @@ class DestroyCommand(Command):
         if not isinstance(command_attributes, CommandAttributes):
             raise TypeError("Command attributes must be an instance of "
                             "CommandAttributes")
+        if command_attributes.is_ansible_vars_set():
+            raise AttributeError("ansible_vars is not a valid attribute of the "
+                                 "command destroy")
         self._command_attributes = command_attributes
 
     def _check_machine_states(self) -> None:
@@ -202,7 +215,14 @@ class DestroyCommand(Command):
         return ["vagrant", "destroy", "-f"] \
             + self.command_attributes.target_vm_names
 
+    def _remove_var_file(self) -> None:
+        var_file: Path = self.command_attributes.sandbox_path.\
+            joinpath("provisioning", "group_vars", "ansible.yml")
+        if var_file.is_file():
+            Writer.remove_file(var_file)
+
     def execute(self) -> None:
+        self._remove_var_file()
         self._check_machine_states()
         cli_command: List[str] = self._generate_cli_command()
         sandbox_location: Path = self.command_attributes.sandbox_path
@@ -234,6 +254,9 @@ class AccessCommand(Command):
             raise AttributeError("The target machine name is missing")
         if len(command_attributes.target_vm_names) != 1:
             raise AttributeError("You can access only one VM at a time")
+        if command_attributes.is_ansible_vars_set():
+            raise AttributeError("ansible_vars is not a valid attribute of the "
+                                 "command access")
         self._command_attributes = command_attributes
 
     def _check_machine_states(self) -> None:
@@ -284,6 +307,9 @@ class SuspendCommand(Command):
         if not isinstance(command_attributes, CommandAttributes):
             raise TypeError("Command attributes must be an instance of "
                             "CommandAttributes")
+        if command_attributes.is_ansible_vars_set():
+            raise AttributeError("ansible_vars is not a valid attribute of the "
+                                 "command suspend")
         self._command_attributes = command_attributes
 
     def _generate_cli_command(self) -> List[str]:
@@ -334,6 +360,9 @@ class ResumeCommand(Command):
         if not isinstance(command_attributes, CommandAttributes):
             raise TypeError("Command attributes must be an instance of "
                             "CommandAttributes")
+        if command_attributes.is_ansible_vars_set():
+            raise AttributeError("ansible_vars is not a valid attribute of the "
+                                 "command resume")
         self._command_attributes = command_attributes
 
     def _check_machine_states(self) -> None:
@@ -386,6 +415,9 @@ class ShutdownCommand(Command):
         if not isinstance(command_attributes, CommandAttributes):
             raise TypeError("Command attributes must be an instance of "
                             "CommandAttributes")
+        if command_attributes.is_ansible_vars_set():
+            raise AttributeError("ansible_vars is not a valid attribute of the "
+                                 "command shutdown")
         self._command_attributes = command_attributes
 
     def _check_machine_states(self) -> None:
@@ -434,6 +466,9 @@ class ReloadCommand(Command):
         if not isinstance(command_attributes, CommandAttributes):
             raise TypeError("Command attributes must be an instance of "
                             "CommandAttributes")
+        if command_attributes.is_ansible_vars_set():
+            raise AttributeError("ansible_vars is not a valid attribute of the "
+                                 "command reload")
         self._command_attributes = command_attributes
 
     def _check_machine_states(self) -> None:
