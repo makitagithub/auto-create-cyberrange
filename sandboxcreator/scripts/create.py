@@ -22,9 +22,6 @@ def _parse_cli_args(cli_args: List[str]) -> argparse.ArgumentParser:
     parser.add_argument("-a", "--ansible-installed",
                         help="use Ansible installed on the host machine",
                         action="store_true")
-    parser.add_argument("-b", "--border-router",
-                        help="create a border router",
-                        action="store_true")
     parser.add_argument("--rewrite-provisioning",
                         help="always generate clean user provisioning",
                         action="store_true")
@@ -48,7 +45,7 @@ def _run_create(parsed_cli_args: argparse.ArgumentParser) -> None:
 
     try:
         create(parsed_cli_args.topology_file, parsed_cli_args.output_dir,
-               parsed_cli_args.ansible_installed, parsed_cli_args.border_router,
+               parsed_cli_args.ansible_installed,
                parsed_cli_args.provisioning_dir, parsed_cli_args.extra_vars,
                parsed_cli_args.rewrite_provisioning,
                parsed_cli_args.verbose_ansible, os.getcwd())

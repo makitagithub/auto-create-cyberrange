@@ -14,9 +14,6 @@ class DefaultCLIArgsTests(unittest.TestCase):
     def test_default_ansible_installed(self):
         self.assertFalse(self.args.ansible_installed)
 
-    def test_default_border_router(self):
-        self.assertFalse(self.args.border_router)
-
     def test_default_rewrite_provisioning(self):
         self.assertFalse(self.args.rewrite_provisioning)
 
@@ -52,14 +49,6 @@ class ValueCLIArgsTests(unittest.TestCase):
     def test_value_ansible_installed_long(self):
         args = create._parse_cli_args(["--ansible-installed", "topology.yml"])
         self.assertTrue(args.ansible_installed)
-
-    def test_value_border_router_short(self):
-        args = create._parse_cli_args(["-b", "topology.yml"])
-        self.assertTrue(args.border_router)
-
-    def test_value_border_router_long(self):
-        args = create._parse_cli_args(["--border-router", "topology.yml"])
-        self.assertTrue(args.border_router)
 
     def test_value_rewrite_provisioning(self):
         args = create._parse_cli_args(["--rewrite-provisioning",

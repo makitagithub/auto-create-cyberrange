@@ -2,4 +2,3 @@
 # You can write your custom configuration here
 
 - hosts: all
-...
