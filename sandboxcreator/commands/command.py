@@ -92,7 +92,8 @@ class Command(abc.ABC):
                                             check=True, text=True,
                                             capture_output=True)
         except subprocess.CalledProcessError:
-            raise RuntimeError("Could not determine machine state") from None
+            raise RuntimeError(f"Could not determine machine state - is the "
+                               f'machine "{vm_name}" defined?') from None
         output_lines: List = process_output.stdout.splitlines()
         output_csv: List[List] = list(csv.reader(output_lines))
         if len(output_csv) >= 2 and "error" in output_csv[0]:
