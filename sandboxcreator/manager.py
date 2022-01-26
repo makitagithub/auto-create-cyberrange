@@ -1,132 +1,58 @@
-from enum import Enum
 from pathlib import Path
-import subprocess
-from typing import List, Union
+from typing import Optional, Union, List
+
+import sandboxcreator.commands.command as commands
+from sandboxcreator.commands.command_attributes import CommandAttributes, OutputLocation
 
 
-class Command(Enum):
-    """Manager commands"""
-    BUILD = 1
-    DESTROY = 2
+def _create_command(command_name: str,
+                    command_attributes: Optional[CommandAttributes]) -> commands.Command:
+    """Create a Command object from the command name"""
+    if not isinstance(command_name, str):
+        raise TypeError("Command name must be a string")
+    if not isinstance(command_attributes, CommandAttributes):
+        raise TypeError("Command attributes must be an instance of "
+                        "CommandAttributes")
+    if command_name == "build":
+        return commands.BuildCommand(command_attributes)
+    if command_name == "destroy":
+        return commands.DestroyCommand(command_attributes)
+    if command_name == "access":
+        return commands.AccessCommand(command_attributes)
+    if command_name == "suspend":
+        return commands.SuspendCommand(command_attributes)
+    if command_name == "resume":
+        return commands.ResumeCommand(command_attributes)
+    if command_name == "shutdown":
+        return commands.ShutdownCommand(command_attributes)
+    if command_name == "reload":
+        return commands.ReloadCommand(command_attributes)
+    raise AttributeError(f'Unknown command: {command_name}')
 
 
-class Output(Enum):
-    """Manager output devices"""
-    DEVNULL = 1
-    STDOUT = 2
-
-
-def _validate_command_name(command: Command) -> Command:
-    """Validate the command name"""
-
-    if not isinstance(command, Command):
-        raise TypeError(f'Invalid command type "{type(command)}"')
-
-    return command
-
-
-def _process_vagrantfile_location(vagrantfile_location: Union[str, Path]) \
-        -> Path:
-    """Validate and resolve path to directory containing Vagrantfile"""
-
-    try:
-        if isinstance(vagrantfile_location, str):
-            if vagrantfile_location == '':
-                raise ValueError('Vagrantfile location cannot be empty')
-            vagrantfile_dir_path: Path = Path(vagrantfile_location).resolve()
-        elif isinstance(vagrantfile_location, Path):
-            vagrantfile_dir_path: Path = vagrantfile_location.resolve()
-        else:
-            raise TypeError('Vagrantfile location has invalid type '
-                            f'"{type(vagrantfile_location)}"')
-        if not vagrantfile_dir_path.is_dir():
-            raise ValueError(f'Directory "{str(vagrantfile_dir_path)}" does '
-                             'not exist')
-        if not vagrantfile_dir_path.joinpath('Vagrantfile').is_file():
-            raise ValueError(f'Directory "{str(vagrantfile_dir_path)}" does '
-                             'not contain Vagrantfile')
-    except OSError:
-        raise ValueError('Invalid path to Vagrantfile directory '
-                         f'"{vagrantfile_location}"') from None
-
-    return vagrantfile_dir_path
-
-
-def _process_machines_list(machines: List[str]) -> List[str]:
-    """Validate the list of machines"""
-
-    if not isinstance(machines, List):
-        raise TypeError('List of machines must be a List')
-    for machine in machines:
-        if not isinstance(machine, str):
-            raise TypeError('Machine names must be strings')
-
-    return machines
-
-
-def _validate_cli_output(output: Output) -> Output:
-    """Validate output device"""
-
-    if not isinstance(output, Output):
-        raise TypeError('Invalid output type')
-
-    return output
-
-
-def _generate_cli_command(command: Command, machines_list: List[str]) \
-        -> List[str]:
-    """Generate CLI command for Vagrant"""
-
-    cli_command: List[str] = ['vagrant']
-    if command is Command.BUILD:
-        cli_command.append('up')
-    elif command is Command.DESTROY:
-        cli_command += ['destroy', '-f']
-    else:
-        raise ValueError(f'Unknown command "{command}"')
-    cli_command += machines_list
-
-    return cli_command
-
-
-def _translate_output(output: Output):
-    """Translate Output enum values to subprocess values"""
-
-    if output is Output.DEVNULL:
-        return subprocess.DEVNULL
-    if output is Output.STDOUT:
-        return None
-
-    raise ValueError('Invalid output device')
-
-
-def _execute_cli_command(cli_command: List[str], vagrantfile_dir: Path,
-                         output: Output, error: Output):
-    """Execute Vagrant CLI command"""
-
-    subprocess.run(cli_command, cwd=vagrantfile_dir, check=True,
-                   stdout=_translate_output(output),
-                   stderr=_translate_output(error))
-
-
-def manage(command: Command, vagrantfile_location: Union[str, Path],
-           machines: List[str] = [], output: Output = Output.DEVNULL,
-           error: Output = Output.DEVNULL):
+def manage(command_name: str,
+           sandbox_location: Union[str, Path],
+           machines: Optional[List[str]] = None,
+           output: OutputLocation = OutputLocation.DEVNULL,
+           error: OutputLocation = OutputLocation.DEVNULL) -> None:
     """Vagrant wrapper to simplify sandbox instantiation and manipulation.
 
-    :param command: type of desired manipulation (build, destroy, ...)
-    :param vagrantfile_location: path to a directory containing Vagrantfile
+    :param command_name: name of the command to execute
+    :param sandbox_location: path to the sandbox directory
     :param machines: list of involved machine names
-    :param output: where to dump the command line output (devnull, stdout, ...)
-    :param error: where to dump the command line error output (stdout, ...)
+    :param output: where to dump the command line output
+    :param error: where to dump the command line error output
     """
 
-    command_name: Command = _validate_command_name(command)
-    vagrantfile_dir: Path = _process_vagrantfile_location(vagrantfile_location)
-    machines_list: List[str] = _process_machines_list(machines)
-    cli_output: Output = _validate_cli_output(output)
-    cli_error: Output = _validate_cli_output(error)
-
-    cli_command: List[str] = _generate_cli_command(command_name, machines_list)
-
-    _execute_cli_command(cli_command, vagrantfile_dir, cli_output, cli_error)
+    try:
+        command_args: CommandAttributes = CommandAttributes(sandbox_location)
+        command_args.target_vm_names = machines
+        command_args.cli_output_location = output
+        command_args.cli_error_location = error
+        command: commands.Command = _create_command(command_name, command_args)
+    except Exception as e:
+        raise RuntimeError(f"Could not prepare command for execution:\n{e}")
+    try:
+        command.execute()
+    except Exception as e:
+        raise RuntimeError(f"Could not execute command:\n{e}")
