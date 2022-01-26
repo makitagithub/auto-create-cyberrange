@@ -33,6 +33,7 @@ def _create_command(command_name: str,
 def manage(command_name: str,
            sandbox_location: Union[str, Path],
            machines: Optional[List[str]] = None,
+           ansible_vars: str = "",
            output: OutputLocation = OutputLocation.DEVNULL,
            error: OutputLocation = OutputLocation.DEVNULL) -> None:
     """Vagrant wrapper to simplify sandbox instantiation and manipulation.
@@ -40,6 +41,7 @@ def manage(command_name: str,
     :param command_name: name of the command to execute
     :param sandbox_location: path to the sandbox directory
     :param machines: list of involved machine names
+    :param ansible_vars: variables for Ansible
     :param output: where to dump the command line output
     :param error: where to dump the command line error output
     """
@@ -48,6 +50,7 @@ def manage(command_name: str,
         command_args: CommandAttributes = CommandAttributes(sandbox_location)
         command_args.target_vm_names = machines
         command_args.cli_output_location = output
+        command_args.ansible_vars = ansible_vars
         command_args.cli_error_location = error
         command: commands.Command = _create_command(command_name, command_args)
     except Exception as e:

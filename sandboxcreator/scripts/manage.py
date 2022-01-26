@@ -28,6 +28,9 @@ def _parse_cli_args(cli_args: List[str]) -> argparse.Namespace:
                         help="show Vagrant and Ansible output",
                         action="store_true",
                         default=False)
+    parser.add_argument("--ansible-vars",
+                        help="Ansible variables",
+                        default="")
     parser.add_argument("-o", "--out",
                         help="command line output",
                         choices=["devnull", "stdout"],
@@ -127,6 +130,7 @@ def _run_manager(cli_args: argparse.Namespace) -> None:
         manager.manage(command_name=command_name,
                        sandbox_location=cli_args.sandbox_directory,
                        machines=cli_args.machines,
+                       ansible_vars=cli_args.ansible_vars,
                        output=output_dev,
                        error=error_dev)
     except Exception as error:

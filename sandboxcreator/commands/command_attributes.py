@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
 
 
 class OutputLocation(Enum):
@@ -16,11 +16,12 @@ class CommandAttributes:
     """Dataclass for all command attributes"""
 
     def __init__(self, sandbox_path: Union[str, Path]):
-        self._sandbox_path: Path = sandbox_path
+        self._sandbox_path: Path = None
+        self.sandbox_path = sandbox_path
         self._target_vm_names: Optional[List[str]] = None
+        self._ansible_vars: Dict = {}
         self._cli_output_location: OutputLocation = OutputLocation.DEVNULL
         self._cli_error_location: OutputLocation = OutputLocation.STDOUT
-        print()
 
     @property
     def sandbox_path(self) -> Path:
@@ -29,21 +30,17 @@ class CommandAttributes:
 
     @sandbox_path.setter
     def sandbox_path(self, sandbox_path: Union[str, Path]) -> None:
-
         if isinstance(sandbox_path, Path):
             self._sandbox_path = sandbox_path.resolve()
         elif isinstance(sandbox_path, str):
             if not sandbox_path:
                 raise ValueError('Sandbox path cannot be empty')
-            try:
-                self._sandbox_path = Path(sandbox_path).resolve()
-            except OSError:
-                raise ValueError('Invalid path to sandbox') from None
+            self._sandbox_path = Path(sandbox_path).resolve()
         else:
             raise AttributeError("Path to sandbox must be a Path or a string")
-        if not self._sandbox_path.is_dir():
+        if not self.sandbox_path.is_dir():
             raise ValueError(f'Directory "{str(sandbox_path)}" does not exist')
-        if not self._sandbox_path.joinpath('Vagrantfile').is_file():
+        if not self.sandbox_path.joinpath('Vagrantfile').is_file():
             raise ValueError(f'Directory "{str(sandbox_path)}" does not '
                              f'contain Vagrantfile')
 
@@ -70,6 +67,27 @@ class CommandAttributes:
     def is_target_vm_names_set(self) -> bool:
         """Check if target_vm_names differs from default"""
         return self._target_vm_names is not None
+
+    @property
+    def ansible_vars(self) -> Dict:
+        return self._ansible_vars
+
+    @ansible_vars.setter
+    def ansible_vars(self, ansible_variables: str) -> None:
+        if not isinstance(ansible_variables, str):
+            raise TypeError("Ansible values are expected in a string")
+        if not ansible_variables:
+            self._ansible_vars = {}
+            return
+        vs: List[List] = [x.split(":") for x in ansible_variables.split(';')]
+        for variable in vs:
+            if len(variable) == 2:
+                self._ansible_vars.update({variable[0]: variable[1]})
+            else:
+                raise ValueError("Invalid format of Ansible variables")
+
+    def is_ansible_vars_set(self) -> bool:
+        return not self._ansible_vars == ""
 
     @property
     def cli_output_location(self) -> OutputLocation:

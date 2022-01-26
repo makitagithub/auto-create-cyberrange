@@ -125,3 +125,15 @@ class Writer:
             shutil.rmtree(directory)
         except OSError:
             raise RuntimeError(f"Could not remove directory {directory}")
+
+    @staticmethod
+    def remove_file(file: Path):
+        """Remove a file
+
+        :param file: path to a file to remove
+        """
+
+        try:
+            os.remove(file)
+        except OSError:
+            raise RuntimeError(f"Could not remove file {file}")
