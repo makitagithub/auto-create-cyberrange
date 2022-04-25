@@ -34,7 +34,7 @@
       lineinfile:
         line: '{{ item.key }} {{ item.value }}'
         path: /etc/hosts
-      loop: '{{ device_aliases | dict2items }}'
+      with_dict: '{{ device_aliases }}'
 
     - name: Configure routes
       include_role:
