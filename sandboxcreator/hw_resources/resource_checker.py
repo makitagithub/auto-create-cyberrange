@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, Dict
 
 from sandboxcreator.hw_resources.memory import verify_available_memory
+from sandboxcreator.hw_resources.cpu import verify_available_cpus
 from sandboxcreator.io.reader import Reader
 
 
@@ -26,3 +27,4 @@ def check_hw_resources(sandbox_directory: str) -> None:
     vagrantfile: str = Reader.get_textfile(vagrantfile_path)
     vm_attributes: List[Dict] = _parse_vagrantfile(vagrantfile)
     verify_available_memory(vm_attributes)
+    verify_available_cpus(vm_attributes)
