@@ -4,6 +4,7 @@ from typing import List, Dict
 
 from sandboxcreator.hw_resources.memory import verify_available_memory
 from sandboxcreator.hw_resources.cpu import verify_available_cpus
+from sandboxcreator.hw_resources.disc import verify_available_disc_space
 from sandboxcreator.io.reader import Reader
 
 
@@ -28,3 +29,4 @@ def check_hw_resources(sandbox_directory: str) -> None:
     vm_attributes: List[Dict] = _parse_vagrantfile(vagrantfile)
     verify_available_memory(vm_attributes)
     verify_available_cpus(vm_attributes)
+    verify_available_disc_space(vm_attributes, sandbox_directory)
