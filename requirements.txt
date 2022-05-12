@@ -1,5 +1,5 @@
 Jinja2>=2.11.3
-psutil>=5.5.1
+psutil>=5.6.7
 PyYAML>=5.4
 netaddr>=0.8
 -e git+https://gitlab.ics.muni.cz/muni-kypo-crp/backend-python/kypo-topology-definition.git#egg=kypo-topology-definition
