@@ -10,11 +10,12 @@ verify_ssl = true
 
 [packages]
 Jinja2 = ">=2.11.3"
+psutil = ">=5.6.7"
 PyYAML = ">=5.4"
 netaddr = ">=0.8"
 kypo-topology-definition = { index = "kypo", version = "~=0.5.0" }
 
 [dev-packages]
-pylint = "==2.12.2"
+pylint = "==2.13.8"
 
 [requires]

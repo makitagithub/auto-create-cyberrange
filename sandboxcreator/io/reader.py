@@ -12,12 +12,21 @@ class Reader:
     def open_yaml(file_path: Path) -> Union[List, Dict]:
         """Open a yaml file and return its content"""
         try:
-            with file_path.open() as input_file:
+            with file_path.open(encoding="utf-8", newline="\n") as input_file:
                 return yaml.safe_load(input_file)
         except yaml.YAMLError:
             raise IOError(f"Could not parse yaml file {file_path}.")
         except IOError:
             raise IOError(f"Could not open yaml file {file_path}.")
+
+    @staticmethod
+    def get_textfile(file_path: Path) -> str:
+        """Open a text file and return it as a string"""
+        try:
+            with file_path.open(encoding="utf-8", newline="\n") as textfile:
+                return textfile.read()
+        except IOError:
+            raise IOError(f"Could not open testfile {file_path}.")
 
     @staticmethod
     def file_exists(file: Path) -> bool:

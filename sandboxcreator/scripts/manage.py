@@ -8,6 +8,7 @@ from typing import List, Optional
 
 from sandboxcreator import manager
 from sandboxcreator.commands.command_attributes import OutputLocation
+from sandboxcreator.hw_resources.resource_checker import check_hw_resources
 
 
 def _parse_cli_args(cli_args: List[str]) -> argparse.Namespace:
@@ -124,6 +125,8 @@ def _run_manager(cli_args: argparse.Namespace) -> None:
     try:
         command_name = cli_args.command
         _print_progress_message(command_name)
+        if command_name == "build":
+            check_hw_resources(cli_args.sandbox_directory)
         output_dev: OutputLocation = _determine_standard_output(cli_args.out,
                                                                 cli_args.verbose)
         error_dev: OutputLocation = _translate_str_output(cli_args.err)
