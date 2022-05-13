@@ -11,7 +11,7 @@ from sandboxcreator.io.reader import Reader
 def _parse_vagrantfile(vagrantfile: str) -> List[Dict]:
     """Parse the vagrantfile for machine attributes"""
     machines = []
-    for vm_definition in re.findall(r"^  config\.vm\.define.+?^  end$", vagrantfile, re.MULTILINE | re.DOTALL):
+    for vm_definition in re.findall(r"^  config\.vm\.define.+?^  end", vagrantfile, re.MULTILINE | re.DOTALL):
         vm = {"hostname": re.search(r"\.vm\.hostname = \"(.+)\"", vm_definition).group(1),
               "box": re.search(r"\.vm\.box = \"(.+)\"", vm_definition).group(1),
               "memory": int(re.search(r"\.memory = (\d+)", vm_definition).group(1)),
