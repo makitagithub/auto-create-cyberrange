@@ -12,6 +12,7 @@ def _get_available_disc_space(directory: str) -> int:
 def _estimate_box_space_requirements(box_name: str) -> int:
     """Estimate the required disc space for the box in MB"""
 
+    # hard-coded values based on our measurements, might differ at other machines 
     generic_linux_required_space: int = 8 * 1024  # MB
     kali_linux_required_space: int = 23 * 1024  # MB
     windows_required_space: int = 30 * 1024  # MB
