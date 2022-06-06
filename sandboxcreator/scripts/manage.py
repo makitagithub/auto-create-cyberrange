@@ -86,19 +86,19 @@ def _print_final_message(command_name: str,
             print("Sandbox was successfully reloaded")
     else:
         if command_name == "build":
-            print(f"\nSandbox building process has failed:\n{exception}")
+            print(f"\nSandbox building process has failed:\n{exception}", file=sys.stderr)
         elif command_name == "destroy":
-            print(f"\nSandbox destroying process has failed:\n{exception}")
+            print(f"\nSandbox destroying process has failed:\n{exception}", file=sys.stderr)
         elif command_name == "access":
-            print(f"\nCould not access the virtual machine:\n{exception}")
+            print(f"\nCould not access the virtual machine:\n{exception}", file=sys.stderr)
         elif command_name == "suspend":
-            print(f"\nCould not suspend the sandbox:\n{exception}")
+            print(f"\nCould not suspend the sandbox:\n{exception}", file=sys.stderr)
         elif command_name == "resume":
-            print(f"\nCould not resume the sandbox:\n{exception}")
+            print(f"\nCould not resume the sandbox:\n{exception}", file=sys.stderr)
         elif command_name == "shutdown":
-            print(f"\nCould not shut down the sandbox:\n{exception}")
+            print(f"\nCould not shut down the sandbox:\n{exception}", file=sys.stderr)
         elif command_name == "reload":
-            print(f"\nCould not reload the sandbox:\n{exception}")
+            print(f"\nCould not reload the sandbox:\n{exception}", file=sys.stderr)
 
 
 def _translate_str_output(output_str: str) -> OutputLocation:
