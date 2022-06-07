@@ -21,7 +21,7 @@ create_sandbox()
     IFS=$'\n'
 
 	echo '└── Generating intermediate definition...'
-    PYTHONPATH=$CSC_PATH python3 "$CREATOR_PATH" "-o=${TEMP_TOPOLOGY_PATH}/sandbox" "$file" > /dev/null || { echo 'Error while creating intermediate definition.'; exit 1; }
+    PYTHONPATH=$CSC_PATH python3 "$CREATOR_PATH" "-o=${TEMP_TOPOLOGY_PATH}/sandbox" "$file" 1> /dev/null || { echo 'Error while creating intermediate definition.'; exit 1; }
 }
 
 
@@ -223,12 +223,12 @@ change_boxes()
     local box=$2
     local filename=$(basename "$file" .yml)
 
-    local box_name=$(PYTHONPATH=$path python3 -c "from yaml_topology import get_box_name; get_box_name('$path/box_names_mapping.yml', '$box')")
-    local box_memory=$(PYTHONPATH=$path python3 -c "from yaml_topology import get_box_memory; get_box_memory('$path/box_memory_mapping.yml', '$box')")
+    local box_name=$(PYTHONPATH=$TEST_PATH python3 -c "from yaml_topology import get_box_name; get_box_name('$TEST_PATH/box_names_mapping.yml', '$box')")
+    local box_memory=$(PYTHONPATH=$TEST_PATH python3 -c "from yaml_topology import get_box_memory; get_box_memory('$TEST_PATH/box_memory_mapping.yml', '$box')")
 
     newfile="${TEMP_TOPOLOGY_PATH}/${filename}_${box_name}.yml"
 
-    PYTHONPATH=$path python3 -c "from yaml_topology import change_boxes; change_boxes('$file', '$newfile', '$box', '$box_memory')"
+    PYTHONPATH=$TEST_PATH python3 -c "from yaml_topology import change_boxes; change_boxes('$file', '$newfile', '$box', '$box_memory')"
 
     echo "$newfile"
 }
@@ -327,7 +327,7 @@ do
         if [ "$box" = "no-box" ]; then
             newfile=$file
         else
-            newfile=$(change_boxes "$creator_path/$file" "$box")
+            newfile=$(change_boxes "$TEST_PATH/$file" "$box")
         fi
 
         filename=$(basename "$newfile" .yml)
