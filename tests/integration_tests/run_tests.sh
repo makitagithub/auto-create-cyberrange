@@ -120,7 +120,7 @@ test_machines()
 
                 output=$(vagrant ssh "$host" -c "traceroute $router | head -n 2 | tail -n 1 | grep '$router'" 2> /dev/null | tr -d '\r')
                 if [ -n "$output" ]; then
-                	echo "'$host routes through $router'"
+                	echo "    └── '$host routes through $router'"
                 else
                 	echo "Test failed: $host does not route through $router."
                 	cd "$current_path"
