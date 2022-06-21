@@ -53,17 +53,14 @@
 
 - name: Windows configuration
   hosts: winrm
-  become: yes
-  become_method: runas
-  become_user: windows
   tasks:
+
     - name: Add aliases of all devices
       win_hosts:
         state: present
         canonical_name: '{{ item.value }}'
         ip_address: '{{ item.key }}'
       with_dict: '{{ device_aliases }}'
-
 
 
 - name: Controller configuration
