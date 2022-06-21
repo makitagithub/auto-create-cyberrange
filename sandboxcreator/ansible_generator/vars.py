@@ -58,9 +58,7 @@ class Vars:
         winrm_vars: Dict = {"ansible_connection": "winrm",
                             "ansible_user": "windows",
                             "ansible_password": "vagrant",
-                            "ansible_become_pass": "vagrant",
-                            "ansible_port": "5985",
-                            "ansible_winrm_scheme": "http",
+                            "ansible_port": 5986,
                             "ansible_winrm_transport": "basic",
                             "ansible_winrm_server_cert_validation": "ignore"}
 
@@ -96,9 +94,7 @@ class Vars:
         winrm_vars: Dict = {"ansible_connection": "winrm",
                             "ansible_user": "windows",
                             "ansible_password": "vagrant",
-                            "ansible_become_pass": "vagrant",
-                            "ansible_port": "5985",
-                            "ansible_winrm_scheme": "http",
+                            "ansible_port": 5986,
                             "ansible_winrm_transport": "basic",
                             "ansible_winrm_server_cert_validation": "ignore"}
         group_vars: Dict[str, Dict] = {"winrm": winrm_vars}
