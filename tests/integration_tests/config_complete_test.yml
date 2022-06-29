@@ -6,9 +6,6 @@ topologies:
     boxes:
       - munikypo/debian-10
       - munikypo/kali
-      - munikypo/centos-7.9
-      - munikypo/centos-8.4
-      - munikypo/ubuntu-18.04
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
@@ -19,9 +16,6 @@ topologies:
     boxes:
       - munikypo/debian-10
       - munikypo/kali
-      - munikypo/centos-7.9
-      - munikypo/centos-8.4
-      - munikypo/ubuntu-18.04
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
@@ -32,9 +26,6 @@ topologies:
     boxes:
       - munikypo/debian-10
       - munikypo/kali
-      - munikypo/centos-7.9
-      - munikypo/centos-8.4
-      - munikypo/ubuntu-18.04
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
@@ -45,9 +36,6 @@ topologies:
     boxes:
       - munikypo/debian-10
       - munikypo/kali
-      - munikypo/centos-7.9
-      - munikypo/centos-8.4
-      - munikypo/ubuntu-18.04
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
@@ -58,9 +46,6 @@ topologies:
     boxes:
       - munikypo/debian-10
       - munikypo/kali
-      - munikypo/centos-7.9
-      - munikypo/centos-8.4
-      - munikypo/ubuntu-18.04
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
@@ -71,9 +56,6 @@ topologies:
     boxes:
       - munikypo/debian-10
       - munikypo/kali
-      - munikypo/centos-7.9
-      - munikypo/centos-8.4
-      - munikypo/ubuntu-18.04
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
@@ -84,9 +66,6 @@ topologies:
     boxes:
       - munikypo/debian-10
       - munikypo/kali
-      - munikypo/centos-7.9
-      - munikypo/centos-8.4
-      - munikypo/ubuntu-18.04
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
