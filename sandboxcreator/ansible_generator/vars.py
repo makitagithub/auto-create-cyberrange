@@ -2,18 +2,46 @@ from pathlib import Path
 from typing import Dict
 
 from sandboxcreator.ansible_generator.routes import Routes
-from sandboxcreator.input_parser.sandbox import Sandbox
+from sandboxcreator.input_parser.sandbox import Sandbox, Device, DeviceType
 from sandboxcreator.io.writer import Writer
 
 
 class Vars:
 
     @staticmethod
+    def _get_aliases(machine: Device, sandbox: Sandbox) -> Dict[str, str]:
+        """Get aliases of all devices for the hosts file of the machine"""
+        aliases: Dict[str, str] = {}
+
+        for device in sandbox.devices:
+            if device.name == machine.name:
+                continue
+            if len(device.interfaces) == 1:
+                aliases[str(device.interfaces[0].ip)] = device.name
+            else:
+                found: bool = False
+                for interface in device.interfaces:
+                    if (machine.device_type == DeviceType.HOST and machine.interfaces[0].network == interface.network)\
+                            or (machine.device_type == DeviceType.ROUTER and interface.network.name == sandbox.wan.name):
+                        aliases[str(interface.ip)] = device.name
+                        found = True
+                        break
+                if not found:
+                    for interface in device.interfaces:
+                        if machine.device_type == DeviceType.HOST and sandbox.wan.name == interface.network.name:
+                            aliases[str(interface.ip)] = device.name
+                            break
+
+        return aliases
+
+
+    @staticmethod
     def create_host_vars(sandbox: Sandbox) -> Dict[str, Dict]:
         """Create variables for each host"""
         host_vars: Dict[str, Dict] = {}
         for device in sandbox.devices:
-            variables: Dict = {"routes": Routes.create_routes(device, sandbox)}
+            variables: Dict = {"device_aliases": Vars._get_aliases(device, sandbox),
+                               "routes": Routes.create_routes(device, sandbox)}
             host_vars[device.name] = variables
 
         return host_vars
@@ -21,12 +49,7 @@ class Vars:
     @staticmethod
     def create_group_vars(sandbox: Sandbox) -> Dict[str, Dict]:
         """Create variables for each group"""
-        aliases: Dict[str, str] = {}
-        for device in sandbox.devices:
-            for interface in device.interfaces:
-                aliases[str(interface.ip)] = device.name
-
-        all_vars: Dict = {"device_aliases": aliases}
+        all_vars: Dict = {}
         if sandbox.controller_present:
             all_vars["controller_name"] = sandbox.config["controller_name"]
         hosts_vars: Dict = {}
@@ -35,9 +58,7 @@ class Vars:
         winrm_vars: Dict = {"ansible_connection": "winrm",
                             "ansible_user": "windows",
                             "ansible_password": "vagrant",
-                            "ansible_become_pass": "vagrant",
-                            "ansible_port": "5985",
-                            "ansible_winrm_scheme": "http",
+                            "ansible_port": 5986,
                             "ansible_winrm_transport": "basic",
                             "ansible_winrm_server_cert_validation": "ignore"}
 
@@ -73,9 +94,7 @@ class Vars:
         winrm_vars: Dict = {"ansible_connection": "winrm",
                             "ansible_user": "windows",
                             "ansible_password": "vagrant",
-                            "ansible_become_pass": "vagrant",
-                            "ansible_port": "5985",
-                            "ansible_winrm_scheme": "http",
+                            "ansible_port": 5986,
                             "ansible_winrm_transport": "basic",
                             "ansible_winrm_server_cert_validation": "ignore"}
         group_vars: Dict[str, Dict] = {"winrm": winrm_vars}
