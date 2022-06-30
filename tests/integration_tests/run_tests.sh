@@ -22,6 +22,7 @@ create_sandbox()
 
 	echo '└── Generating intermediate definition...'
     PYTHONPATH=$CSC_PATH python3 "$CREATOR_PATH" "-o=${TEMP_TOPOLOGY_PATH}/sandbox" "$file" 1> /dev/null || { echo 'Error while creating intermediate definition.'; exit 1; }
+    cat "${TEMP_TOPOLOGY_PATH}/sandbox/Vagrantfile"
 }
 
 
