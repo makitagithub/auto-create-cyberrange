@@ -286,13 +286,13 @@ oIFS="$IFS"
 IFS=$'\n'
 
 # Get a list of paths to topology definition files from configuration file.
-files=( "$(PYTHONPATH=$path python3 -c "from yaml_config import get_topology_files; get_topology_files('$config_file')")" )
+files=( "$(PYTHONPATH=$TEST_PATH python3 -c "from yaml_config import get_topology_files; get_topology_files('$config_file')")" )
 if [ "${#files[@]}" -eq 0 ]; then
     echo "Failed to process configuration file: no topologies were found."
 fi
 
 # Get path to output directory from configuration file.
-outputdir="$(PYTHONPATH=$path python3 -c "from yaml_config import get_output_dir; get_output_dir('$config_file')")"
+outputdir="$(PYTHONPATH=$TEST_PATH python3 -c "from yaml_config import get_output_dir; get_output_dir('$config_file')")"
 if [[ ! "$outputdir" = /* && ! "$outputdir" = ~* ]]; then
     outputdir=$(pwd)/$outputdir
 fi
@@ -313,13 +313,13 @@ failed=false
 for file in ${files[@]}
 do
     # Get list of optional arguments for creating sandbox from configuration file.
-    mapfile -t arguments_strings < <(PYTHONPATH=$path python3 -c "import yaml_config; yaml_config.get_topology_arguments('$config_file', '${file}')")
+    mapfile -t arguments_strings < <(PYTHONPATH=$TEST_PATH python3 -c "import yaml_config; yaml_config.get_topology_arguments('$config_file', '${file}')")
     if [ "${#arguments_strings[@]}" -eq 0 ]; then
         arguments_strings=(" ")
     fi
 
     # Get list of OS images to be tried in current topology's host machines.
-    mapfile -t boxes < <(PYTHONPATH=$path python3 -c "from yaml_config import get_topology_boxes; get_topology_boxes('$config_file', '$file')")
+    mapfile -t boxes < <(PYTHONPATH=$TEST_PATH python3 -c "from yaml_config import get_topology_boxes; get_topology_boxes('$config_file', '$file')")
     boxes=("${boxes[@]}")
 
     for box in "${boxes[@]}"
