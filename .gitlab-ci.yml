@@ -3,6 +3,8 @@ image: registry.gitlab.ics.muni.cz:443/muni-kypo-csc/cyber-sandbox-creator/csc-d
 
 # Make sure that VirtualBox kernel modules are loaded and install Python dependencies.
 before_script:
+  - apt-get update -y --allow-releaseinfo-change
+  - apt-get install -y linux-headers-$(uname -r)
   - lsmod | grep "vbox" || /usr/lib/virtualbox/vboxdrv.sh setup
   - pip3 install -r requirements.txt
   - chmod +x tests/integration_tests/run_tests.sh
@@ -29,6 +31,8 @@ kali-2020:
   stage: kali
   # overwriting global before_script to create a virtual display before running test requiring a display
   before_script:
+    - apt-get update -y --allow-releaseinfo-change
+    - apt-get install -y linux-headers-$(uname -r)
     - lsmod | grep "vbox" || /usr/lib/virtualbox/vboxdrv.sh setup
     - pip3 install -r requirements.txt
     - chmod +x tests/integration_tests/run_tests.sh
