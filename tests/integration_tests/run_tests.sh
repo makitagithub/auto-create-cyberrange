@@ -286,13 +286,13 @@ oIFS="$IFS"
 IFS=$'\n'
 
 # Get a list of paths to topology definition files from configuration file.
-files=( "$(PYTHONPATH=$TEST_PATH python3 -c "from yaml_config import get_topology_files; get_topology_files('$config_file')")" )
+files=( "$TEST_PATH/$(PYTHONPATH=$TEST_PATH python3 -c "from yaml_config import get_topology_files; get_topology_files('$config_file')")" )
 if [ "${#files[@]}" -eq 0 ]; then
     echo "Failed to process configuration file: no topologies were found."
 fi
 
 # Get path to output directory from configuration file.
-outputdir="$(PYTHONPATH=$TEST_PATH python3 -c "from yaml_config import get_output_dir; get_output_dir('$config_file')")"
+outputdir="$TEST_PATH/$(PYTHONPATH=$TEST_PATH python3 -c "from yaml_config import get_output_dir; get_output_dir('$config_file')")"
 if [[ ! "$outputdir" = /* && ! "$outputdir" = ~* ]]; then
     outputdir=$(pwd)/$outputdir
 fi

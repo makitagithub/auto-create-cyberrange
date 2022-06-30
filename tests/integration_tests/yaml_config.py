@@ -19,7 +19,7 @@ def get_output_dir(config_file):
     if 'output_directory' in doc:
         print(doc['output_directory'], file=stdout)
     else:
-        print("./test_output", file=stdout)
+        print("test_output", file=stdout)
 
 def get_topology_files(config_file):
     """Read and print values for file for all topologies."""
