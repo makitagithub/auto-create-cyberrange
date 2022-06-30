@@ -325,9 +325,9 @@ do
     for box in "${boxes[@]}"
     do
         if [ "$box" = "no-box" ]; then
-            newfile=$file
+            newfile="$CSC_PATH/$file"
         else
-            newfile=$(change_boxes "$TEST_PATH/$file" "$box")
+            newfile=$(change_boxes "$CSC_PATH/$file" "$box")
         fi
 
         filename=$(basename "$newfile" .yml)

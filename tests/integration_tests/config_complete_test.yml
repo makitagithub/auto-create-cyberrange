@@ -1,5 +1,5 @@
 topologies:
-  - file: ../../topologies/0-routers-1-network-1-host.yml
+  - file: topologies/0-routers-1-network-1-host.yml
     arguments:
       - no-arguments
       - ansible-installed
@@ -9,7 +9,7 @@ topologies:
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
-  - file: ../../topologies/1-router-1-network-1-host.yml
+  - file: topologies/1-router-1-network-1-host.yml
     arguments:
       - no-arguments
       - ansible-installed
@@ -19,7 +19,7 @@ topologies:
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
-  - file: ../../topologies/1-router-2-networks-2-hosts.yml
+  - file: topologies/1-router-2-networks-2-hosts.yml
     arguments:
       - no-arguments
       - ansible-installed
@@ -29,7 +29,7 @@ topologies:
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
-  - file: ../../topologies/2-routers-2-networks-2-hosts.yml
+  - file: topologies/2-routers-2-networks-2-hosts.yml
     arguments:
       - no-arguments
       - ansible-installed
@@ -39,7 +39,7 @@ topologies:
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
-  - file: ../../topologies/2-routers-4-networks-4-hosts.yml
+  - file: topologies/2-routers-4-networks-4-hosts.yml
     arguments:
       - no-arguments
       - ansible-installed
@@ -49,7 +49,7 @@ topologies:
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
-  - file: ../../topologies/3-routers-5-networks-5-hosts.yml
+  - file: topologies/3-routers-5-networks-5-hosts.yml
     arguments:
       - no-arguments
       - ansible-installed
@@ -59,7 +59,7 @@ topologies:
       - munikypo/windows-server-2019
       - munikypo/windows-10
     original_boxes: false
-  - file: ../../topologies/0-routers-1-network-4-hosts.yml
+  - file: topologies/0-routers-1-network-4-hosts.yml
     arguments:
       - no-arguments
       - ansible-installed

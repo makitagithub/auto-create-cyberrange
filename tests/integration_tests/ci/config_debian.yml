@@ -1,17 +1,17 @@
 topologies:
-  - file: ../../topologies/0-routers-1-network-1-host.yml
+  - file: topologies/0-routers-1-network-1-host.yml
     arguments:
       - no-arguments
       - ansible_installed
-  - file: ../../topologies/1-router-1-network-1-host.yml
+  - file: topologies/1-router-1-network-1-host.yml
     arguments:
       - no-arguments
       - ansible_installed
-  - file: ../../topologies/1-router-2-networks-2-hosts.yml
+  - file: topologies/1-router-2-networks-2-hosts.yml
     arguments:
       - no-arguments
       - ansible_installed
-  - file: ../../topologies/2-routers-2-networks-2-hosts.yml
+  - file: topologies/2-routers-2-networks-2-hosts.yml
     arguments:
       - no-arguments
       - ansible_installed
