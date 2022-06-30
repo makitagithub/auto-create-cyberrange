@@ -87,9 +87,9 @@ test_machines()
     cd "${TEMP_TOPOLOGY_PATH}/sandbox" || { echo "Could not find the intermediate definition"; cleanup_and_exit 1; }
 
     # Get list of host machines.
-    mapfile -t hosts < <(PYTHONPATH=$CSC_PATH python3 -c "from yaml_topology import get_hosts; get_hosts('$file')")
+    mapfile -t hosts < <(PYTHONPATH=$TEST_PATH python3 -c "from yaml_topology import get_hosts; get_hosts('$CSC_PATH/'$file')")
     # Get list of router machines.
-    mapfile -t routers < <(PYTHONPATH=$CSC_PATH python3 -c "from yaml_topology import get_routers; get_routers('$file')")
+    mapfile -t routers < <(PYTHONPATH=$TEST_PATH python3 -c "from yaml_topology import get_routers; get_routers('$CSC_PATH/$file')")
 
     # check network settings on host machines.
     for host in "${hosts[@]}"
@@ -115,8 +115,8 @@ test_machines()
                 done
 
                 # Check that route from host goes through the correct router.
-                network=$(PYTHONPATH=$CSC_PATH python3 -c "from yaml_topology import get_network_for_host; get_network_for_host('$file', '$host')")
-                router=$(PYTHONPATH=$CSC_PATH python3 -c "from yaml_topology import get_router_for_network; get_router_for_network('$file', '$network')")
+                network=$(PYTHONPATH=$TEST_PATH python3 -c "from yaml_topology import get_network_for_host; get_network_for_host('$CSC_PATH/$file', '$host')")
+                router=$(PYTHONPATH=$TEST_PATH python3 -c "from yaml_topology import get_router_for_network; get_router_for_network('$CSC_PATH/$file', '$network')")
 
                 output=$(vagrant ssh "$host" -c "traceroute $router | head -n 2 | tail -n 1 | grep '$router'" 2> /dev/null | tr -d '\r')
                 if [ -n "$output" ]; then
@@ -142,7 +142,7 @@ test_machines()
             for target in "${hosts[@]}"
             do
                 if [ "$host" != "$target" ]; then
-                    ip=$(PYTHONPATH=$CSC_PATH python3 -c "from yaml_topology import get_ip_for_host; get_ip_for_host('$file', '$target')")
+                    ip=$(PYTHONPATH=$TEST_PATH python3 -c "from yaml_topology import get_ip_for_host; get_ip_for_host('$CSC_PATH/$file', '$target')")
                     vagrant ssh "$host" -c "ping -c 1 $ip" > /dev/null 2>&1 && echo "    └── '$host' can access '$target'." || { echo "Test failed: $host can't reach $target."; cd "$current_path"; return 1; }
                 fi
             done
@@ -151,7 +151,7 @@ test_machines()
                 # Check that machine can reach all router machines.
                 for target in "${routers[@]}"
                 do
-                    ip=$(PYTHONPATH=$CSC_PATH python3 -c "from yaml_topology import get_ip_for_host; get_ip_for_host('$file', '$target')")
+                    ip=$(PYTHONPATH=$TEST_PATH python3 -c "from yaml_topology import get_ip_for_host; get_ip_for_host('$CSC_PATH/$file', '$target')")
                     output=$(vagrant powershell "$host" -c "ping -c 1 www.muni.cz" 2>&1 | tr -d '\r' | grep "output code 0")
                     if [ -n "$output" ]; then
                     	echo "    └── '$host' can access '$target'."
