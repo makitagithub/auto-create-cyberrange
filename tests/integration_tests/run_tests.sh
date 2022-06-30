@@ -87,7 +87,7 @@ test_machines()
     cd "${TEMP_TOPOLOGY_PATH}/sandbox" || { echo "Could not find the intermediate definition"; cleanup_and_exit 1; }
 
     # Get list of host machines.
-    mapfile -t hosts < <(PYTHONPATH=$TEST_PATH python3 -c "from yaml_topology import get_hosts; get_hosts('$CSC_PATH/'$file')")
+    mapfile -t hosts < <(PYTHONPATH=$TEST_PATH python3 -c "from yaml_topology import get_hosts; get_hosts('$CSC_PATH/$file')")
     # Get list of router machines.
     mapfile -t routers < <(PYTHONPATH=$TEST_PATH python3 -c "from yaml_topology import get_routers; get_routers('$CSC_PATH/$file')")
 
