@@ -72,7 +72,7 @@ class Command(abc.ABC):
                                             check=True, text=True,
                                             capture_output=True)
         except subprocess.CalledProcessError:
-            raise RuntimeError("Could access list of machines") from None
+            raise RuntimeError("Could not access list of machines") from None
         output_lines: List = process_output.stdout.splitlines()
         output_csv: List[List] = list(csv.reader(output_lines))
         machines: List[str] = []
