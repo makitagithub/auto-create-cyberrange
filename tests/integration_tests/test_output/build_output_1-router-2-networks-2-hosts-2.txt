@@ -1,0 +1,463 @@
+Bringing machine 'router' up with 'virtualbox' provider...
+Bringing machine 'server' up with 'virtualbox' provider...
+Bringing machine 'home' up with 'virtualbox' provider...
+==> router: You assigned a static IP ending in ".1" to this machine.
+==> router: This is very often used by the router and can cause the
+==> router: network to not work properly. If the network doesn't work
+==> router: properly, try changing this IP.
+==> router: You assigned a static IP ending in ".1" to this machine.
+==> router: This is very often used by the router and can cause the
+==> router: network to not work properly. If the network doesn't work
+==> router: properly, try changing this IP.
+==> router: You assigned a static IP ending in ".1" to this machine.
+==> router: This is very often used by the router and can cause the
+==> router: network to not work properly. If the network doesn't work
+==> router: properly, try changing this IP.
+==> router: Importing base box 'munikypo/debian-10'...
+[KProgress: 10%[KProgress: 20%[KProgress: 30%[KProgress: 50%[KProgress: 60%[KProgress: 70%[KProgress: 80%[KProgress: 90%[K==> router: Matching MAC address for NAT networking...
+==> router: You assigned a static IP ending in ".1" to this machine.
+==> router: This is very often used by the router and can cause the
+==> router: network to not work properly. If the network doesn't work
+==> router: properly, try changing this IP.
+==> router: You assigned a static IP ending in ".1" to this machine.
+==> router: This is very often used by the router and can cause the
+==> router: network to not work properly. If the network doesn't work
+==> router: properly, try changing this IP.
+==> router: You assigned a static IP ending in ".1" to this machine.
+==> router: This is very often used by the router and can cause the
+==> router: network to not work properly. If the network doesn't work
+==> router: properly, try changing this IP.
+==> router: Checking if box 'munikypo/debian-10' version '0.4.0' is up to date...
+==> router: Setting the name of the VM: sandbox_router_1654607797909_96398
+==> router: Fixed port collision for 22 => 2222. Now on port 2201.
+==> router: Clearing any previously set network interfaces...
+==> router: Preparing network interfaces based on configuration...
+    router: Adapter 1: nat
+    router: Adapter 2: intnet
+    router: Adapter 3: intnet
+    router: Adapter 4: intnet
+==> router: Forwarding ports...
+    router: 22 (guest) => 2201 (host) (adapter 1)
+==> router: Running 'pre-boot' VM customizations...
+==> router: Booting VM...
+==> router: Waiting for machine to boot. This may take a few minutes...
+    router: SSH address: 127.0.0.1:2201
+    router: SSH username: vagrant
+    router: SSH auth method: private key
+    router: 
+    router: Vagrant insecure key detected. Vagrant will automatically replace
+    router: this with a newly generated keypair for better security.
+    router: 
+    router: Inserting generated public key within guest...
+    router: Removing insecure key from the guest if it's present...
+    router: Key inserted! Disconnecting and reconnecting using new SSH key...
+==> router: Machine booted and ready!
+==> router: Checking for guest additions in VM...
+==> router: Setting hostname...
+==> router: Configuring and enabling network interfaces...
+==> router: Installing rsync to the VM...
+==> router: Rsyncing folder: /home/ati/Documents/CS4E/cyber-sandbox-creator/tests/integration_tests/tmp_topologies/sandbox/ => /vagrant
+==> router:   - Exclude: [".vagrant/", ".git/"]
+==> router: Running provisioner: ansible_local...
+    router: Running ansible-playbook...
+
+PLAY [Router configuration] ****************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [router]
+
+TASK [Enable IP forwarding] ****************************************************
+changed: [router]
+
+TASK [Set up postrouting] ******************************************************
+changed: [router]
+
+PLAY [Linux configuration] *****************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [router]
+
+TASK [Install net-tools] *******************************************************
+ok: [router]
+
+TASK [Add aliases of all devices] **********************************************
+changed: [router] => (item={'key': '10.10.20.1', 'value': 'router'})
+changed: [router] => (item={'key': '10.10.20.5', 'value': 'server'})
+changed: [router] => (item={'key': '10.10.30.1', 'value': 'router'})
+changed: [router] => (item={'key': '10.10.30.5', 'value': 'home'})
+changed: [router] => (item={'key': '100.100.100.1', 'value': 'router'})
+
+TASK [Configure routes] ********************************************************
+
+TASK [interface : sanity check] ************************************************
+skipping: [router]
+
+TASK [interface : find all interfaces configuration files] *********************
+ok: [router]
+
+TASK [interface : set_fact] ****************************************************
+ok: [router]
+
+TASK [interface : remove old iface settings for retrieved interface name] ******
+changed: [router] => (item=/etc/network/interfaces)
+
+TASK [interface : remove the rest of old settings for retrieved interface name] ***
+changed: [router] => (item=/etc/network/interfaces)
+
+TASK [interface : remove multiple consecutive new line characters] *************
+changed: [router] => (item=/etc/network/interfaces)
+
+TASK [interface : configure interface] *****************************************
+changed: [router]
+
+TASK [interface : sanity check] ************************************************
+skipping: [router]
+
+TASK [interface : find all interfaces configuration files] *********************
+ok: [router]
+
+TASK [interface : set_fact] ****************************************************
+ok: [router]
+
+TASK [interface : remove old iface settings for retrieved interface name] ******
+changed: [router] => (item=/etc/network/interfaces)
+
+TASK [interface : remove the rest of old settings for retrieved interface name] ***
+changed: [router] => (item=/etc/network/interfaces)
+
+TASK [interface : remove multiple consecutive new line characters] *************
+changed: [router] => (item=/etc/network/interfaces)
+
+TASK [interface : configure interface] *****************************************
+changed: [router]
+
+RUNNING HANDLER [interface : interface_networking_restart] *********************
+changed: [router]
+
+PLAY [Windows configuration] ***************************************************
+skipping: no hosts matched
+[WARNING]: Could not match supplied host pattern, ignoring: controller
+
+PLAY [Controller configuration] ************************************************
+skipping: no hosts matched
+
+PLAY RECAP *********************************************************************
+router                     : ok=19   changed=12   unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+
+==> router: Running provisioner: ansible_local...
+    router: Running ansible-playbook...
+
+PLAY [all] *********************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [router]
+[DEPRECATION WARNING]: Distribution debian 10.10 on host router should use 
+/usr/bin/python3, but is using /usr/bin/python for backward compatibility with 
+prior Ansible releases. A future Ansible release will default to using the 
+discovered platform python for this host. See https://docs.ansible.com/ansible/
+2.11/reference_appendices/interpreter_discovery.html for more information. This
+ feature will be removed in version 2.12. Deprecation warnings can be disabled 
+by setting deprecation_warnings=False in ansible.cfg.
+
+PLAY RECAP *********************************************************************
+router                     : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+==> server: Importing base box 'munikypo/debian-10'...
+[KProgress: 10%[KProgress: 20%[KProgress: 30%[KProgress: 40%[KProgress: 50%[KProgress: 60%[KProgress: 70%[KProgress: 80%[KProgress: 90%[K==> server: Matching MAC address for NAT networking...
+==> server: Checking if box 'munikypo/debian-10' version '0.4.0' is up to date...
+==> server: Setting the name of the VM: sandbox_server_1654607966109_62091
+==> server: Fixed port collision for 22 => 2222. Now on port 2202.
+==> server: Clearing any previously set network interfaces...
+==> server: Preparing network interfaces based on configuration...
+    server: Adapter 1: nat
+    server: Adapter 2: intnet
+==> server: Forwarding ports...
+    server: 22 (guest) => 2202 (host) (adapter 1)
+==> server: Running 'pre-boot' VM customizations...
+==> server: Booting VM...
+==> server: Waiting for machine to boot. This may take a few minutes...
+    server: SSH address: 127.0.0.1:2202
+    server: SSH username: vagrant
+    server: SSH auth method: private key
+    server: 
+    server: Vagrant insecure key detected. Vagrant will automatically replace
+    server: this with a newly generated keypair for better security.
+    server: 
+    server: Inserting generated public key within guest...
+    server: Removing insecure key from the guest if it's present...
+    server: Key inserted! Disconnecting and reconnecting using new SSH key...
+==> server: Machine booted and ready!
+==> server: Checking for guest additions in VM...
+==> server: Setting hostname...
+==> server: Configuring and enabling network interfaces...
+==> server: Installing rsync to the VM...
+==> server: Rsyncing folder: /home/ati/Documents/CS4E/cyber-sandbox-creator/tests/integration_tests/tmp_topologies/sandbox/ => /vagrant
+==> server:   - Exclude: [".vagrant/", ".git/"]
+==> server: Running provisioner: ansible_local...
+    server: Running ansible-playbook...
+
+PLAY [Router configuration] ****************************************************
+skipping: no hosts matched
+
+PLAY [Linux configuration] *****************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [server]
+
+TASK [Install net-tools] *******************************************************
+ok: [server]
+
+TASK [Add aliases of all devices] **********************************************
+changed: [server] => (item={'key': '10.10.20.1', 'value': 'router'})
+changed: [server] => (item={'key': '10.10.20.5', 'value': 'server'})
+changed: [server] => (item={'key': '10.10.30.1', 'value': 'router'})
+changed: [server] => (item={'key': '10.10.30.5', 'value': 'home'})
+changed: [server] => (item={'key': '100.100.100.1', 'value': 'router'})
+
+TASK [Configure routes] ********************************************************
+
+TASK [interface : sanity check] ************************************************
+skipping: [server]
+
+TASK [interface : find all interfaces configuration files] *********************
+ok: [server]
+
+TASK [interface : set_fact] ****************************************************
+ok: [server]
+
+TASK [interface : remove old iface settings for retrieved interface name] ******
+changed: [server] => (item=/etc/network/interfaces)
+
+TASK [interface : remove the rest of old settings for retrieved interface name] ***
+changed: [server] => (item=/etc/network/interfaces)
+
+TASK [interface : remove multiple consecutive new line characters] *************
+changed: [server] => (item=/etc/network/interfaces)
+
+TASK [interface : configure interface] *****************************************
+changed: [server]
+
+TASK [interface : sanity check] ************************************************
+skipping: [server]
+
+TASK [interface : find all interfaces configuration files] *********************
+ok: [server]
+
+TASK [interface : set_fact] ****************************************************
+ok: [server]
+
+TASK [interface : remove old iface settings for retrieved interface name] ******
+changed: [server] => (item=/etc/network/interfaces)
+
+TASK [interface : remove the rest of old settings for retrieved interface name] ***
+changed: [server] => (item=/etc/network/interfaces)
+
+TASK [interface : remove multiple consecutive new line characters] *************
+changed: [server] => (item=/etc/network/interfaces)
+
+TASK [interface : configure interface] *****************************************
+changed: [server]
+
+TASK [interface : sanity check] ************************************************
+skipping: [server]
+
+TASK [interface : find all interfaces configuration files] *********************
+ok: [server]
+
+TASK [interface : set_fact] ****************************************************
+ok: [server]
+
+TASK [interface : remove old iface settings for retrieved interface name] ******
+changed: [server] => (item=/etc/network/interfaces)
+
+TASK [interface : remove the rest of old settings for retrieved interface name] ***
+changed: [server] => (item=/etc/network/interfaces)
+
+TASK [interface : remove multiple consecutive new line characters] *************
+changed: [server] => (item=/etc/network/interfaces)
+
+TASK [interface : configure interface] *****************************************
+changed: [server]
+
+RUNNING HANDLER [interface : interface_networking_restart] *********************
+changed: [server]
+
+PLAY [Windows configuration] ***************************************************
+skipping: no hosts matched
+[WARNING]: Could not match supplied host pattern, ignoring: controller
+
+PLAY [Controller configuration] ************************************************
+skipping: no hosts matched
+
+PLAY RECAP *********************************************************************
+server                     : ok=22   changed=14   unreachable=0    failed=0    skipped=3    rescued=0    ignored=0   
+
+==> server: Running provisioner: ansible_local...
+    server: Running ansible-playbook...
+
+PLAY [all] *********************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [server]
+[DEPRECATION WARNING]: Distribution debian 10.10 on host server should use 
+/usr/bin/python3, but is using /usr/bin/python for backward compatibility with 
+prior Ansible releases. A future Ansible release will default to using the 
+discovered platform python for this host. See https://docs.ansible.com/ansible/
+2.11/reference_appendices/interpreter_discovery.html for more information. This
+ feature will be removed in version 2.12. Deprecation warnings can be disabled 
+by setting deprecation_warnings=False in ansible.cfg.
+
+PLAY RECAP *********************************************************************
+server                     : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+==> home: Importing base box 'munikypo/debian-10'...
+[KProgress: 10%[KProgress: 20%[KProgress: 30%[KProgress: 50%[KProgress: 60%[KProgress: 70%[KProgress: 80%[KProgress: 90%[K==> home: Matching MAC address for NAT networking...
+==> home: Checking if box 'munikypo/debian-10' version '0.4.0' is up to date...
+==> home: Setting the name of the VM: sandbox_home_1654608151553_57252
+==> home: Fixed port collision for 22 => 2222. Now on port 2203.
+==> home: Clearing any previously set network interfaces...
+==> home: Preparing network interfaces based on configuration...
+    home: Adapter 1: nat
+    home: Adapter 2: intnet
+==> home: Forwarding ports...
+    home: 22 (guest) => 2203 (host) (adapter 1)
+==> home: Running 'pre-boot' VM customizations...
+==> home: Booting VM...
+==> home: Waiting for machine to boot. This may take a few minutes...
+    home: SSH address: 127.0.0.1:2203
+    home: SSH username: vagrant
+    home: SSH auth method: private key
+    home: 
+    home: Vagrant insecure key detected. Vagrant will automatically replace
+    home: this with a newly generated keypair for better security.
+    home: 
+    home: Inserting generated public key within guest...
+    home: Removing insecure key from the guest if it's present...
+    home: Key inserted! Disconnecting and reconnecting using new SSH key...
+==> home: Machine booted and ready!
+==> home: Checking for guest additions in VM...
+==> home: Setting hostname...
+==> home: Configuring and enabling network interfaces...
+==> home: Installing rsync to the VM...
+==> home: Rsyncing folder: /home/ati/Documents/CS4E/cyber-sandbox-creator/tests/integration_tests/tmp_topologies/sandbox/ => /vagrant
+==> home:   - Exclude: [".vagrant/", ".git/"]
+==> home: Running provisioner: ansible_local...
+    home: Running ansible-playbook...
+
+PLAY [Router configuration] ****************************************************
+skipping: no hosts matched
+
+PLAY [Linux configuration] *****************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [home]
+
+TASK [Install net-tools] *******************************************************
+ok: [home]
+
+TASK [Add aliases of all devices] **********************************************
+changed: [home] => (item={'key': '10.10.20.1', 'value': 'router'})
+changed: [home] => (item={'key': '10.10.20.5', 'value': 'server'})
+changed: [home] => (item={'key': '10.10.30.1', 'value': 'router'})
+changed: [home] => (item={'key': '10.10.30.5', 'value': 'home'})
+changed: [home] => (item={'key': '100.100.100.1', 'value': 'router'})
+
+TASK [Configure routes] ********************************************************
+
+TASK [interface : sanity check] ************************************************
+skipping: [home]
+
+TASK [interface : find all interfaces configuration files] *********************
+ok: [home]
+
+TASK [interface : set_fact] ****************************************************
+ok: [home]
+
+TASK [interface : remove old iface settings for retrieved interface name] ******
+changed: [home] => (item=/etc/network/interfaces)
+
+TASK [interface : remove the rest of old settings for retrieved interface name] ***
+changed: [home] => (item=/etc/network/interfaces)
+
+TASK [interface : remove multiple consecutive new line characters] *************
+changed: [home] => (item=/etc/network/interfaces)
+
+TASK [interface : configure interface] *****************************************
+changed: [home]
+
+TASK [interface : sanity check] ************************************************
+skipping: [home]
+
+TASK [interface : find all interfaces configuration files] *********************
+ok: [home]
+
+TASK [interface : set_fact] ****************************************************
+ok: [home]
+
+TASK [interface : remove old iface settings for retrieved interface name] ******
+changed: [home] => (item=/etc/network/interfaces)
+
+TASK [interface : remove the rest of old settings for retrieved interface name] ***
+changed: [home] => (item=/etc/network/interfaces)
+
+TASK [interface : remove multiple consecutive new line characters] *************
+changed: [home] => (item=/etc/network/interfaces)
+
+TASK [interface : configure interface] *****************************************
+changed: [home]
+
+TASK [interface : sanity check] ************************************************
+skipping: [home]
+
+TASK [interface : find all interfaces configuration files] *********************
+ok: [home]
+
+TASK [interface : set_fact] ****************************************************
+ok: [home]
+
+TASK [interface : remove old iface settings for retrieved interface name] ******
+changed: [home] => (item=/etc/network/interfaces)
+
+TASK [interface : remove the rest of old settings for retrieved interface name] ***
+changed: [home] => (item=/etc/network/interfaces)
+
+TASK [interface : remove multiple consecutive new line characters] *************
+changed: [home] => (item=/etc/network/interfaces)
+
+TASK [interface : configure interface] *****************************************
+changed: [home]
+
+RUNNING HANDLER [interface : interface_networking_restart] *********************
+changed: [home]
+
+PLAY [Windows configuration] ***************************************************
+skipping: no hosts matched
+[WARNING]: Could not match supplied host pattern, ignoring: controller
+
+PLAY [Controller configuration] ************************************************
+skipping: no hosts matched
+
+PLAY RECAP *********************************************************************
+home                       : ok=22   changed=14   unreachable=0    failed=0    skipped=3    rescued=0    ignored=0   
+
+==> home: Running provisioner: ansible_local...
+    home: Running ansible-playbook...
+
+PLAY [all] *********************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [home]
+[DEPRECATION WARNING]: Distribution debian 10.10 on host home should use 
+/usr/bin/python3, but is using /usr/bin/python for backward compatibility with 
+prior Ansible releases. A future Ansible release will default to using the 
+discovered platform python for this host. See https://docs.ansible.com/ansible/
+2.11/reference_appendices/interpreter_discovery.html for more information. This
+ feature will be removed in version 2.12. Deprecation warnings can be disabled 
+by setting deprecation_warnings=False in ansible.cfg.
+
+PLAY RECAP *********************************************************************
+home                       : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+Building the sandbox...
+
+Sandbox was successfully built

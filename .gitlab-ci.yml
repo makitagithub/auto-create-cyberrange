@@ -3,23 +3,24 @@ image: registry.gitlab.ics.muni.cz:443/muni-kypo-csc/cyber-sandbox-creator/csc-d
 
 # Make sure that VirtualBox kernel modules are loaded and install Python dependencies.
 before_script:
+  - apt-get update -y --allow-releaseinfo-change
   - apt-get install -y linux-headers-$(uname -r)
   - lsmod | grep "vbox" || /usr/lib/virtualbox/vboxdrv.sh setup
   - pip3 install -r requirements.txt
-  - chmod +x testing/run_tests.sh
+  - chmod +x tests/integration_tests/run_tests.sh
 
 # Separating integration tests into several stages to ensure only one job creating virtual environment will run at one time.
 # Running several jobs at once will make them fail while testing virtual network. 
-# Integration tests need to be separated into several jobs to fit under timeout treshold.
+# Integration tests need to be separated into several jobs to fit under timeout threshold.
 stages:
   - debian
-  - kali-2020
+  - kali
   - windows-server
 
 debian:
   stage: debian
   script:
-    - testing/run_tests.sh -c testing/ci/config_debian.yml -p
+    - tests/integration_tests/run_tests.sh -c tests/integration_tests/ci/config_debian.yml -p
   # run even when other stages fail
   when: always
   # only run for merge requests
@@ -27,17 +28,18 @@ debian:
     - merge_requests
 
 kali-2020:
-  stage: kali-2020
-  # overwritting global before_script to create a virtual display before running test requiring a display
+  stage: kali
+  # overwriting global before_script to create a virtual display before running test requiring a display
   before_script:
+    - apt-get update -y --allow-releaseinfo-change
     - apt-get install -y linux-headers-$(uname -r)
     - lsmod | grep "vbox" || /usr/lib/virtualbox/vboxdrv.sh setup
     - pip3 install -r requirements.txt
-    - chmod +x testing/run_tests.sh
+    - chmod +x tests/integration_tests/run_tests.sh
     - Xvfb :1 -screen 0 800x600x16 &
 
   script:
-    - DISPLAY=:1 testing/run_tests.sh -c testing/ci/config_kali_2020.yml -p
+    - DISPLAY=:1 tests/integration_tests/run_tests.sh -c tests/integration_tests/ci/config_kali.yml -p
   # run even when other stages fail
   when: always
   # only run for and merge requests
@@ -47,7 +49,7 @@ kali-2020:
 windows-server:
   stage: windows-server
   script:
-    - testing/run_tests.sh -c testing/ci/config_windows_server.yml -p
+    - tests/integration_tests/run_tests.sh -c tests/integration_tests/ci/config_windows_server.yml -p
   # run even when other stages fail
   when: always
   # only run for merge requests

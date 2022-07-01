@@ -1,6 +1,6 @@
 from enum import Enum
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Union
 
 from netaddr import IPNetwork, IPAddress
 import kypo.topology_definition.models as kypo
@@ -219,22 +219,22 @@ class Sandbox:
         raise AttributeError(f"Invalid flavor: {flavor_name}")
 
     @staticmethod
-    def _parse_memory_and_cpus(host: kypo.Host, flavors: List[Flavor])\
+    def _parse_memory_and_cpus(device: Union[kypo.Host, kypo.Router], flavors: List[Flavor])\
             -> Tuple[int, int]:
-        if host.flavor:
-            memory, cpus = Sandbox._resolve_flavor(host.flavor, flavors)
-        if host.extra is not None:
-            if "memory" in host.extra:
+        if device.flavor:
+            memory, cpus = Sandbox._resolve_flavor(device.flavor, flavors)
+        if device.extra is not None:
+            if "memory" in device.extra:
                 try:
-                    memory = int(host.extra["memory"])
+                    memory = int(device.extra["memory"])
                 except ValueError:
-                    raise ValueError(f'Memory value "{host.extra["memory"]}"'
+                    raise ValueError(f'Memory value "{device.extra["memory"]}"'
                                      ' is not an integer')
-            if "cpus" in host.extra:
+            if "cpus" in device.extra:
                 try:
-                    cpus = int(host.extra["cpus"])
+                    cpus = int(device.extra["cpus"])
                 except ValueError:
-                    raise (f'Cpus value "{host.extra["cpus"]}" is not an'
+                    raise (f'Cpus value "{device.extra["cpus"]}" is not an'
                            'integer')
         return memory, cpus
 
@@ -270,7 +270,7 @@ class Sandbox:
                               networks: List[Network], router_n: int) -> Device:
 
         if router.flavor:
-            memory, cpus = Sandbox._resolve_flavor(router.flavor, flavors)
+            memory, cpus = Sandbox._parse_memory_and_cpus(router, flavors)
         else:
             memory, cpus = config["default_router_memory"], \
                            config["default_router_cpus"]

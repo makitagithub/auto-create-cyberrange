@@ -50,7 +50,7 @@ def _run_create(parsed_cli_args: argparse.ArgumentParser) -> None:
                parsed_cli_args.rewrite_provisioning,
                parsed_cli_args.verbose_ansible, os.getcwd())
     except Exception as e:
-        print(f"Could not create intermediate sandbox definition:\n{e}")
+        print(f"Could not create intermediate sandbox definition:\n{e}", file=sys.stderr)
         sys.exit(1)
 
     print("Intermediate sandbox definition was successfully created")

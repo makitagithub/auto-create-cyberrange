@@ -1,27 +1,25 @@
 topologies:
-  - file: ./topologies/0-routers-1-network-1-host.yml
+  - file: topologies/0-routers-1-network-1-host.yml
     arguments:
-      - ansible_local
+      - no-arguments
     boxes:
       - munikypo/windows-server-2019
     original_boxes: false
-  - file: ./topologies/1-router-1-network-1-host.yml
+  - file: topologies/1-router-1-network-1-host.yml
     arguments:
-      - ansible_local
-      - [ansible_local, border_router]
+      - no-arguments
     boxes:
       - munikypo/windows-server-2019
     original_boxes: false
-  - file: ./topologies/1-router-2-networks-2-hosts.yml
+  - file: topologies/1-router-2-networks-2-hosts.yml
     arguments:
-      - ansible_local
-      - [ansible_local, border_router]
+      - no-arguments
     boxes:
       - munikypo/windows-server-2019
     original_boxes: false
-  - file: ./topologies/2-routers-2-networks-2-hosts.yml
+  - file: topologies/2-routers-2-networks-2-hosts.yml
     arguments:
-      - [ansible_local, border_router]
+      - no-arguments
     boxes:
       - munikypo/windows-server-2019
     original_boxes: false

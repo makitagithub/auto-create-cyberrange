@@ -8,6 +8,7 @@ from typing import List, Optional
 
 from sandboxcreator import manager
 from sandboxcreator.commands.command_attributes import OutputLocation
+from sandboxcreator.hw_resources.resource_checker import check_hw_resources
 
 
 def _parse_cli_args(cli_args: List[str]) -> argparse.Namespace:
@@ -85,19 +86,19 @@ def _print_final_message(command_name: str,
             print("Sandbox was successfully reloaded")
     else:
         if command_name == "build":
-            print(f"\nSandbox building process has failed:\n{exception}")
+            print(f"\nSandbox building process has failed:\n{exception}", file=sys.stderr)
         elif command_name == "destroy":
-            print(f"\nSandbox destroying process has failed:\n{exception}")
+            print(f"\nSandbox destroying process has failed:\n{exception}", file=sys.stderr)
         elif command_name == "access":
-            print(f"\nCould not access the virtual machine:\n{exception}")
+            print(f"\nCould not access the virtual machine:\n{exception}", file=sys.stderr)
         elif command_name == "suspend":
-            print(f"\nCould not suspend the sandbox:\n{exception}")
+            print(f"\nCould not suspend the sandbox:\n{exception}", file=sys.stderr)
         elif command_name == "resume":
-            print(f"\nCould not resume the sandbox:\n{exception}")
+            print(f"\nCould not resume the sandbox:\n{exception}", file=sys.stderr)
         elif command_name == "shutdown":
-            print(f"\nCould not shut down the sandbox:\n{exception}")
+            print(f"\nCould not shut down the sandbox:\n{exception}", file=sys.stderr)
         elif command_name == "reload":
-            print(f"\nCould not reload the sandbox:\n{exception}")
+            print(f"\nCould not reload the sandbox:\n{exception}", file=sys.stderr)
 
 
 def _translate_str_output(output_str: str) -> OutputLocation:
@@ -124,6 +125,8 @@ def _run_manager(cli_args: argparse.Namespace) -> None:
     try:
         command_name = cli_args.command
         _print_progress_message(command_name)
+        if command_name == "build":
+            check_hw_resources(cli_args.sandbox_directory)
         output_dev: OutputLocation = _determine_standard_output(cli_args.out,
                                                                 cli_args.verbose)
         error_dev: OutputLocation = _translate_str_output(cli_args.err)
