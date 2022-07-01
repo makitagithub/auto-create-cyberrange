@@ -60,10 +60,6 @@ class Command(abc.ABC):
             return None
         raise ValueError('Invalid output device')
 
-    @abc.abstractmethod
-    def _check_machine_states(self) -> None:
-        pass
-
     @staticmethod
     def list_machines(sandbox_dir: Path):
         status_command: List[str] = ["vagrant", "status", "--machine-readable"]
@@ -72,13 +68,13 @@ class Command(abc.ABC):
                                             check=True, text=True,
                                             capture_output=True)
         except subprocess.CalledProcessError:
-            raise RuntimeError("Could access list of machines") from None
+            raise RuntimeError("Could not access list of machines") from None
         output_lines: List = process_output.stdout.splitlines()
         output_csv: List[List] = list(csv.reader(output_lines))
         machines: List[str] = []
         for line in output_csv:
             machine_name: str = line[1]
-            if machine_name and machine_name not in machines:
+            if machine_name and machine_name != 'vagrant' and machine_name not in machines:
                 machines.append(machine_name)
         return machines
 
