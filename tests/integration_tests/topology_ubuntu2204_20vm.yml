@@ -1,0 +1,211 @@
+name: ubuntu2204-20vm
+hosts:
+- name: h-a01
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-a02
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-a03
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-a04
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-a05
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-a06
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-a07
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-a08
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-a09
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-b01
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-b02
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-b03
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-b04
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-b05
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-b06
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-b07
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-b08
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+- name: h-b09
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 768
+    cpus: 1
+routers:
+- name: r-a
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 1024
+    cpus: 1
+- name: r-b
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 1024
+    cpus: 1
+networks:
+- name: test20-a
+  cidr: 10.88.20.0/24
+- name: test20-b
+  cidr: 10.88.30.0/24
+net_mappings:
+- host: h-a01
+  network: test20-a
+  ip: 10.88.20.11
+- host: h-a02
+  network: test20-a
+  ip: 10.88.20.12
+- host: h-a03
+  network: test20-a
+  ip: 10.88.20.13
+- host: h-a04
+  network: test20-a
+  ip: 10.88.20.14
+- host: h-a05
+  network: test20-a
+  ip: 10.88.20.15
+- host: h-a06
+  network: test20-a
+  ip: 10.88.20.16
+- host: h-a07
+  network: test20-a
+  ip: 10.88.20.17
+- host: h-a08
+  network: test20-a
+  ip: 10.88.20.18
+- host: h-a09
+  network: test20-a
+  ip: 10.88.20.19
+- host: h-b01
+  network: test20-b
+  ip: 10.88.30.11
+- host: h-b02
+  network: test20-b
+  ip: 10.88.30.12
+- host: h-b03
+  network: test20-b
+  ip: 10.88.30.13
+- host: h-b04
+  network: test20-b
+  ip: 10.88.30.14
+- host: h-b05
+  network: test20-b
+  ip: 10.88.30.15
+- host: h-b06
+  network: test20-b
+  ip: 10.88.30.16
+- host: h-b07
+  network: test20-b
+  ip: 10.88.30.17
+- host: h-b08
+  network: test20-b
+  ip: 10.88.30.18
+- host: h-b09
+  network: test20-b
+  ip: 10.88.30.19
+router_mappings:
+- router: r-a
+  network: test20-a
+  ip: 10.88.20.1
+- router: r-b
+  network: test20-b
+  ip: 10.88.30.1
+groups: []

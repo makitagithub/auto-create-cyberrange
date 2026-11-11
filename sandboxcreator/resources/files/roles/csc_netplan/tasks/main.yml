@@ -1,0 +1,120 @@
+---
+- name: Check Netplan availability
+  ansible.builtin.command: netplan info
+  changed_when: false
+  check_mode: false
+
+- name: Initialize interface mapping
+  ansible.builtin.set_fact:
+    csc_ip_interfaces: {}
+    csc_ethernet_interfaces: []
+    csc_netplan_ethernets: {}
+
+- name: Collect Ethernet interfaces
+  ansible.builtin.set_fact:
+    csc_ethernet_interfaces: "{{ csc_ethernet_interfaces + [item] }}"
+  loop: "{{ ansible_facts.interfaces }}"
+  when: ansible_facts[item].type | default('') == 'ether'
+
+- name: Map current IPv4 addresses to interfaces
+  ansible.builtin.set_fact:
+    csc_ip_interfaces: "{{ csc_ip_interfaces | combine({ansible_facts[item].ipv4.address: item}) }}"
+  loop: "{{ csc_ethernet_interfaces }}"
+  when: ansible_facts[item].ipv4 is defined
+
+- name: Require Vagrant-configured exercise addresses
+  ansible.builtin.assert:
+    that:
+      - item.ip in csc_ip_interfaces
+    fail_msg: "Vagrant must configure exercise address {{ item.ip }} before provisioning."
+  loop: "{{ csc_netplan_interfaces }}"
+
+- name: Build exercise interface configuration
+  ansible.builtin.set_fact:
+    csc_netplan_ethernets: "{{ csc_netplan_ethernets | combine({csc_ip_interfaces[item.ip]: {'dhcp4': false, 'dhcp6': false, 'addresses': [item.address], 'routes': item.routes}}) }}"
+  loop: "{{ csc_netplan_interfaces }}"
+
+- name: Identify the Vagrant management interface
+  ansible.builtin.set_fact:
+    csc_management_interfaces: "{{ csc_ethernet_interfaces | difference(csc_netplan_ethernets.keys() | list) }}"
+
+- name: Require exactly one management interface
+  ansible.builtin.assert:
+    that:
+      - csc_management_interfaces | length == 1
+    fail_msg: "Expected one Vagrant NAT interface outside the exercise topology."
+
+- name: Preserve management DHCP and configure route ownership
+  ansible.builtin.set_fact:
+    csc_netplan_ethernets: "{{ csc_netplan_ethernets | combine({csc_management_interfaces[0]: {'dhcp4': true, 'dhcp4-overrides': {'use-routes': csc_netplan_use_management_routes}, 'dhcp6-overrides': {'use-routes': csc_netplan_use_management_routes}}}) }}"
+
+# Stage the complete merged configuration, so an invalid candidate never replaces
+# the active file. Check mode also validates the candidate without applying it.
+- name: Validate and install Netplan configuration
+  block:
+    - name: Create validation directory
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: csc-netplan-
+      register: csc_netplan_stage
+      changed_when: false
+      check_mode: false
+
+    - name: Create staged configuration directory
+      ansible.builtin.file:
+        path: "{{ csc_netplan_stage.path }}/etc/netplan"
+        state: directory
+        mode: '0700'
+      changed_when: false
+      check_mode: false
+
+    - name: Stage existing Netplan configuration
+      ansible.builtin.copy:
+        src: /etc/netplan/
+        dest: "{{ csc_netplan_stage.path }}/etc/netplan/"
+        remote_src: true
+        mode: preserve
+      changed_when: false
+      check_mode: false
+
+    - name: Render candidate Netplan configuration
+      ansible.builtin.copy:
+        content: "{{ {'network': {'version': 2, 'renderer': 'networkd', 'ethernets': csc_netplan_ethernets}} | to_nice_yaml }}"
+        dest: "{{ csc_netplan_stage.path }}/etc/netplan/60-csc.yaml"
+        mode: '0600'
+      changed_when: false
+      check_mode: false
+
+    - name: Validate merged Netplan configuration
+      ansible.builtin.command:
+        argv:
+          - netplan
+          - generate
+          - --root-dir
+          - "{{ csc_netplan_stage.path }}"
+      changed_when: false
+      check_mode: false
+
+    - name: Install validated Netplan configuration
+      ansible.builtin.copy:
+        src: "{{ csc_netplan_stage.path }}/etc/netplan/60-csc.yaml"
+        dest: /etc/netplan/60-csc.yaml
+        remote_src: true
+        owner: root
+        group: root
+        mode: '0600'
+      register: csc_netplan_install
+
+    - name: Apply changed Netplan configuration
+      ansible.builtin.command: netplan apply
+      when:
+        - csc_netplan_install.changed
+        - not ansible_check_mode
+  always:
+    - name: Remove validation directory
+      ansible.builtin.file:
+        path: "{{ csc_netplan_stage.path }}"
+        state: absent
+      when: csc_netplan_stage.path is defined
+      changed_when: false
+      check_mode: false

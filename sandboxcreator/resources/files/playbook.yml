@@ -36,7 +36,15 @@
         path: /etc/hosts
       with_dict: '{{ device_aliases }}'
 
+    - name: Configure Ubuntu 22.04 networking with Netplan
+      ansible.builtin.include_role:
+        name: csc_netplan
+      when:
+        - ansible_distribution == "Ubuntu"
+        - ansible_distribution_version == "22.04"
+
     - name: Configure routes
+      when: not (ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04")
       include_role:
         name: interface
       loop: '{{ routes }}'

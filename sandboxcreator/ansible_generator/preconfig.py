@@ -30,6 +30,10 @@ class Preconfig:
                                     sandbox.sandbox_dir / sandbox.config["preconfig_roles"],
                                     sandbox.config["interface_role"])
 
+        Writer.copy_directory(
+            Path(__file__).parent.parent / "resources/files/roles/csc_netplan",
+            sandbox.sandbox_dir / sandbox.config["preconfig_roles"] / "csc_netplan")
+
         Vars.generate_vars(sandbox,
                            sandbox.sandbox_dir.joinpath(
                                sandbox.config["preconfig_host_vars"]),

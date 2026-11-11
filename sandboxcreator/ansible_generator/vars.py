@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Dict
 
 from sandboxcreator.ansible_generator.routes import Routes
+from sandboxcreator.ansible_generator.netplan import Netplan
 from sandboxcreator.input_parser.sandbox import Sandbox, Device, DeviceType
 from sandboxcreator.io.writer import Writer
 
@@ -42,6 +43,7 @@ class Vars:
         for device in sandbox.devices:
             variables: Dict = {"device_aliases": Vars._get_aliases(device, sandbox),
                                "routes": Routes.create_routes(device, sandbox)}
+            variables.update(Netplan.create_host_vars(device, sandbox))
             host_vars[device.name] = variables
 
         return host_vars

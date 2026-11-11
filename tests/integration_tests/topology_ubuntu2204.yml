@@ -1,0 +1,51 @@
+name: ubuntu2204-netplan-integration
+hosts:
+- name: server
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 1024
+    cpus: 1
+- name: home
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 1024
+    cpus: 1
+routers:
+- name: server-router
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 1024
+    cpus: 1
+- name: home-router
+  base_box:
+    image: ubuntu/jammy64
+  flavor: csirtmu.tiny1x4
+  extra:
+    memory: 1024
+    cpus: 1
+networks:
+- name: netplan-test-server-switch
+  cidr: 10.77.20.0/24
+- name: netplan-test-home-switch
+  cidr: 10.77.30.0/24
+net_mappings:
+- host: server
+  network: netplan-test-server-switch
+  ip: 10.77.20.5
+- host: home
+  network: netplan-test-home-switch
+  ip: 10.77.30.5
+router_mappings:
+- router: server-router
+  network: netplan-test-server-switch
+  ip: 10.77.20.1
+- router: home-router
+  network: netplan-test-home-switch
+  ip: 10.77.30.1
+groups: []
